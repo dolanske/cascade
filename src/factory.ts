@@ -1,6 +1,5 @@
 import { Component } from './component'
 import type { ComponentInstance, HtmlTags } from './types'
-import { portal } from './components/portal'
 import { fragment } from './components/fragment'
 import { isArray } from './util'
 
@@ -24,8 +23,6 @@ const nativeElImpl = nativeHtmlTags.reduce((group, elId) => {
 }, {} as Record<HtmlTags, ComponentInstance>)
 
 export const El = Object.assign(nativeElImpl, {
-  // TODO
-  portal,
   fragment,
 })
 

@@ -1,11 +1,20 @@
 import { ref } from '@vue/reactivity'
 import { El } from './factory'
 
-const visible = ref(false)
+// Define reusable component with props
+const CounterComponent = El.button().setup(({ self, props }) => {
+  const data = ref(props.startingCount as number)
 
-const App = El.fragment([
-  El.button('Increment').click(() => visible.value = !visible.value),
-  El.span('Hello').class(() => ({ pink: visible.value })),
+  self.text(() => `Clicked ${data.value} times`)
+  self.click(() => data.value++)
+})
+
+///////////////
+
+// Use component somewhere
+const App = El.div([
+  El.h1('Counter'),
+  CounterComponent.prop('startingCount', 5),
 ])
 
 App.mount('#app')

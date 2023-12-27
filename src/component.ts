@@ -1,17 +1,19 @@
 import type { WatchStopHandle } from '@vue-reactivity/watch'
 import { watch } from '@vue-reactivity/watch'
 import { Fragment } from './components/fragment'
-import type { ComponentChildren, GenericCallback } from './types'
-import { text } from './directives/text'
-import { click, on } from './directives/on'
-import { if_impl } from './directives/if'
-import { class_impl } from './directives/class'
+import type { ComponentChildren, GenericCallback, PropObject } from './types'
+import { text } from './methods/text'
+import { click, on } from './methods/on'
+import { if_impl } from './methods/if'
+import { class_impl } from './methods/class'
 import { isFunction, isNil } from './util'
-import { html } from './directives/html'
+import { html } from './methods/html'
+import { prop, props, setup } from './methods/setup'
 
 export class Component {
   el: HTMLElement
   children: ComponentChildren
+  componentProps: PropObject
 
   text = text.bind(this)
   html = html.bind(this)
@@ -19,16 +21,21 @@ export class Component {
   click = click.bind(this)
   if = if_impl.bind(this)
   class = class_impl.bind(this)
+  setup = setup.bind(this)
+  prop = prop.bind(this)
+  props = props.bind(this)
 
   // Lifecycle
   onMountCbs: GenericCallback[]
   onDestroyCbs: GenericCallback[]
 
-  constructor(el: HTMLElement) {
+  constructor(el: HTMLElement, props: PropObject = {}) {
     this.el = el
     this.children = []
     this.onMountCbs = []
     this.onDestroyCbs = []
+
+    this.componentProps = props
   }
 
   /////////////////////////////////////////////////////////////
