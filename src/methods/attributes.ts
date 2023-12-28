@@ -1,38 +1,66 @@
+import type { Primitive } from '@vue/reactivity'
+import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
+import { isFunction, isNil, isObject } from '../util'
 
-// export function setAttribute(el: HTMLElement, key: string | Record<string, Primitive>, value: Primitive) {
-//   if (isObject(key)) {
-//     Object.entries(key).forEach(([k, v]) => {
-//       setAttribute(el, k, v)
-//     })
-//     return
-//   }
+type Attributes = Record<string, Primitive>
 
-//   if (!value) {
-//     el.setAttribute(key, '')
-//   }
-//   else if (typeof value === 'boolean') {
-//     if (value)
-//       el.setAttribute(key, '')
-//     else
-//       el.removeAttribute(key)
-//   }
-//   else {
-//     el.setAttribute(key, String(value))
-//   }
-// }
+export function setAttribute(el: HTMLElement, key: string | Attributes, value?: Primitive) {
+  if (isObject(key)) {
+    Object.entries(key).forEach(([k, v]) => {
+      setAttribute(el, k, v)
+    })
+    return
+  }
 
-export function attributes(this: Component) {
+  if (isNil(value)) {
+    el.setAttribute(key, '')
+  }
+  else if (typeof value === 'boolean') {
+    if (value)
+      el.setAttribute(key, '')
+    else
+      el.removeAttribute(key)
+  }
+  else {
+    el.setAttribute(key, String(value))
+  }
+}
+
+export function attrs(this: Component, attrData: Attributes | (() => Attributes)) {
+  this.onInit(() => {
+    if (isFunction(attrData)) {
+      const release = watch(attrData, value => setAttribute(this.el, value), {
+        immediate: true,
+        deep: true,
+      })
+
+      this.onDestroy(release)
+    }
+    else {
+      setAttribute(this.el, attrData)
+    }
+  })
+
   return this
 }
 
-export function attribute(this: Component) {
-  // attr(key: string | Record<string, Primitive>, value?: Primitive) {
-  //   // No value means we are setting a boolean attribute
-  //   setAttribute(this.el, key, value)
+export function attr(this: Component, key: string, value?: Primitive | (() => Primitive)) {
+  this.onInit(() => {
+    if (isFunction(value)) {
+      const release = watch(value, value => setAttribute(this.el, key, value), {
+        immediate: true,
+        deep: true,
+      })
 
-  //   return this
-  // }
+      this.onDestroy(release)
+    }
+    else {
+      setAttribute(this.el, key, value)
+    }
+  })
+
+  return this
 
   return this
 }

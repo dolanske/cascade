@@ -25,6 +25,7 @@ export function if_impl(this: Component, expr: boolean | (() => any)) {
       const cachedExpr = computed(expr)
       const release = watch(cachedExpr, run, {
         immediate: true,
+        deep: true,
       })
 
       this.onDestroy(release)

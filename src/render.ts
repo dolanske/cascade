@@ -61,6 +61,7 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
       else if (isFunction(child)) {
         watch(child, value => render(root, value, i), {
           immediate: true,
+          deep: true,
         })
       }
       else {
@@ -75,6 +76,7 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
   else if (isFunction(children)) {
     watch(children, value => render(root, value), {
       immediate: true,
+      deep: true,
     })
   }
 }

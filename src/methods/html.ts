@@ -9,6 +9,7 @@ export function html(this: Component, value: string | (() => any)) {
       this.el.innerHTML = computedVal
     }, {
       immediate: true,
+      deep: true,
     })
 
     this.onDestroy(release)

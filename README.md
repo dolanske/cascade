@@ -50,8 +50,14 @@ This project started during Christmas, without much thinking through. So far it'
 - [] for()
 - [] show()
 - [] model()
-- [] attr()
+  - [] input
+    - [] checkbox
+    - [] radio
+    - [x] other
+  - [] select
+  - [] details
+- [x] attr()
 - [] style()
-- [] Split elements into those who can have children and those who are "final"
+- [x] Split elements into void and normal components
 - [] destroying and re-mounting components
   Maybe wrapping every nested method into a function, which saves the whole function and re-runs it on re-mount could work?

@@ -9,6 +9,7 @@ import { nest } from './methods/nest'
 import { model } from './methods/model'
 import { render } from './render'
 import { destroy } from './factory'
+import { attr, attrs } from './methods/attributes'
 
 export class Component {
   /**
@@ -59,6 +60,8 @@ export class Component {
    */
   nest = nest.bind(this)
   model = model.bind(this)
+  attrs = attrs.bind(this)
+  attr = attr.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []

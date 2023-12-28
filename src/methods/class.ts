@@ -61,6 +61,7 @@ export function class_impl(this: Component, classNames: ClassNames | (() => Clas
   if (isFunction(classNames)) {
     const release = watch(classNames, val => processClass(val), {
       immediate: true,
+      deep: true,
     })
 
     this.onDestroy(release)

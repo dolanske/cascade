@@ -9,6 +9,7 @@ export function text(this: Component, value: string | (() => any)) {
       this.el.textContent = computedVal
     }, {
       immediate: true,
+      deep: true,
     })
 
     this.onDestroy(release)
