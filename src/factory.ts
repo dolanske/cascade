@@ -25,34 +25,3 @@ const nativeElImpl = nativeHtmlTags.reduce((group, elId) => {
 export const El = Object.assign(nativeElImpl, {
   fragment,
 })
-
-export function destroy(component: Component) {
-  // Iterate over a component and all of its desendands and stop all of their reactive watchers
-  // Then remove the root element
-  // component.__releaseWatchers()
-
-  function stop(cm: Component) {
-    if (!(cm instanceof Component))
-      return
-
-    for (const cb of cm.onDestroyCbs)
-      cb()
-
-    const { children } = cm
-
-    if (children instanceof Component) {
-      stop(children)
-    }
-    else if (isArray(children)) {
-      for (const child of children) {
-        if (child instanceof Component)
-          stop(child)
-      }
-    }
-  }
-
-  stop(component)
-
-  // Remove root
-  component.el.remove()
-}

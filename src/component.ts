@@ -6,35 +6,74 @@ import { text } from './methods/text'
 import { click, on } from './methods/on'
 import { if_impl } from './methods/if'
 import { class_impl } from './methods/class'
-import { isFunction, isNil } from './util'
+import { isArray, isFunction, isNil } from './util'
 import { html } from './methods/html'
 import { prop, props, setup } from './methods/setup'
+import { nest } from './methods/nest'
 
 export class Component {
-  el: HTMLElement
-  children: ComponentChildren
-  componentProps: PropObject
-
+  /**
+   * Set `textContent` of the current node.
+   *
+   * @param text {string | () => string}
+   */
   text = text.bind(this)
+  /**
+   * Set `innerHTML` of the current node.
+   */
   html = html.bind(this)
+  /**
+   * Add an event listener to the current node.
+   *
+   * @param on {keyof HTMLElementEventMap} Event name
+   * @param listener {EventListenerOrEventListenerObject} Function which runs on event trigger
+   * @param options {EventListenerOptions | undefined} Optional event configuration
+   *
+   */
   on = on.bind(this)
+  /**
+   * Shorthand for binding `on("click")` event listener to the current node.
+   */
   click = click.bind(this)
   if = if_impl.bind(this)
   class = class_impl.bind(this)
   setup = setup.bind(this)
+  /**
+   * Pass a single prop value into the component. You can also pass in refs, but
+   * make sure to use the `.value` in the components, as these refs are directly
+   * passed through.
+   *
+   * @param propKey {string}
+   * @param propValue {any}
+   */
   prop = prop.bind(this)
+  /**
+   * Pass an object of props into the component. You can also pass in refs, but
+   * make sure to use the `.value` in the components, as these refs are directly
+   * passed through.
+   */
   props = props.bind(this)
+  /**
+   * Simple helper which allows you to insert component's children anywhere in
+   * the chain. This was made mainly because it feels less natural to add
+   * children to a component and only then use methods like `if` or `for` on it.
+   */
+  nest = nest.bind(this)
+
+  el: HTMLElement
+  children: ComponentChildren = []
+  componentProps: PropObject
 
   // Lifecycle
-  onMountCbs: GenericCallback[]
-  onDestroyCbs: GenericCallback[]
+  onMountCbs: GenericCallback[] = []
+  onDestroyCbs: GenericCallback[] = []
+  onInitCbs: GenericCallback[] = []
+
+  __isElse?: boolean
+  __isElseIf?: boolean
 
   constructor(el: HTMLElement, props: PropObject = {}) {
     this.el = el
-    this.children = []
-    this.onMountCbs = []
-    this.onDestroyCbs = []
-
     this.componentProps = props
   }
 
@@ -44,20 +83,52 @@ export class Component {
     this.children = value
   }
 
-  /////////////////////////////////////////////////////////////
-  // Public API
-
-  onDestroy(cb: GenericCallback) {
-    this.onDestroyCbs.push(cb)
-  }
-
-  onMount(cb: GenericCallback) {
-    this.onMountCbs.push(cb)
-  }
-
   __runOnMount() {
     for (const cb of this.onMountCbs)
       cb()
+  }
+
+  __runOnDestroy() {
+    for (const cb of this.onDestroyCbs)
+      cb()
+  }
+
+  __runOnInit() {
+    for (const cb of this.onInitCbs)
+      cb()
+  }
+
+  /////////////////////////////////////////////////////////////
+  // Public API
+
+  /**
+   * Executes provided callback function when the component is initialized.
+   * Before being rendered in the dom.
+   *
+   * @param callback {function}
+   */
+  onInit(callback: GenericCallback) {
+    this.onInitCbs.push(callback)
+  }
+
+  /**
+   * Executes provided callback function when the component is mounted in the
+   * DOM.
+   *
+   * @param callback {function}
+   */
+  onMount(callback: GenericCallback) {
+    this.onMountCbs.push(callback)
+  }
+
+  /**
+   *
+   * @param callback executes provided callback function when the component is
+   * removed from the DOM.
+   */
+
+  onDestroy(callback: GenericCallback) {
+    this.onDestroyCbs.push(callback)
   }
 
   // style(key: keyof CSSStyle | CSSStyle, value?: string | number | boolean) {
@@ -87,9 +158,16 @@ export class Component {
       throw new Error('Root element does not exist')
 
     domRoot.appendChild(this.el)
-    render(this.el, this.children)
 
+    this.__runOnInit()
+
+    render(this.el, this.children)
     this.__runOnMount()
+  }
+
+  // Removes the root node and its desendants. It also
+  destroy() {
+    destroy(this)
   }
 }
 
@@ -154,6 +232,7 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
 
   else if (children instanceof Component) {
     root.appendChild(children.el)
+    children.__runOnInit()
     render(children.el, children.children)
     children.__runOnMount()
   }
@@ -176,6 +255,7 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
       }
       else {
         root.appendChild(child.el)
+        child.__runOnInit()
         render(child.el, child.children)
         child.__runOnMount()
       }
@@ -187,4 +267,37 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
       immediate: true,
     })
   }
+}
+
+export function destroy(component: Component) {
+  // Iterate over a component and all of its desendands and stop all of their reactive watchers
+  // Then remove the root element
+  // component.__releaseWatchers()
+
+  function stop(comp: Component) {
+    if (!(comp instanceof Component))
+      return
+
+    for (const cb of comp.onDestroyCbs)
+      cb()
+
+    const { children } = comp
+
+    if (children instanceof Component) {
+      stop(children)
+    }
+    else if (isArray(children)) {
+      for (const child of children) {
+        if (child instanceof Component)
+          stop(child)
+      }
+    }
+  }
+
+  stop(component)
+
+  component.__runOnDestroy()
+
+  // Remove root
+  component.el.remove()
 }

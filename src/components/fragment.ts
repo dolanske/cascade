@@ -3,11 +3,9 @@ import type { ComponentChildren } from '../types'
 
 export class Fragment {
   children: ComponentChildren
-  // __isFragment: boolean
 
   constructor(children: ComponentChildren) {
     this.children = children
-    // this.__isFragment = true
   }
 
   mount(selector: string) {

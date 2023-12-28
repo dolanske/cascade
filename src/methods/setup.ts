@@ -12,7 +12,7 @@ type SetupArguments = (setupArgs: SetupArgs) => void
 export function setup(this: Component, setupFn: SetupArguments) {
   const scope = effectScope()
 
-  this.onMount(() => {
+  this.onInit(() => {
     scope.run(() => {
       setupFn({
         self: this,
@@ -28,8 +28,7 @@ export function setup(this: Component, setupFn: SetupArguments) {
   return this
 }
 
-////
-
+// Assign a key value pair into the
 export function prop(this: Component, key: string, value: unknown) {
   Object.assign(this.componentProps, { [key]: value })
   return this

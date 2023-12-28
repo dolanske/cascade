@@ -21,8 +21,14 @@ Counter.mount('#app')
 
 This project started during Christmas, without much thinking through. So far it's been fun and smooth sailing. If this syntax is viable is something future me needs to worry about.
 
-- [] props????
+- [] Props
+  - [] Add passing static data into components
+  - [] make props accept refs for reactivity and watch for them
+  - [] Correctly type props (using the builder TS pattern)
 - [] else() / elseif() (just complete if() implementation)
 - [] for()
 - [] show()
-- [ ]
+- [] attr()
+- [] style()
+- [] destroying and re-mounting components
+  Maybe wrapping every nested method into a function, which saves the whole function and re-runs it on re-mount could work?

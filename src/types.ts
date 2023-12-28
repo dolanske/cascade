@@ -20,4 +20,4 @@ export interface CSSStyle extends Properties, PropertiesHyphen { }
 export type GenericCallbackWithThis = (this: Component) => void
 export type GenericCallback = () => void
 
-export type PropObject = Record<string, unknown>
+export type PropObject = Record<string, any>
