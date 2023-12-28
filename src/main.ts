@@ -1,13 +1,18 @@
 import { ref } from '@vue/reactivity'
 import { El } from './factory'
 
-const InputWrapper = El.div().setup(({ self }) => {
+const InputWrapper = El.fragment().setup(({ self }) => {
   const text = ref('')
 
   self.nest([
-    El.label('My Input'),
+    El.label('Name'),
+    // .attribute("for", "name"),
     El.input('text').model(text),
-    El.input(),
+    // .attributes({
+    //   placeholder: "Please enter your name",
+    //   name: "name",
+    //   id: "name"
+    // }),
     El.hr(),
     () => text.value,
   ])

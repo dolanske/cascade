@@ -1,6 +1,5 @@
-import { Component, VoidComponent } from './component'
+import { Component, VoidComponent, fragment } from './component'
 import type { ComponentChildren, ComponentInstance, HtmlTags, HtmlVoidtags } from './types'
-import { fragment } from './components/fragment'
 import { input } from './components/input'
 import { isArray } from './util'
 

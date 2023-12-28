@@ -10,28 +10,6 @@ import { model } from './methods/model'
 import { render } from './render'
 import { destroy } from './factory'
 
-// TODO
-// Split component into multiple component classes
-// BaseComponent
-// - contains hooks and methods which do not require a HTML or children, props
-// DomComponent
-// - contains el. and DOM specific API
-// VoidComponent
-// - Component which does not contain any children
-// Component
-
-// export class BaseComponent {
-
-// }
-
-// export class DomComponent extends BaseComponent {
-//   constructor() {
-//     super()
-//   }
-// }
-
-// export class VoidComponent extends BaseComponent { }
-
 export class Component {
   /**
    * Set `textContent` of the current node.
@@ -160,9 +138,7 @@ export class Component {
       throw new Error('Root element does not exist')
 
     domRoot.appendChild(this.el)
-
     this.__runOnInit()
-
     render(this.el, this.children)
     this.__runOnMount()
   }
@@ -173,7 +149,12 @@ export class Component {
   }
 }
 
-export class VoidComponent extends Component {
+/**
+ * Void components are those which can not contain any more child nodes. The
+ * implementation is the same as normal elements, except it is not possible to
+ * provide any child elements. The
+ */
+export class VoidComponent extends Component implements Omit<Component, 'nest'> {
   constructor(type: HtmlVoidtags) {
     super(document.createElement(type))
   }
@@ -181,4 +162,36 @@ export class VoidComponent extends Component {
   override __children(_value: ComponentChildren): void {
     this.children = []
   }
+}
+
+/**
+ * Fragment does not have any DOM node associated within it. All of its children
+ * are appended to fragment's parent node.
+ */
+export class Fragment extends Component implements Omit<Component, 'on'> {
+  constructor(children: ComponentChildren) {
+    super(document.createElement('template'))
+    this.children = children
+  }
+
+  override mount(selector: string) {
+    const domRoot = document.querySelector(selector)
+    if (!domRoot)
+      throw new Error('Root element does not exist')
+
+    this.__runOnInit()
+    render(domRoot, this.children)
+    this.__runOnMount()
+  }
+}
+
+/**
+ * Fragment is not inserted into the DOM. Its children are appended to
+ * fragment's parent node. Any methods which require DOM element to be present
+ * will not work.
+ *
+ * @param children {ComponentChildren}
+ */
+export function fragment(children?: ComponentChildren) {
+  return new Fragment(children)
 }

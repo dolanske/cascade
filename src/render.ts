@@ -1,6 +1,5 @@
 import { watch } from '@vue-reactivity/watch'
-import { Component } from './component'
-import { Fragment } from './components/fragment'
+import { Component, Fragment } from './component'
 import type { ComponentChildren } from './types'
 import { isFunction, isNil } from './util'
 
@@ -33,12 +32,12 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
     }
   }
 
-  else if (children instanceof Element) {
-    root.appendChild(children)
-  }
-
   else if (children instanceof Fragment) {
     render(root, children.children)
+  }
+
+  else if (children instanceof Element) {
+    root.appendChild(children)
   }
 
   else if (children instanceof Component) {
