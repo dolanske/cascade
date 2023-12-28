@@ -1,15 +1,14 @@
-import { watch } from '@vue-reactivity/watch'
-import { Fragment } from './components/fragment'
-import type { ComponentChildren, GenericCallback, PropObject } from './types'
+import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
 import { if_impl } from './methods/if'
 import { class_impl } from './methods/class'
-import { isArray, isFunction, isNil } from './util'
 import { html } from './methods/html'
 import { prop, props, setup } from './methods/setup'
 import { nest } from './methods/nest'
 import { model } from './methods/model'
+import { render } from './render'
+import { destroy } from './factory'
 
 // TODO
 // Split component into multiple component classes
@@ -174,111 +173,12 @@ export class Component {
   }
 }
 
-// Returns wether node was replaced or not
-function replaceChildAt(parent: Element, newChild: Element | Text, index: number): boolean {
-  // Using childNodes instead of children will also include textNodes, which we want
-  const currentChild = Array.from(parent.childNodes).at(index)
-  if (!currentChild)
-    return false
-
-  parent.replaceChild(newChild, currentChild)
-  return true
-}
-
-export function render(root: Element, children?: ComponentChildren, index?: number) {
-  if (!children)
-    return
-
-  if (typeof children === 'string' || typeof children === 'number') {
-    // if index is not provided, simply set text content, otherwise replace text
-    // node at index of the children list
-    if (isNil(index)) {
-      root.innerHTML = String(children)
-    }
-    else {
-      const textNode = document.createTextNode(String(children))
-      // on first iteration, the child will not exist, so we need to create it
-      if (!replaceChildAt(root, textNode, index))
-        root.appendChild(textNode)
-    }
+export class VoidComponent extends Component {
+  constructor(type: HtmlVoidtags) {
+    super(document.createElement(type))
   }
 
-  else if (children instanceof Element) {
-    root.appendChild(children)
+  override __children(_value: ComponentChildren): void {
+    this.children = []
   }
-
-  else if (children instanceof Fragment) {
-    render(root, children.children)
-  }
-
-  else if (children instanceof Component) {
-    root.appendChild(children.el)
-    children.__runOnInit()
-    render(children.el, children.children)
-    children.__runOnMount()
-  }
-
-  else if (Array.isArray(children)) {
-    const len = children.length
-    for (let i = 0; i < len; i++) {
-      const child = children[i]
-
-      if (child instanceof Element || typeof child === 'string' || typeof child === 'number') {
-        render(root, child, i)
-      }
-      else if (child instanceof Fragment) {
-        render(root, child.children)
-      }
-      else if (isFunction(child)) {
-        watch(child, value => render(root, value, i), {
-          immediate: true,
-        })
-      }
-      else {
-        root.appendChild(child.el)
-        child.__runOnInit()
-        render(child.el, child.children)
-        child.__runOnMount()
-      }
-    }
-  }
-
-  else if (isFunction(children)) {
-    watch(children, value => render(root, value), {
-      immediate: true,
-    })
-  }
-}
-
-export function destroy(component: Component) {
-  // Iterate over a component and all of its desendands and stop all of their reactive watchers
-  // Then remove the root element
-  // component.__releaseWatchers()
-
-  function stop(comp: Component) {
-    if (!(comp instanceof Component))
-      return
-
-    for (const cb of comp.onDestroyCbs)
-      cb()
-
-    const { children } = comp
-
-    if (children instanceof Component) {
-      stop(children)
-    }
-    else if (isArray(children)) {
-      for (const child of children) {
-        if (child instanceof Component)
-          stop(child)
-      }
-    }
-  }
-
-  stop(component)
-
-  component.__runOnDestroy()
-
-  // Remove root
-  component.el.remove()
 }

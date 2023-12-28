@@ -7,6 +7,8 @@ const InputWrapper = El.div().setup(({ self }) => {
   self.nest([
     El.label('My Input'),
     El.input('text').model(text),
+    El.input(),
+    El.hr(),
     () => text.value,
   ])
 })

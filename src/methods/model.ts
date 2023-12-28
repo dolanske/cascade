@@ -26,8 +26,6 @@ function applyTransforms(value: string, transforms?: ModelTransform[]) {
 // This also work as a two way binding.
 export function model(this: Component, defaultRef: Ref<Primitive>, options: ModelOptions = {}) {
   this.onMount(() => {
-    // let root = this.el
-
     switch (this.el.tagName) {
       case 'INPUT':
       case 'TEXTAREA': {
