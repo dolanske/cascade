@@ -49,7 +49,9 @@ This project started during Christmas, without much thinking through. So far it'
 - [] else() / elseif() (just complete if() implementation)
 - [] for()
 - [] show()
+- [] model()
 - [] attr()
 - [] style()
+- [] Split elements into those who can have children and those who are "final"
 - [] destroying and re-mounting components
   Maybe wrapping every nested method into a function, which saves the whole function and re-runs it on re-mount could work?

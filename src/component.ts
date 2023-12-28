@@ -1,4 +1,3 @@
-import type { WatchStopHandle } from '@vue-reactivity/watch'
 import { watch } from '@vue-reactivity/watch'
 import { Fragment } from './components/fragment'
 import type { ComponentChildren, GenericCallback, PropObject } from './types'
@@ -10,6 +9,29 @@ import { isArray, isFunction, isNil } from './util'
 import { html } from './methods/html'
 import { prop, props, setup } from './methods/setup'
 import { nest } from './methods/nest'
+import { model } from './methods/model'
+
+// TODO
+// Split component into multiple component classes
+// BaseComponent
+// - contains hooks and methods which do not require a HTML or children, props
+// DomComponent
+// - contains el. and DOM specific API
+// VoidComponent
+// - Component which does not contain any children
+// Component
+
+// export class BaseComponent {
+
+// }
+
+// export class DomComponent extends BaseComponent {
+//   constructor() {
+//     super()
+//   }
+// }
+
+// export class VoidComponent extends BaseComponent { }
 
 export class Component {
   /**
@@ -59,6 +81,7 @@ export class Component {
    * children to a component and only then use methods like `if` or `for` on it.
    */
   nest = nest.bind(this)
+  model = model.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []
@@ -131,26 +154,6 @@ export class Component {
     this.onDestroyCbs.push(callback)
   }
 
-  // style(key: keyof CSSStyle | CSSStyle, value?: string | number | boolean) {
-  //   if (typeof key === 'string' && value) {
-  //     // We are adding just key x value style pair
-  //     this.el.style.setProperty(key, String(value))
-  //   }
-  //   else {
-  //     // Working with object
-  //     Object.assign(this.el.style, key)
-  //   }
-
-  //   return this
-  // }
-
-  // attr(key: string | Record<string, Primitive>, value?: Primitive) {
-  //   // No value means we are setting a boolean attribute
-  //   setAttribute(this.el, key, value)
-
-  //   return this
-  // }
-
   // Allows any component to be mounted anywhere in the dom
   mount(selector: string = 'body') {
     const domRoot = document.querySelector(selector)
@@ -170,28 +173,6 @@ export class Component {
     destroy(this)
   }
 }
-
-// export function setAttribute(el: HTMLElement, key: string | Record<string, Primitive>, value: Primitive) {
-//   if (isObject(key)) {
-//     Object.entries(key).forEach(([k, v]) => {
-//       setAttribute(el, k, v)
-//     })
-//     return
-//   }
-
-//   if (!value) {
-//     el.setAttribute(key, '')
-//   }
-//   else if (typeof value === 'boolean') {
-//     if (value)
-//       el.setAttribute(key, '')
-//     else
-//       el.removeAttribute(key)
-//   }
-//   else {
-//     el.setAttribute(key, String(value))
-//   }
-// }
 
 // Returns wether node was replaced or not
 function replaceChildAt(parent: Element, newChild: Element | Text, index: number): boolean {
