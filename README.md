@@ -5,16 +5,38 @@ Create simple, reusable and reactive UI components using render functions and ad
 I am so sorry guys, after creating my own jQuery and Alpine.js, I think it is time I just make my own version of jsx.
 
 ```ts
-// Using Vue's reactivity API
-const count = ref(0)
+// Define reusable component with props
+const CounterComponent = El.button().setup(({ self, props }) => {
+  const data = ref(props.startingCount as number)
 
-const Counter = El.fragment([
-  El.button('Increment').click(() => count.value++),
-  El.span(() => count.value)
-])
+  self.text(() => `Clicked ${data.value} times`)
+  self.click(() => {
+    if (props.canIncrement.value)
+      data.value++
+  })
+})
 
-// Any component can be mounted anywhere in the dom.
-Counter.mount('#app')
+///////////////
+
+// Use component somewhere
+const App = El.div().setup(({ self }) => {
+  const canIncrement = ref(true)
+
+  // This is the same as adding the children inside the El.div(...children).
+  // But being able to define this AFTER defining the component logic is much more ergonomic
+  self.nest([
+    El.h1('Counter'),
+    CounterComponent.props({
+      // Static prop
+      startingCount: 5,
+      // Dynamic prop (reactive)
+      canIncrement,
+    }),
+    El.button('Toggle').click(() => canIncrement.value = !canIncrement.value),
+  ])
+})
+
+App.mount('#app')
 ```
 
 ## TODO
@@ -22,8 +44,7 @@ Counter.mount('#app')
 This project started during Christmas, without much thinking through. So far it's been fun and smooth sailing. If this syntax is viable is something future me needs to worry about.
 
 - [] Props
-  - [] Add passing static data into components
-  - [] make props accept refs for reactivity and watch for them
+  - [x] Add passing static data into components
   - [] Correctly type props (using the builder TS pattern)
 - [] else() / elseif() (just complete if() implementation)
 - [] for()
