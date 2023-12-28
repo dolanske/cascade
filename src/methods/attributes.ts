@@ -1,4 +1,4 @@
-import type { Primitive } from '@vue/reactivity'
+import { type Primitive, type Ref, isRef } from '@vue/reactivity'
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isFunction, isNil, isObject } from '../util'
@@ -45,9 +45,9 @@ export function attrs(this: Component, attrData: Attributes | (() => Attributes)
   return this
 }
 
-export function attr(this: Component, key: string, value?: Primitive | (() => Primitive)) {
+export function attr(this: Component, key: string, value?: Primitive | (() => Primitive) | Ref<Primitive>) {
   this.onInit(() => {
-    if (isFunction(value)) {
+    if (isFunction(value) || isRef(value)) {
       const release = watch(value, value => setAttribute(this.el, key, value), {
         immediate: true,
         deep: true,

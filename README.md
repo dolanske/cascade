@@ -1,5 +1,7 @@
 # cascade
 
+I swear this is the last framework I make (for now)
+
 Create simple, reusable and reactive UI components using render functions and add more complex functionality through method chaining. These methods can be mounted anywhere in the DOM, static applications, with added reactivity only where needed.
 
 I am so sorry guys, after creating my own jQuery and Alpine.js, I think it is time I just make my own version of jsx.

@@ -7,6 +7,9 @@ import { isArray, isFunction, isObject } from '../util'
 export type ClassObject = Record<string, boolean>
 export type ClassNames = string | ClassObject | Array<string | ClassObject> | undefined
 
+// TODO
+// class("name", boolean | Ref<boolean>)
+
 export function class_impl(this: Component, classNames: ClassNames | (() => ClassNames)) {
   let prevString = ''
   const prevObj: Record<number, string | null> = Object.create(null)
