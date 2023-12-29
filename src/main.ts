@@ -1,24 +1,19 @@
 import { ref } from '@vue/reactivity'
 import { El } from './factory'
 
-const InputText = El.form().setup(({ self, props }) => {
-  const { id, placeholder, label } = props
-
-  const text = ref('')
+const InputText = El.form().setup(({ self }) => {
+  const people = ref(['John'])
 
   self.nest([
-    El.label(label).attr('for', id),
-    El.input('text').model(text).attrs({
-      name: id,
-      placeholder,
-      id,
-    }),
-    () => text.value,
+    El.label('John'),
+    El.input('checkbox').value('John').model(people),
+    El.label('Daniel'),
+    El.input('checkbox').value('Daniel').model(people),
+    El.label('Pavel'),
+    El.input('checkbox').value('Pavel').model(people),
+    El.hr(),
+    () => JSON.stringify(people.value, null, 2),
   ])
 })
 
-InputText
-  .prop('label', 'Nickname')
-  .prop('placeholder', 'Please enter your name')
-  .prop('id', 'name')
-  .mount('#app')
+InputText.mount('#app')

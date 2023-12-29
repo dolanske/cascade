@@ -1,3 +1,4 @@
+import type { Primitive } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
@@ -105,6 +106,16 @@ export class Component {
   // Public API
 
   /**
+   * Set the `id` of HTML the element
+   *
+   * @param value {string | number}
+   */
+  id(value: Primitive) {
+    this.el.id = String(value)
+    return this
+  }
+
+  /**
    * Executes provided callback function when the component is initialized.
    * Before being rendered in the dom.
    *
@@ -157,7 +168,7 @@ export class Component {
  * implementation is the same as normal elements, except it is not possible to
  * provide any child elements. The
  */
-export class VoidComponent extends Component implements Omit<Component, 'nest'> {
+export class VoidComponent extends Component {
   constructor(type: HtmlVoidtags) {
     super(document.createElement(type))
   }
@@ -171,7 +182,7 @@ export class VoidComponent extends Component implements Omit<Component, 'nest'> 
  * Fragment does not have any DOM node associated within it. All of its children
  * are appended to fragment's parent node.
  */
-export class Fragment extends Component implements Omit<Component, 'on'> {
+export class Fragment extends Component {
   constructor(children: ComponentChildren) {
     super(document.createElement('template'))
     this.children = children

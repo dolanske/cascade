@@ -61,6 +61,4 @@ export function attr(this: Component, key: string, value?: Primitive | (() => Pr
   })
 
   return this
-
-  return this
 }
