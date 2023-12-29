@@ -53,8 +53,8 @@ This project started during Christmas, without much thinking through. So far it'
 - [] show()
 - [] model()
   - [] input
-    - [] checkbox
-    - [] radio
+    - [x] checkbox
+    - [x] radio
     - [x] other
   - [] select
   - [] details
