@@ -13,6 +13,7 @@ export const NUMBER: ModelTransform<number> = (val: string) => {
 interface ModelOptions {
   lazy?: boolean
   transforms?: ModelTransform[]
+  eventOptions?: EventListenerOptions
 }
 
 function applyTransforms(value: string, transforms?: ModelTransform[]) {
@@ -82,7 +83,7 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
             root.addEventListener('change', (event) => {
               const { checked, value } = event.target as HTMLInputElement
               setCheckboxValue(defaultRef, value, checked)
-            })
+            }, options.eventOptions)
 
             break
           }
@@ -104,33 +105,68 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
               const { value, checked } = event.target as HTMLInputElement
               if (checked)
                 defaultRef.value = value
-            })
+            }, options.eventOptions)
 
             break
           }
 
           default: {
             const root = this.el as HTMLInputElement | HTMLTextAreaElement
-            root.value = String(defaultRef.value)
+
+            // No need to assign default values here as the watch runs immediately
+            // root.value = String(defaultRef.value)
+
+            const release = watch(defaultRef, (value) => {
+              root.value = String(value)
+            }, { deep: true, immediate: true })
+            this.onDestroy(release)
 
             // @value inputs
             root.addEventListener(options.lazy ? 'change' : 'input', (event) => {
               let newValue = (event.target as HTMLInputElement).value
               newValue = applyTransforms(newValue, options.transforms)
               defaultRef.value = newValue
-            })
+            }, options.eventOptions)
 
             break
           }
         }
+
         break
       }
 
-      // case 'SELECT': {
-      //   const root = this.el as HTMLSelectElement
+      case 'SELECT': {
+        const root = this.el as HTMLSelectElement
 
-      //   break
-      // }
+        const release = watch(defaultRef, (value) => {
+          defaultRef.value = value
+        }, { deep: true })
+
+        this.onDestroy(release)
+
+        root.addEventListener('change', (event) => {
+          let newValue = (event.target as HTMLSelectElement).value
+          newValue = applyTransforms(newValue, options.transforms)
+          defaultRef.value = newValue
+        }, options.eventOptions)
+
+        const defaultValue = isArray(defaultRef.value) ? defaultRef.value[0] : defaultRef.value
+        if (defaultValue) {
+          root.value = defaultValue.toString()
+        }
+        else {
+          const hasSelected = Array.from(root.children).find(c => c.hasAttribute('selected'))
+
+          if (hasSelected) {
+            hasSelected.removeAttribute('selected')
+            const newValue = (hasSelected as HTMLOptionElement).value
+            defaultRef.value = newValue
+            root.value = newValue
+          }
+        }
+
+        break
+      }
 
       // case 'DETAILS': {
       //   const root = this.el as HTMLDetailsElement

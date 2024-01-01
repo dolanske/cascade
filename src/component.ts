@@ -1,4 +1,3 @@
-import type { Primitive } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
@@ -9,8 +8,10 @@ import { prop, props, setup } from './methods/setup'
 import { nest } from './methods/nest'
 import { model } from './methods/model'
 import { render } from './render'
-import { destroy } from './factory'
 import { attr, attrs } from './methods/attributes'
+import { disabled } from './methods/disabled'
+import { id } from './methods/id'
+import { destroy } from './lifecycle'
 
 export class Component {
   /**
@@ -63,6 +64,8 @@ export class Component {
   model = model.bind(this)
   attrs = attrs.bind(this)
   attr = attr.bind(this)
+  disabled = disabled.bind(this)
+  id = id.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []
@@ -104,16 +107,6 @@ export class Component {
 
   /////////////////////////////////////////////////////////////
   // Public API
-
-  /**
-   * Set the `id` of HTML the element
-   *
-   * @param value {string | number}
-   */
-  id(value: Primitive) {
-    this.el.id = String(value)
-    return this
-  }
 
   /**
    * Executes provided callback function when the component is initialized.
@@ -169,7 +162,7 @@ export class Component {
  * provide any child elements. The
  */
 export class VoidComponent extends Component {
-  constructor(type: HtmlVoidtags) {
+  constructor(type: HtmlVoidtags | 'option') {
     super(document.createElement(type))
   }
 
@@ -183,7 +176,7 @@ export class VoidComponent extends Component {
  * are appended to fragment's parent node.
  */
 export class Fragment extends Component {
-  constructor(children: ComponentChildren) {
+  constructor(children: ComponentChildren = []) {
     super(document.createElement('template'))
     this.children = children
   }

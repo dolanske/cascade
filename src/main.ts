@@ -1,19 +1,19 @@
 import { ref } from '@vue/reactivity'
 import { El } from './factory'
 
-const InputText = El.form().setup(({ self }) => {
-  const people = ref('Daniel')
+const Form = El.form().setup(({ self }) => {
+  const options = ['Jan', 'Daniel', 'Petr']
+  const people = ref()
 
   self.nest([
-    El.label('John'),
-    El.input('radio').value('John').model(people),
-    El.label('Daniel'),
-    El.input('radio').value('Daniel').model(people),
-    El.label('Pavel'),
-    El.input('radio').value('Pavel').model(people),
-    El.hr(),
-    () => JSON.stringify(people.value, null, 2),
+    El.select([
+      // Default, disabled option
+      El.option('', 'Please select a name').disabled(),
+      // Array of options
+      ...options.map(option => El.option(option)),
+    ]).model(people),
+    // El.span(() => people.value),
   ])
 })
 
-InputText.mount('#app')
+Form.mount('#app')

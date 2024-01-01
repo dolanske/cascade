@@ -1,24 +1,9 @@
-import { watch } from '@vue-reactivity/watch'
-import { queueJob } from '../queue'
+import type { Primitive } from '@vue/reactivity'
 import type { Component } from '../component'
-import { isFunction } from '../util'
+import { registerWatchedProp } from '../property-method'
+import type { RefOrvalue } from '../types'
 
-export function text(this: Component, value: string | (() => any)) {
-  if (isFunction(value)) {
-    const release = watch(value, (computedVal: string) => {
-      this.el.textContent = computedVal
-    }, {
-      immediate: true,
-      deep: true,
-    })
-
-    this.onDestroy(release)
-  }
-  else {
-    queueJob(() => {
-      this.el.textContent = value
-    })
-  }
-
+export function text(this: Component, value: RefOrvalue<Primitive>) {
+  registerWatchedProp.call(this, 'textContent', value)
   return this
 }
