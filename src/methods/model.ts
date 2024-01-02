@@ -67,16 +67,13 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
              *  - array values:   push / splice out if checked or not
              */
 
-            // If no model value is provided and element contains checked, assign default value
-            setDefaultCheckboxVaule(defaultRef, root)
-
             // Update the UI based on change in the ref from outside the component
             const release = watch(defaultRef, (value) => {
               if (value === root.value || (isArray(value) && value.includes(root.value)))
                 root.checked = true
               else
                 root.checked = false
-            }, { deep: true, immediate: true })
+            }, { deep: true })
             this.onDestroy(release)
 
             // Listen for changes in the UI element
@@ -85,19 +82,19 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
               setCheckboxValue(defaultRef, value, checked)
             }, options.eventOptions)
 
+            // If no model value is provided and element contains checked, assign default value
+            setDefaultCheckboxVaule(defaultRef, root)
+
             break
           }
 
           case 'radio': {
             const root = this.el as HTMLInputElement
 
-            // If no model value is provided and element contains checked, assign default value
-            setDefaultCheckboxVaule(defaultRef, root)
-
             // Update the UI based on change in the ref from outside the component
             const release = watch(defaultRef, (value) => {
               root.checked = value === root.value
-            }, { deep: true, immediate: true })
+            }, { deep: true })
             this.onDestroy(release)
 
             // Listen for changes in the UI element
@@ -107,26 +104,30 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
                 defaultRef.value = value
             }, options.eventOptions)
 
+            // If no model value is provided and element contains checked, assign default value
+            setDefaultCheckboxVaule(defaultRef, root)
+
             break
           }
 
           default: {
             const root = this.el as HTMLInputElement | HTMLTextAreaElement
 
-            // No need to assign default values here as the watch runs immediately
-            // root.value = String(defaultRef.value)
-
+            // Watch for changes from the ref
             const release = watch(defaultRef, (value) => {
               root.value = String(value)
-            }, { deep: true, immediate: true })
+            }, { deep: true })
             this.onDestroy(release)
 
-            // @value inputs
+            // Watch for changes from UI
             root.addEventListener(options.lazy ? 'change' : 'input', (event) => {
               let newValue = (event.target as HTMLInputElement).value
               newValue = applyTransforms(newValue, options.transforms)
               defaultRef.value = newValue
             }, options.eventOptions)
+
+            // Default value
+            root.value = String(defaultRef.value)
 
             break
           }
@@ -138,23 +139,25 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
       case 'SELECT': {
         const root = this.el as HTMLSelectElement
 
+        // Watch for outside changes to the ref
         const release = watch(defaultRef, (value) => {
           defaultRef.value = value
         }, { deep: true })
-
         this.onDestroy(release)
 
+        // Watch for changes from the UI
         root.addEventListener('change', (event) => {
           let newValue = (event.target as HTMLSelectElement).value
           newValue = applyTransforms(newValue, options.transforms)
           defaultRef.value = newValue
         }, options.eventOptions)
 
+        // Initial assignment of the default value
         const defaultValue = isArray(defaultRef.value) ? defaultRef.value[0] : defaultRef.value
         if (defaultValue) {
           root.value = defaultValue.toString()
         }
-        else {
+        else if (root.childElementCount > 0) {
           const hasSelected = Array.from(root.children).find(c => c.hasAttribute('selected'))
 
           if (hasSelected) {
@@ -168,11 +171,26 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
         break
       }
 
-      // case 'DETAILS': {
-      //   const root = this.el as HTMLDetailsElement
+      case 'DETAILS': {
+        const root = this.el as HTMLDetailsElement
 
-      //   break
-      // }
+        // Watch for outside changes to the ref
+        const release = watch(defaultRef, (value) => {
+          root.open = Boolean(value)
+        }, { deep: true })
+        this.onDestroy(release)
+
+        // Watch for changes from the UI
+        root.addEventListener('toggle', () => {
+          defaultRef.value = root.open
+        }, options.eventOptions)
+
+        // Initial assignment of the default value
+        const isOpen = isArray(defaultRef.value) ? defaultRef.value[0] : defaultRef.value
+        root.open = Boolean(isOpen)
+
+        break
+      }
     }
   })
 
