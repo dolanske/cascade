@@ -5,4 +5,5 @@ import { registerWatchedProp } from '../property-method'
 
 export function id(this: Component, value: RefOrvalue<Primitive>) {
   registerWatchedProp.call(this, 'id', value)
+  return this
 }

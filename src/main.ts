@@ -1,23 +1,20 @@
 import { ref } from '@vue/reactivity'
 import { El } from './factory'
 
-const open = ref(true)
+const items = ref(['Jan', 'Daniel', 'Petr', 'Iida', 'Andrew'])
+const newPerson = ref('')
 
-const Details = El.details().setup(({ self }) => {
-  self.model(open)
-  self.nest([
-    El.summary('Click to open'),
-    El.p('Lorem ispum dolor sit amet amongus cumulus.'),
-  ])
-})
-
-const Button = El
-  .button('Toggle from outside')
-  .click(() => open.value = !open.value)
-
-const App = El.fragment([
-  Details,
-  Button,
-])
-
-App.mount('#app')
+El.fragment([
+  El.label('Create Child'),
+  El.form(El.input('text').model(newPerson))
+    .on('submit', (e) => {
+      e.preventDefault()
+      items.value.push(newPerson.value)
+      newPerson.value = ''
+    }),
+  El.ul(
+    El.li().for(items, (item, { value }) => {
+      item.nest(El.strong(value))
+    }),
+  ),
+]).mount('#app')

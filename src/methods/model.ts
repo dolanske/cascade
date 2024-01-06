@@ -5,10 +5,21 @@ import { isArray } from '../util'
 
 type ModelTransform<T = string> = (value: string) => T
 
+//////////////////////////////
 // Transforms
 export const NUMBER: ModelTransform<number> = (val: string) => {
   return Number(val)
 }
+
+export const TRIM: ModelTransform = (val: string) => {
+  return val.trim()
+}
+
+export const UPPERCASE: ModelTransform = (val: string) => {
+  return val.toString().toUpperCase()
+}
+
+//////////////////////////////
 
 interface ModelOptions {
   lazy?: boolean
@@ -127,7 +138,7 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
             }, options.eventOptions)
 
             // Default value
-            root.value = String(defaultRef.value)
+            root.value = String(defaultRef.value ?? '')
 
             break
           }

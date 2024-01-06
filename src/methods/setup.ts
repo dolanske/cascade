@@ -2,22 +2,23 @@ import { effectScope } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { PropObject } from '../types'
 
-interface SetupArgs {
-  self: Component
-  props: PropObject
-}
+// interface SetupArgs {
+//   element: HTMLElement
+//   props: PropObject
+// }
 
-type SetupArguments = (setupArgs: SetupArgs) => void
+type SetupArguments = (componentInstance: Component, props: PropObject) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
   const scope = effectScope()
 
   this.onInit(() => {
     scope.run(() => {
-      setupFn({
-        self: this,
-        props: this.componentProps,
-      })
+      setupFn(this, this.componentProps)
+      // setupFn(this, {
+      //   props: this.componentProps,
+      //   element: this.el,
+      // })
     })
   })
 

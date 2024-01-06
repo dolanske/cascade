@@ -47,15 +47,14 @@ This project started during Christmas, without much thinking through. So far it'
   - [x] Add passing static data into components
   - [] Correctly type props (using the builder TS pattern)
 - [] else() / elseif() (just complete if() implementation)
-- [] for()
-- [] show()
-- [] model()
+- [x] show()
+- [x] model()
   - [x] input
     - [x] checkbox
     - [x] radio
     - [x] other
   - [x] select
-  - [] details
+  - [x] details
 - [x] attr()
 - [] style()
 - [x] Split elements into void and normal components

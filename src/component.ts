@@ -1,7 +1,9 @@
+import type { UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
-import { if_impl } from './methods/if'
+
+// import { if_impl } from './methods/if'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
 import { prop, props, setup } from './methods/setup'
@@ -12,6 +14,9 @@ import { attr, attrs } from './methods/attributes'
 import { disabled } from './methods/disabled'
 import { id } from './methods/id'
 import { destroy } from './lifecycle'
+import { show } from './methods/show'
+import type { ItemCallbackValue } from './methods/for'
+import { for_impl } from './methods/for'
 
 export class Component {
   /**
@@ -37,8 +42,17 @@ export class Component {
    * Shorthand for binding `on("click")` event listener to the current node.
    */
   click = click.bind(this)
-  if = if_impl.bind(this)
+  // if = if_impl.bind(this)
+
+  /**
+   * Bind reactive class object to the current node.
+   */
   class = class_impl.bind(this)
+  /**
+   * Create a component scope, in which you can declare reactive variables. When
+   * the component is removed from the DOM, all of the scope properties get
+   * removed. This is the best way to declare reusable components.
+   */
   setup = setup.bind(this)
   /**
    * Pass a single prop value into the component. You can also pass in refs, but
@@ -64,8 +78,26 @@ export class Component {
   model = model.bind(this)
   attrs = attrs.bind(this)
   attr = attr.bind(this)
+
+  /**
+   * Dynamically bind a `disabled` attribute to the node.
+   */
   disabled = disabled.bind(this)
+
+  /**
+   * Dynamically bind an `id` attribute to the node.
+   */
   id = id.bind(this)
+
+  /**
+   * Toggle between showing or hiding the current node. The node is still
+   * rendered, but has `display: none` applied to it.
+   *
+   * This function also preserves the previously added inline styles.
+   */
+  show = show.bind(this)
+
+  __for = for_impl.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []
@@ -138,7 +170,13 @@ export class Component {
     this.onDestroyCbs.push(callback)
   }
 
-  // Allows any component to be mounted anywhere in the dom
+  /**
+   * Mounts the current element in the DOM. Usually, you would use this function
+   * either in the root App component, or a single component, if you're simply
+   * adding small reactive scopes into an otherwise static site.
+   *
+   * @param selector {string} Default: "body" element
+   */
   mount(selector: string = 'body') {
     const domRoot = document.querySelector(selector)
     if (!domRoot)
@@ -153,6 +191,17 @@ export class Component {
   // Removes the root node and its desendants. It also
   destroy() {
     destroy(this)
+  }
+
+  for<S extends readonly any[] | number | object>(source: S, callback: (
+    element: Component,
+    item: ItemCallbackValue<UnwrapRef<S>>
+  ) => void) {
+    // @ts-expect-error The issue here is that tyhe type mismatch happens from a
+    // generic type being passed in. I have ran into an issue where if a
+    // function has a `this` as the first argument, the generic type infer does
+    // not work. I am not sure why.
+    return for_impl.call(this, source, callback)
   }
 }
 
