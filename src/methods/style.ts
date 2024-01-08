@@ -20,8 +20,16 @@ export function style(
     for (const key of keys)
       this.el.style.setProperty(key, Reflect.get(props, key))
   }
-  if (typeof key === 'string' && typeof value === 'string') {
-    setStyleProperties({ [key]: value })
+  if (typeof key === 'string') {
+    if (isRef(value)) {
+      const release = watch(value, (updatedValue) => {
+        setStyleProperties({ [key]: updatedValue })
+      })
+      this.onDestroy(release)
+    }
+    else if (value) {
+      setStyleProperties({ [key]: value })
+    }
   }
   else if (isRef(key)) {
     if (value) {
@@ -40,10 +48,10 @@ export function style(
     for (const keyProp of keyProps) {
       const value: LimitedPrimitive | Ref<LimitedPrimitive> = Reflect.get(key, keyProp)
       if (isRef(value)) {
-        const release = watch(value, (value) => {
-          if (isNil(value))
+        const release = watch(value, (updatedValue) => {
+          if (isNil(updatedValue))
             return
-          this.el.style.setProperty(keyProp, String(value))
+          this.el.style.setProperty(keyProp, String(updatedValue))
         })
         this.onDestroy(release)
       }

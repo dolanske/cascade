@@ -7,6 +7,9 @@ import type { PropObject } from '../types'
 //   props: PropObject
 // }
 
+// TODO
+// Return child nodes?
+
 type SetupArguments = (componentInstance: Component, props: PropObject) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
