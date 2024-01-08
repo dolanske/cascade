@@ -17,6 +17,7 @@ import { destroy } from './lifecycle'
 import { show } from './methods/show'
 import type { ItemCallbackValue } from './methods/for'
 import { for_impl } from './methods/for'
+import { style } from './methods/style'
 
 export class Component {
   /**
@@ -96,6 +97,7 @@ export class Component {
    * This function also preserves the previously added inline styles.
    */
   show = show.bind(this)
+  style = style.bind(this)
 
   __for = for_impl.bind(this)
 

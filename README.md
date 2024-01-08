@@ -56,7 +56,7 @@ This project started during Christmas, without much thinking through. So far it'
   - [x] select
   - [x] details
 - [x] attr()
-- [] style()
+- [x] style()
 - [x] Split elements into void and normal components
 - [] destroying and re-mounting components
   Maybe wrapping every nested method into a function, which saves the whole function and re-runs it on re-mount could work?
