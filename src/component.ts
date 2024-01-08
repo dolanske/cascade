@@ -3,7 +3,6 @@ import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } fro
 import { text } from './methods/text'
 import { click, on } from './methods/on'
 
-// import { if_impl } from './methods/if'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
 import { prop, props, setup } from './methods/setup'
@@ -18,6 +17,7 @@ import { show } from './methods/show'
 import type { ItemCallbackValue } from './methods/for'
 import { for_impl } from './methods/for'
 import { style } from './methods/style'
+import { type ConditionalExpr, else_impl, elseif_impl, if_impl } from './methods/if'
 
 export class Component {
   /**
@@ -97,13 +97,21 @@ export class Component {
    * This function also preserves the previously added inline styles.
    */
   show = show.bind(this)
+  /**
+   * Add reactive styling object to the current node.
+   */
   style = style.bind(this)
 
-  __for = for_impl.bind(this)
+  if = if_impl.bind(this)
+  else = else_impl.bind(this)
+  elseIf = elseif_impl.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []
   componentProps: PropObject
+  // TODO
+  // Add parent instance when element is created
+  parent?: Component
 
   // Lifecycle
   onMountCbs: GenericCallback[] = []
@@ -111,10 +119,11 @@ export class Component {
   onInitCbs: GenericCallback[] = []
 
   __isElse?: boolean
-  __isElseIf?: boolean
+  __isElseIf?: ConditionalExpr
 
   constructor(el: HTMLElement, props: PropObject = {}) {
     this.el = el
+    Object.defineProperty(this.el, '__instance', this)
     this.componentProps = props
   }
 
@@ -195,6 +204,21 @@ export class Component {
     destroy(this)
   }
 
+  /**
+   * Iterate over the provided object / array / number and execute the provided
+   * callback for each item. Components returned from the callback are then
+   * rendered.
+   *
+   * It is recommended not to use other chained methods when using `for`,
+   * because the base element is replaced with the return value of the callback
+   * function. All logic should therefore be handled there.
+   *
+   * @param source Array|Object|Number
+   * @param callback Function which runs for each provided item.
+   * @returns Component to render
+   *
+   *
+   */
   for<S extends readonly any[] | number | object>(source: S, callback: (
     element: Component,
     item: ItemCallbackValue<UnwrapRef<S>>

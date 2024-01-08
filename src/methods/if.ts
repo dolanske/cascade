@@ -1,39 +1,71 @@
 import { watch } from '@vue-reactivity/watch'
 import { computed } from '@vue/reactivity'
 import type { Component } from '../component'
-import { isFunction } from '../util'
+import { getInstance, isFunction } from '../util'
 
-export function if_impl(this: Component, expr: boolean | (() => any)) {
+export type ConditionalExpr = boolean | (() => void)
+
+export function if_impl(this: Component, expr: ConditionalExpr) {
   // Anchors are used to correctly re-insert nodes back to the dom
   const anchor = new Comment('if')
 
+  // this.onInit(() => {
+  // this.show(false)
+  // })
+
   // Process if after its node has been appended to the DOM so that a else and
   // elseif can be looked up and processed.
-  this.onMount(() => {
+
+  this.parent.onMount(() => {
     const parent = this.el.parentElement!
+    const elseElements = []
 
-    const run = (res: boolean) => {
-      if (!res)
-        this.el.remove()
-      else
-        parent.insertBefore(this.el, anchor)
-    }
+    requestAnimationFrame(() => {
+      let sibling = this.el.nextElementSibling
+      while (sibling) {
+        const inst = getInstance(sibling)
 
-    parent.insertBefore(anchor, this.el)
+        if (inst && (inst.__isElse || inst.__isElseIf))
+          elseElements.push(inst)
 
-    if (isFunction(expr)) {
-      const cachedExpr = computed(expr)
-      const release = watch(cachedExpr, run, {
-        immediate: true,
-        deep: true,
-      })
+        sibling = sibling.nextElementSibling
+      }
 
-      this.onDestroy(release)
-    }
-    else {
-      run(expr)
-    }
+      console.log(elseElements)
+    })
+
+    // const run = (res: boolean) => {
+    //   if (!res)
+    //     this.el.remove()
+    //   else
+    //     parent.insertBefore(this.el, anchor)
+    // }
+
+    // parent.insertBefore(anchor, this.el)
+
+    // if (isFunction(expr)) {
+    //   const cachedExpr = computed(expr)
+    //   const release = watch(cachedExpr, run, {
+    //     immediate: true,
+    //     deep: true,
+    //   })
+
+    //   this.onDestroy(release)
+    // }
+    // else {
+    //   run(expr)
+    // }
   })
 
+  return this
+}
+
+export function else_impl(this: Component) {
+  this.__isElse = true
+  return this
+}
+
+export function elseif_impl(this: Component, expr: ConditionalExpr) {
+  this.__isElseIf = expr
   return this
 }
