@@ -16,46 +16,48 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
   // Process if after its node has been appended to the DOM so that a else and
   // elseif can be looked up and processed.
 
-  this.parent.onMount(() => {
-    const parent = this.el.parentElement!
-    const elseElements = []
+  console.log(this.parent)
 
-    requestAnimationFrame(() => {
-      let sibling = this.el.nextElementSibling
-      while (sibling) {
-        const inst = getInstance(sibling)
+  // this.parent.onMount(() => {
+  //   const parent = this.el.parentElement!
+  //   const elseElements = []
 
-        if (inst && (inst.__isElse || inst.__isElseIf))
-          elseElements.push(inst)
+  //   requestAnimationFrame(() => {
+  //     let sibling = this.el.nextElementSibling
+  //     while (sibling) {
+  //       const inst = getInstance(sibling)
 
-        sibling = sibling.nextElementSibling
-      }
+  //       if (inst && (inst.__isElse || inst.__isElseIf))
+  //         elseElements.push(inst)
 
-      console.log(elseElements)
-    })
+  //       sibling = sibling.nextElementSibling
+  //     }
 
-    // const run = (res: boolean) => {
-    //   if (!res)
-    //     this.el.remove()
-    //   else
-    //     parent.insertBefore(this.el, anchor)
-    // }
+  //     console.log(elseElements)
+  //   })
 
-    // parent.insertBefore(anchor, this.el)
+  // const run = (res: boolean) => {
+  //   if (!res)
+  //     this.el.remove()
+  //   else
+  //     parent.insertBefore(this.el, anchor)
+  // }
 
-    // if (isFunction(expr)) {
-    //   const cachedExpr = computed(expr)
-    //   const release = watch(cachedExpr, run, {
-    //     immediate: true,
-    //     deep: true,
-    //   })
+  // parent.insertBefore(anchor, this.el)
 
-    //   this.onDestroy(release)
-    // }
-    // else {
-    //   run(expr)
-    // }
-  })
+  // if (isFunction(expr)) {
+  //   const cachedExpr = computed(expr)
+  //   const release = watch(cachedExpr, run, {
+  //     immediate: true,
+  //     deep: true,
+  //   })
+
+  //   this.onDestroy(release)
+  // }
+  // else {
+  //   run(expr)
+  // }
+  // })
 
   return this
 }

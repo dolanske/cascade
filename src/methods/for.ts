@@ -65,6 +65,8 @@ export function for_impl(
       }
     }
     parent?.replaceChildren()
+    // REVIEW
+    // Is HTML node enough or should parent be provided?
     if (parent)
       render(parent, childrenToRender)
   }

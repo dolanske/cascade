@@ -109,9 +109,7 @@ export class Component {
   el: HTMLElement
   children: ComponentChildren = []
   componentProps: PropObject
-  // TODO
-  // Add parent instance when element is created
-  parent?: Component
+  parent: Component | null = null
 
   // Lifecycle
   onMountCbs: GenericCallback[] = []
@@ -195,7 +193,7 @@ export class Component {
 
     domRoot.appendChild(this.el)
     this.__runOnInit()
-    render(this.el, this.children)
+    render(this, this.children)
     this.__runOnMount()
   }
 
