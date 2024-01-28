@@ -17,7 +17,7 @@ import { show } from './methods/show'
 import type { ItemCallbackValue } from './methods/for'
 import { for_impl } from './methods/for'
 import { style } from './methods/style'
-import { type ConditionalExpr, else_impl, elseif_impl, if_impl } from './methods/if'
+import { if_impl } from './methods/if'
 
 export class Component {
   /**
@@ -103,8 +103,8 @@ export class Component {
   style = style.bind(this)
 
   if = if_impl.bind(this)
-  else = else_impl.bind(this)
-  elseIf = elseif_impl.bind(this)
+  // else = else_impl.bind(this)
+  // elseIf = elseif_impl.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []
@@ -116,8 +116,8 @@ export class Component {
   onDestroyCbs: GenericCallback[] = []
   onInitCbs: GenericCallback[] = []
 
-  __isElse?: boolean
-  __isElseIf?: ConditionalExpr
+  // __isElse?: boolean
+  // __isElseIf?: ConditionalExpr
 
   constructor(el: HTMLElement, props: PropObject = {}) {
     this.el = el
