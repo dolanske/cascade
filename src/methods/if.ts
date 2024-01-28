@@ -9,14 +9,18 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
   // Anchors are used to correctly re-insert nodes back to the dom
   const anchor = new Comment('if')
 
-  // this.onInit(() => {
-  // this.show(false)
-  // })
+  this.onInit(() => {
+    this.show(false)
+  })
 
   // Process if after its node has been appended to the DOM so that a else and
   // elseif can be looked up and processed.
 
-  console.log(this.parent)
+  this.onInit(() => {
+    const parent = this.parent
+
+    // const elseElement = parent?.children
+  })
 
   // this.parent.onMount(() => {
   //   const parent = this.el.parentElement!
