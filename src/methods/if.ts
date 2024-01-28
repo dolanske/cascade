@@ -1,7 +1,7 @@
 import { watch } from '@vue-reactivity/watch'
 import { computed } from '@vue/reactivity'
 import type { Component } from '../component'
-import { getInstance, isFunction } from '../util'
+import { isFunction } from '../util'
 
 export type ConditionalExpr = boolean | (() => boolean)
 

@@ -1,8 +1,36 @@
 {
-  "name": "funky",
+  "name": "@dolanske/cascade",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Write reactive UI components using render functions.",
+  "author": "dolanske",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dolanske/cascade.git"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "UI framework",
+    "UI Components",
+    "framework",
+    "render function",
+    "vue",
+    "react"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/cascade.js"
+    }
+  },
+  "main": "./dist/cascade.js",
+  "module": "./dist/cascade.js",
+  "types": "./dist/cascade.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -17,8 +45,10 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.0",
+    "@types/node": "^20.11.9",
     "eslint": "^8.56.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.7.2"
   }
 }
