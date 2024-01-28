@@ -14,7 +14,9 @@ function replaceChildAt(parent: Element, newChild: Element | Text, index: number
   return true
 }
 
-export function render(root: Element, children?: ComponentChildren, index?: number) {
+export function render(parent: Component | Element, children?: ComponentChildren, index?: number) {
+  const root = parent instanceof Element ? parent : parent.el
+
   if (!children)
     return
 
@@ -41,9 +43,11 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
   }
 
   else if (children instanceof Component) {
+    if (parent instanceof Component)
+      children.parent = parent
     root.appendChild(children.el)
     children.__runOnInit()
-    render(children.el, children.children)
+    render(children, children.children)
     children.__runOnMount()
   }
 
@@ -65,9 +69,11 @@ export function render(root: Element, children?: ComponentChildren, index?: numb
         })
       }
       else {
+        if (parent instanceof Component)
+          child.parent = parent
         root.appendChild(child.el)
         child.__runOnInit()
-        render(child.el, child.children)
+        render(child, child.children)
         child.__runOnMount()
       }
     }

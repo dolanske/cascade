@@ -1,29 +1,32 @@
 import { watch } from '@vue-reactivity/watch'
 import { computed } from '@vue/reactivity'
 import type { Component } from '../component'
-import { isFunction } from '../util'
+import { getInstance, isFunction } from '../util'
 
-export function if_impl(this: Component, expr: boolean | (() => any)) {
+export type ConditionalExpr = boolean | (() => boolean)
+
+export function if_impl(this: Component, expr: ConditionalExpr) {
   // Anchors are used to correctly re-insert nodes back to the dom
   const anchor = new Comment('if')
 
-  // Process if after its node has been appended to the DOM so that a else and
-  // elseif can be looked up and processed.
-  this.onMount(() => {
-    const parent = this.el.parentElement!
+  this.onInit(() => {
+    const parent = this.parent
 
-    const run = (res: boolean) => {
+    if (!parent)
+      return console.warn('Parent element not found. `if()` will not work.')
+
+    const process = (res: boolean) => {
       if (!res)
         this.el.remove()
       else
-        parent.insertBefore(this.el, anchor)
+        parent.el.insertBefore(this.el, anchor)
     }
 
-    parent.insertBefore(anchor, this.el)
+    parent.el.insertBefore(anchor, this.el)
 
     if (isFunction(expr)) {
       const cachedExpr = computed(expr)
-      const release = watch(cachedExpr, run, {
+      const release = watch(cachedExpr, process, {
         immediate: true,
         deep: true,
       })
@@ -31,9 +34,37 @@ export function if_impl(this: Component, expr: boolean | (() => any)) {
       this.onDestroy(release)
     }
     else {
-      run(expr)
+      process(expr)
     }
   })
 
+  // this.parent.onMount(() => {
+  //   const parent = this.el.parentElement!
+  //   const elseElements = []
+
+  //   requestAnimationFrame(() => {
+  //     let sibling = this.el.nextElementSibling
+  //     while (sibling) {
+  //       const inst = getInstance(sibling)
+
+  //       if (inst && (inst.__isElse || inst.__isElseIf))
+  //         elseElements.push(inst)
+
+  //       sibling = sibling.nextElementSibling
+  //     }
+
+  //     console.log(elseElements)
+  //   })
+
   return this
 }
+
+// export function else_impl(this: Component) {
+//   this.__isElse = true
+//   return this
+// }
+
+// export function elseif_impl(this: Component, expr: ConditionalExpr) {
+//   this.__isElseIf = expr
+//   return this
+// }
