@@ -14,5 +14,8 @@ export default defineConfig({
       external: ['@vue/reactivity', '@vue-reactivity/watch'],
     },
   },
-  plugins: [dts({ rollupTypes: true })],
+  plugins: [dts({
+    rollupTypes: true,
+    exclude: ['./src/examples'],
+  })],
 })

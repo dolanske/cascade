@@ -1,9 +1,3 @@
-import { El } from './factory'
-import { getInstance } from './util'
-import type { Component } from './component'
-
-export {
-  El,
-  type Component,
-  getInstance,
-}
+export { El } from './factory'
+export { getInstance } from './util'
+export type { Component } from './component'

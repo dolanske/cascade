@@ -20,8 +20,8 @@ export const UPPERCASE: ModelTransform = (val: string) => {
 }
 
 //////////////////////////////
-
-interface ModelOptions {
+// Implementation
+export interface ModelOptions {
   lazy?: boolean
   transforms?: ModelTransform[]
   eventOptions?: EventListenerOptions
