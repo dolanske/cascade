@@ -642,6 +642,7 @@ const ie = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", 
   option: se
 });
 export {
+  f as Component,
   de as El,
   ae as getInstance
 };
