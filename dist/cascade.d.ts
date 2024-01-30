@@ -4,6 +4,8 @@ import type { PropertiesHyphen } from 'csstype';
 import { Ref } from '@vue/reactivity';
 import { UnwrapRef } from '@vue/reactivity';
 
+export declare type Children = ComponentChildrenItems | ComponentChildrenItems[];
+
 declare type ClassNames = string | ClassObject | Array<string | ClassObject> | undefined;
 
 declare type ClassObject = Record<string, boolean>;
@@ -62,7 +64,7 @@ export declare class Component {
      * the chain. This was made mainly because it feels less natural to add
      * children to a component and only then use methods like `if` or `for` on it.
      */
-    nest: (children: ComponentChildren) => Component;
+    nest: (children: Children) => Component;
     model: (defaultRef: Ref<Primitive | Primitive[]>, options?: ModelOptions | undefined) => Component;
     attrs: (attrData: {
         [x: string]: Primitive;
@@ -91,14 +93,14 @@ export declare class Component {
     style: (key: CSSStyle | keyof CSSStyle | Ref<CSSStyle>, value?: (string | number) | Ref<string | number> | undefined) => Component;
     if: (expr: ConditionalExpr) => Component;
     el: HTMLElement;
-    children: ComponentChildren;
+    children: Children;
     componentProps: PropObject;
     parent: Component | null;
     onMountCbs: GenericCallback[];
     onDestroyCbs: GenericCallback[];
     onInitCbs: GenericCallback[];
     constructor(el: HTMLElement, props?: PropObject);
-    __children(value: ComponentChildren): void;
+    __children(value: Children): void;
     __runOnMount(): void;
     __runOnDestroy(): void;
     __runOnInit(): void;
@@ -149,11 +151,9 @@ export declare class Component {
     for<S extends readonly any[] | number | object>(source: S, callback: (element: Component, item: ItemCallbackValue<UnwrapRef<S>>) => void): Component;
 }
 
-declare type ComponentChildren = ComponentChildrenItems | ComponentChildrenItems[];
-
 declare type ComponentChildrenItems = string | number | Component | Element | Fragment | (() => string | number);
 
-declare type ComponentInstance = (children?: ComponentChildren) => Component;
+declare type ComponentInstance = (children?: Children) => Component;
 
 declare type ConditionalExpr = boolean | (() => boolean);
 
@@ -172,7 +172,7 @@ export declare const El: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidta
  * are appended to fragment's parent node.
  */
 declare class Fragment extends Component {
-    constructor(children?: ComponentChildren);
+    constructor(children?: Children);
     mount(selector: string): void;
 }
 
@@ -183,7 +183,7 @@ declare class Fragment extends Component {
  *
  * @param children {ComponentChildren}
  */
-declare function fragment(children?: ComponentChildren): Fragment;
+declare function fragment(children?: Children): Fragment;
 
 declare type GenericCallback = () => void;
 
@@ -251,7 +251,7 @@ declare function textarea(): InputElement<HTMLTextAreaElement>;
  */
 declare class VoidComponent extends Component {
     constructor(type: HtmlVoidtags | 'option');
-    __children(_value: ComponentChildren): void;
+    __children(_value: Children): void;
 }
 
 export { }
