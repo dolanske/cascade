@@ -92,6 +92,7 @@ export declare class Component {
      */
     style: (key: CSSStyle | keyof CSSStyle | Ref<CSSStyle>, value?: (string | number) | Ref<string | number> | undefined) => Component;
     if: (expr: ConditionalExpr) => Component;
+    clone: () => Component;
     el: HTMLElement;
     children: Children;
     componentProps: PropObject;

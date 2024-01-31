@@ -18,6 +18,7 @@ import type { ItemCallbackValue } from './methods/for'
 import { for_impl } from './methods/for'
 import { style } from './methods/style'
 import { if_impl } from './methods/if'
+import { clone } from './methods/clone'
 
 export class Component {
   /**
@@ -43,8 +44,6 @@ export class Component {
    * Shorthand for binding `on("click")` event listener to the current node.
    */
   click = click.bind(this)
-  // if = if_impl.bind(this)
-
   /**
    * Bind reactive class object to the current node.
    */
@@ -79,17 +78,14 @@ export class Component {
   model = model.bind(this)
   attrs = attrs.bind(this)
   attr = attr.bind(this)
-
   /**
    * Dynamically bind a `disabled` attribute to the node.
    */
   disabled = disabled.bind(this)
-
   /**
    * Dynamically bind an `id` attribute to the node.
    */
   id = id.bind(this)
-
   /**
    * Toggle between showing or hiding the current node. The node is still
    * rendered, but has `display: none` applied to it.
@@ -101,10 +97,8 @@ export class Component {
    * Add reactive styling object to the current node.
    */
   style = style.bind(this)
-
   if = if_impl.bind(this)
-  // else = else_impl.bind(this)
-  // elseIf = elseif_impl.bind(this)
+  clone = clone.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []

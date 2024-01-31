@@ -1,30 +1,30 @@
 var j = Object.defineProperty;
-var A = (t, e, n) => e in t ? j(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
-var c = (t, e, n) => (A(t, typeof e != "symbol" ? e + "" : e, n), n);
+var A = (e, t, n) => t in e ? j(e, t, { enumerable: !0, configurable: !0, writable: !0, value: n }) : e[t] = n;
+var c = (e, t, n) => (A(e, typeof t != "symbol" ? t + "" : t, n), n);
 import { watch as h } from "@vue-reactivity/watch";
 import { isRef as y, effectScope as I, computed as L } from "@vue/reactivity";
-function g(t) {
-  const e = typeof t;
-  return t != null && e === "object";
+function g(e) {
+  const t = typeof e;
+  return e != null && t === "object";
 }
-function v(t) {
-  return t == null;
+function v(e) {
+  return e == null;
 }
-function b(t) {
-  return Object.prototype.toString.call(t) == "[object Function]";
+function b(e) {
+  return Object.prototype.toString.call(e) == "[object Function]";
 }
-function m(t) {
-  return Array.isArray(t);
+function m(e) {
+  return Array.isArray(e);
 }
-function ae(t) {
-  return Object.hasOwn(t, "__instance") ? Reflect.get(t, "__instance") : null;
+function de(e) {
+  return Object.hasOwn(e, "__instance") ? Reflect.get(e, "__instance") : null;
 }
-function p(t, e, n) {
+function p(e, t, n) {
   const s = (o) => {
-    Reflect.set(this.el, t, o);
+    Reflect.set(this.el, e, o);
   };
-  if (b(e) || y(e)) {
-    const o = h(e, (i) => {
+  if (b(t) || y(t)) {
+    const o = h(t, (i) => {
       s(n ? String(i) : i);
     }, {
       immediate: !0,
@@ -32,31 +32,31 @@ function p(t, e, n) {
     });
     this.onDestroy(o);
   } else
-    s(n ? String(e) : e);
+    s(n ? String(t) : t);
   return this;
 }
-function P(t) {
-  return p.call(this, "textContent", t), this;
+function P(e) {
+  return p.call(this, "textContent", e), this;
 }
-function M(t, e, n) {
+function M(e, t, n) {
   return this.onMount(() => {
-    this.el.addEventListener(t, e, n);
+    this.el.addEventListener(e, t, n);
   }), this.onDestroy(() => {
-    this.el.removeEventListener(t, e);
+    this.el.removeEventListener(e, t);
   }), this;
 }
-function T(t, e) {
-  return this.on("click", t, e);
+function T(e, t) {
+  return this.on("click", e, t);
 }
-function N(t) {
-  let e = "";
+function N(e) {
+  let t = "";
   const n = /* @__PURE__ */ Object.create(null), s = (i) => {
     for (const r of Object.keys(i))
       i[r] ? this.el.classList.add(r) : this.el.classList.remove(r);
   }, o = (i) => {
     if (i)
       if (typeof i == "string")
-        e && this.el.classList.remove(e), e = i, this.el.classList.add(e);
+        t && this.el.classList.remove(t), t = i, this.el.classList.add(t);
       else if (m(i)) {
         const r = i.length;
         for (let l = 0; l < r; l++) {
@@ -64,104 +64,104 @@ function N(t) {
           if (u)
             typeof u == "string" ? (this.el.classList.add(u), n[l] = u) : g(i) && s(u);
           else {
-            const a = n[l];
-            a && (this.el.classList.remove(a), n[l] = null);
+            const d = n[l];
+            d && (this.el.classList.remove(d), n[l] = null);
           }
         }
       } else
         g(i) && s(i);
   };
-  if (b(t)) {
-    const i = h(t, (r) => o(r), {
+  if (b(e)) {
+    const i = h(e, (r) => o(r), {
       immediate: !0,
       deep: !0
     });
     this.onDestroy(i);
   } else
-    o(t);
+    o(e);
   return this;
 }
-function q(t) {
-  return p.call(this, "innerHTML", t), this;
+function q(e) {
+  return p.call(this, "innerHTML", e), this;
 }
-function F(t) {
-  const e = I();
+function F(e) {
+  const t = I();
   return this.onInit(() => {
-    e.run(() => {
-      t(this, this.componentProps);
+    t.run(() => {
+      e(this, this.componentProps);
     });
   }), this.onDestroy(() => {
-    e.stop();
+    t.stop();
   }), this;
 }
-function V(t, e) {
-  return Object.assign(this.componentProps, { [t]: e }), this;
+function V(e, t) {
+  return Object.assign(this.componentProps, { [e]: t }), this;
 }
-function B(t) {
-  for (const e of Object.keys(t))
-    this.prop(e, t[e]);
+function B(e) {
+  for (const t of Object.keys(e))
+    this.prop(t, e[t]);
   return this;
 }
-function H(t) {
-  return this.__children(t), this;
+function H(e) {
+  return this.__children(e), this;
 }
-function k(t, e) {
-  return !e || e.length === 0 ? t : e.reduce((n, s) => s(n), t);
+function k(e, t) {
+  return !t || t.length === 0 ? e : t.reduce((n, s) => s(n), e);
 }
-function x(t, e, n) {
-  m(t.value) ? t.value.includes(e) ? t.value.splice(t.value.indexOf(e), 1) : t.value.push(e) : n ? t.value = e : t.value = null;
+function x(e, t, n) {
+  m(e.value) ? e.value.includes(t) ? e.value.splice(e.value.indexOf(t), 1) : e.value.push(t) : n ? e.value = t : e.value = null;
 }
-function D(t, e) {
-  (!t.value || m(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (x(t, e.value, !0), e.removeAttribute("checked"));
+function D(e, t) {
+  (!e.value || m(e.value) && e.value.length === 0) && t.hasAttribute("checked") && (x(e, t.value, !0), t.removeAttribute("checked"));
 }
-function z(t, e = {}) {
+function z(e, t = {}) {
   return this.onMount(() => {
     switch (this.el.tagName) {
       case "INPUT":
       case "TEXTAREA": {
         switch (this.el.type) {
           case "checkbox": {
-            const n = this.el, s = h(t, (o) => {
+            const n = this.el, s = h(e, (o) => {
               o === n.value || m(o) && o.includes(n.value) ? n.checked = !0 : n.checked = !1;
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener("change", (o) => {
               const { checked: i, value: r } = o.target;
-              x(t, r, i);
-            }, e.eventOptions), D(t, n);
+              x(e, r, i);
+            }, t.eventOptions), D(e, n);
             break;
           }
           case "radio": {
-            const n = this.el, s = h(t, (o) => {
+            const n = this.el, s = h(e, (o) => {
               n.checked = o === n.value;
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener("change", (o) => {
               const { value: i, checked: r } = o.target;
-              r && (t.value = i);
-            }, e.eventOptions), D(t, n);
+              r && (e.value = i);
+            }, t.eventOptions), D(e, n);
             break;
           }
           default: {
-            const n = this.el, s = h(t, (o) => {
+            const n = this.el, s = h(e, (o) => {
               n.value = String(o);
             }, { deep: !0 });
-            this.onDestroy(s), n.addEventListener(e.lazy ? "change" : "input", (o) => {
+            this.onDestroy(s), n.addEventListener(t.lazy ? "change" : "input", (o) => {
               let i = o.target.value;
-              i = k(i, e.transforms), t.value = i;
-            }, e.eventOptions), n.value = String(t.value ?? "");
+              i = k(i, t.transforms), e.value = i;
+            }, t.eventOptions), n.value = String(e.value ?? "");
             break;
           }
         }
         break;
       }
       case "SELECT": {
-        const n = this.el, s = h(t, (i) => {
-          t.value = i;
+        const n = this.el, s = h(e, (i) => {
+          e.value = i;
         }, { deep: !0 });
         this.onDestroy(s), n.addEventListener("change", (i) => {
           let r = i.target.value;
-          r = k(r, e.transforms), t.value = r;
-        }, e.eventOptions);
-        const o = m(t.value) ? t.value[0] : t.value;
+          r = k(r, t.transforms), e.value = r;
+        }, t.eventOptions);
+        const o = m(e.value) ? e.value[0] : e.value;
         if (o)
           n.value = o.toString();
         else if (n.childElementCount > 0) {
@@ -169,170 +169,170 @@ function z(t, e = {}) {
           if (i) {
             i.removeAttribute("selected");
             const r = i.value;
-            t.value = r, n.value = r;
+            e.value = r, n.value = r;
           }
         }
         break;
       }
       case "DETAILS": {
-        const n = this.el, s = h(t, (i) => {
+        const n = this.el, s = h(e, (i) => {
           n.open = !!i;
         }, { deep: !0 });
         this.onDestroy(s), n.addEventListener("toggle", () => {
-          t.value = n.open;
-        }, e.eventOptions);
-        const o = m(t.value) ? t.value[0] : t.value;
+          e.value = n.open;
+        }, t.eventOptions);
+        const o = m(e.value) ? e.value[0] : e.value;
         n.open = !!o;
         break;
       }
     }
   }), this;
 }
-function U(t, e, n) {
-  const s = Array.from(t.childNodes).at(n);
-  return s ? (t.replaceChild(e, s), !0) : !1;
+function U(e, t, n) {
+  const s = Array.from(e.childNodes).at(n);
+  return s ? (e.replaceChild(t, s), !0) : !1;
 }
-function d(t, e, n) {
-  const s = t instanceof Element ? t : t.el;
-  if (e)
-    if (typeof e == "string" || typeof e == "number")
+function f(e, t, n) {
+  const s = e instanceof Element ? e : e.el;
+  if (t)
+    if (typeof t == "string" || typeof t == "number")
       if (v(n))
-        s.innerHTML = String(e);
+        s.innerHTML = String(t);
       else {
-        const o = document.createTextNode(String(e));
+        const o = document.createTextNode(String(t));
         U(s, o, n) || s.appendChild(o);
       }
-    else if (e instanceof O)
-      d(s, e.children);
-    else if (e instanceof Element)
-      s.appendChild(e);
-    else if (e instanceof f)
-      t instanceof f && (e.parent = t), s.appendChild(e.el), e.__runOnInit(), d(e, e.children), e.__runOnMount();
-    else if (Array.isArray(e)) {
-      const o = e.length;
+    else if (t instanceof O)
+      f(s, t.children);
+    else if (t instanceof Element)
+      s.appendChild(t);
+    else if (t instanceof a)
+      e instanceof a && (t.parent = e), s.appendChild(t.el), t.__runOnInit(), f(t, t.children), t.__runOnMount();
+    else if (Array.isArray(t)) {
+      const o = t.length;
       for (let i = 0; i < o; i++) {
-        const r = e[i];
-        r instanceof Element || typeof r == "string" || typeof r == "number" ? d(s, r, i) : r instanceof O ? d(s, r.children) : b(r) ? h(r, (l) => d(s, l, i), {
+        const r = t[i];
+        r instanceof Element || typeof r == "string" || typeof r == "number" ? f(s, r, i) : r instanceof O ? f(s, r.children) : b(r) ? h(r, (l) => f(s, l, i), {
           immediate: !0,
           deep: !0
-        }) : (t instanceof f && (r.parent = t), s.appendChild(r.el), r.__runOnInit(), d(r, r.children), r.__runOnMount());
+        }) : (e instanceof a && (r.parent = e), s.appendChild(r.el), r.__runOnInit(), f(r, r.children), r.__runOnMount());
       }
     } else
-      b(e) && h(e, (o) => d(s, o), {
+      b(t) && h(t, (o) => f(s, o), {
         immediate: !0,
         deep: !0
       });
 }
-function _(t, e, n) {
-  if (g(e)) {
-    Object.entries(e).forEach(([s, o]) => {
-      _(t, s, o);
+function _(e, t, n) {
+  if (g(t)) {
+    Object.entries(t).forEach(([s, o]) => {
+      _(e, s, o);
     });
     return;
   }
-  v(n) ? t.setAttribute(e, "") : typeof n == "boolean" ? n ? t.setAttribute(e, "") : t.removeAttribute(e) : t.setAttribute(e, String(n));
+  v(n) ? e.setAttribute(t, "") : typeof n == "boolean" ? n ? e.setAttribute(t, "") : e.removeAttribute(t) : e.setAttribute(t, String(n));
 }
-function W(t) {
+function W(e) {
   return this.onInit(() => {
-    if (b(t)) {
-      const e = h(t, (n) => _(this.el, n), {
+    if (b(e)) {
+      const t = h(e, (n) => _(this.el, n), {
         immediate: !0,
         deep: !0
       });
-      this.onDestroy(e);
+      this.onDestroy(t);
     } else
-      _(this.el, t);
+      _(this.el, e);
   }), this;
 }
-function X(t, e) {
+function X(e, t) {
   return this.onInit(() => {
-    if (b(e) || y(e)) {
-      const n = h(e, (s) => _(this.el, t, s), {
+    if (b(t) || y(t)) {
+      const n = h(t, (s) => _(this.el, e, s), {
         immediate: !0,
         deep: !0
       });
       this.onDestroy(n);
     } else
-      _(this.el, t, e);
+      _(this.el, e, t);
   }), this;
 }
-function G(t) {
-  return this.attr("disabled", t), this;
+function G(e) {
+  return this.attr("disabled", e), this;
 }
-function J(t) {
-  return p.call(this, "id", t), this;
+function J(e) {
+  return p.call(this, "id", e), this;
 }
-function K(t) {
-  function e(n) {
-    if (!(n instanceof f))
+function K(e) {
+  function t(n) {
+    if (!(n instanceof a))
       return;
     for (const o of n.onDestroyCbs)
       o();
     const { children: s } = n;
-    if (s instanceof f)
-      e(s);
+    if (s instanceof a)
+      t(s);
     else if (m(s))
       for (const o of s)
-        o instanceof f && e(o);
+        o instanceof a && t(o);
   }
-  e(t), t.__runOnDestroy(), t.el.remove();
+  t(e), e.__runOnDestroy(), e.el.remove();
 }
-function Q(t) {
+function Q(e) {
   return this.onMount(() => {
-    const e = this.el.style.getPropertyValue("display"), n = (s) => {
-      s ? v(e) ? this.el.style.removeProperty("display") : this.el.style.setProperty("display", e) : this.el.style.setProperty("display", "none");
+    const t = this.el.style.getPropertyValue("display"), n = (s) => {
+      s ? v(t) ? this.el.style.removeProperty("display") : this.el.style.setProperty("display", t) : this.el.style.setProperty("display", "none");
     };
-    if (b(t) || y(t)) {
-      const s = h(t, n, {
+    if (b(e) || y(e)) {
+      const s = h(e, n, {
         deep: !0,
         immediate: !0
       });
       this.onDestroy(s);
     } else
-      n(t);
+      n(e);
   }), this;
 }
-function Y(t, e) {
+function Y(e, t) {
   let n;
   const s = () => {
     const i = this.el.cloneNode(!0);
-    return new f(i);
+    return new a(i);
   }, o = (i) => {
     const r = [];
     if (m(i)) {
       const l = i.length;
       for (let u = 0; u < l; u++) {
-        const a = s();
-        e(a, { value: i[u], index: u }), r.push(a);
+        const d = s();
+        t(d, { value: i[u], index: u }), r.push(d);
       }
     } else if (g(i)) {
       const l = Object.keys(i), u = l.length;
-      for (let a = 0; a < u; a++) {
-        const w = l[a], C = s();
-        e(C, {
-          value: Reflect.get(i, w),
-          key: w,
-          index: a
+      for (let d = 0; d < u; d++) {
+        const E = l[d], C = s();
+        t(C, {
+          value: Reflect.get(i, E),
+          key: E,
+          index: d
         }), r.push(C);
       }
     } else if (typeof i == "number")
       for (let l = 0; l < i; l++) {
         const u = s();
-        e(u, l), r.push(u);
+        t(u, l), r.push(u);
       }
-    n == null || n.replaceChildren(), n && d(n, r);
+    n == null || n.replaceChildren(), n && f(n, r);
   };
   return this.onInit(() => {
-    if (n = this.el.parentElement, y(t)) {
-      const i = h(t, (r) => {
+    if (n = this.el.parentElement, y(e)) {
+      const i = h(e, (r) => {
         o(r);
       }, { immediate: !0, deep: !0 });
       this.onDestroy(i);
     } else
-      o(t);
+      o(e);
   }), this;
 }
-function Z(t, e) {
+function Z(e, t) {
   const n = (s) => {
     if (!g(s)) {
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
@@ -342,28 +342,28 @@ function Z(t, e) {
     for (const i of o)
       this.el.style.setProperty(i, Reflect.get(s, i));
   };
-  if (typeof t == "string")
-    if (y(e)) {
-      const s = h(e, (o) => {
-        n({ [t]: o });
+  if (typeof e == "string")
+    if (y(t)) {
+      const s = h(t, (o) => {
+        n({ [e]: o });
       });
       this.onDestroy(s);
     } else
-      e && n({ [t]: e });
-  else if (y(t))
-    if (e)
+      t && n({ [e]: t });
+  else if (y(e))
+    if (t)
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
     else {
-      const s = h(t, n, {
+      const s = h(e, n, {
         immediate: !0,
         deep: !0
       });
       this.onDestroy(s);
     }
-  else if (g(t)) {
-    const s = Object.keys(t);
+  else if (g(e)) {
+    const s = Object.keys(e);
     for (const o of s) {
-      const i = Reflect.get(t, o);
+      const i = Reflect.get(e, o);
       if (y(i)) {
         const r = h(i, (l) => {
           v(l) || this.el.style.setProperty(o, String(l));
@@ -375,29 +375,33 @@ function Z(t, e) {
   }
   return this;
 }
-function $(t) {
-  const e = new Comment("if");
+function $(e) {
+  const t = new Comment("if");
   return this.onInit(() => {
     const n = this.parent;
     if (!n)
       return console.warn("Parent element not found. `if()` will not work.");
     const s = (o) => {
-      o ? n.el.insertBefore(this.el, e) : this.el.remove();
+      o ? n.el.insertBefore(this.el, t) : this.el.remove();
     };
-    if (n.el.insertBefore(e, this.el), b(t)) {
-      const o = L(t), i = h(o, s, {
+    if (n.el.insertBefore(t, this.el), b(e)) {
+      const o = L(e), i = h(o, s, {
         immediate: !0,
         deep: !0
       });
       this.onDestroy(i);
     } else
-      s(t);
+      s(e);
   }), this;
 }
-class f {
+function R() {
+  const e = new a(this.el);
+  return e.children = this.children, e.el = this.el.cloneNode(!0), e;
+}
+class a {
   // __isElse?: boolean
   // __isElseIf?: ConditionalExpr
-  constructor(e, n = {}) {
+  constructor(t, n = {}) {
     /**
      * Set `textContent` of the current node.
      *
@@ -421,7 +425,6 @@ class f {
      * Shorthand for binding `on("click")` event listener to the current node.
      */
     c(this, "click", T.bind(this));
-    // if = if_impl.bind(this)
     /**
      * Bind reactive class object to the current node.
      */
@@ -476,8 +479,7 @@ class f {
      */
     c(this, "style", Z.bind(this));
     c(this, "if", $.bind(this));
-    // else = else_impl.bind(this)
-    // elseIf = elseif_impl.bind(this)
+    c(this, "clone", R.bind(this));
     c(this, "el");
     c(this, "children", []);
     c(this, "componentProps");
@@ -486,24 +488,24 @@ class f {
     c(this, "onMountCbs", []);
     c(this, "onDestroyCbs", []);
     c(this, "onInitCbs", []);
-    this.el = e, Object.defineProperty(this.el, "__instance", this), this.componentProps = n;
+    this.el = t, Object.defineProperty(this.el, "__instance", this), this.componentProps = n;
   }
   /////////////////////////////////////////////////////////////
   // Private API
-  __children(e) {
-    this.children = e;
+  __children(t) {
+    this.children = t;
   }
   __runOnMount() {
-    for (const e of this.onMountCbs)
-      e();
+    for (const t of this.onMountCbs)
+      t();
   }
   __runOnDestroy() {
-    for (const e of this.onDestroyCbs)
-      e();
+    for (const t of this.onDestroyCbs)
+      t();
   }
   __runOnInit() {
-    for (const e of this.onInitCbs)
-      e();
+    for (const t of this.onInitCbs)
+      t();
   }
   /////////////////////////////////////////////////////////////
   // Public API
@@ -513,8 +515,8 @@ class f {
    *
    * @param callback {function}
    */
-  onInit(e) {
-    this.onInitCbs.push(e);
+  onInit(t) {
+    this.onInitCbs.push(t);
   }
   /**
    * Executes provided callback function when the component is mounted in the
@@ -522,16 +524,16 @@ class f {
    *
    * @param callback {function}
    */
-  onMount(e) {
-    this.onMountCbs.push(e);
+  onMount(t) {
+    this.onMountCbs.push(t);
   }
   /**
    *
    * @param callback executes provided callback function when the component is
    * removed from the DOM.
    */
-  onDestroy(e) {
-    this.onDestroyCbs.push(e);
+  onDestroy(t) {
+    this.onDestroyCbs.push(t);
   }
   /**
    * Mounts the current element in the DOM. Usually, you would use this function
@@ -540,11 +542,11 @@ class f {
    *
    * @param selector {string} Default: "body" element
    */
-  mount(e = "body") {
-    const n = document.querySelector(e);
+  mount(t = "body") {
+    const n = document.querySelector(t);
     if (!n)
       throw new Error("Root element does not exist");
-    n.appendChild(this.el), this.__runOnInit(), d(this, this.children), this.__runOnMount();
+    n.appendChild(this.el), this.__runOnInit(), f(this, this.children), this.__runOnMount();
   }
   // Removes the root node and its desendants. It also
   destroy() {
@@ -565,33 +567,33 @@ class f {
    *
    *
    */
-  for(e, n) {
-    return Y.call(this, e, n);
+  for(t, n) {
+    return Y.call(this, t, n);
   }
 }
-class E extends f {
-  constructor(e) {
-    super(document.createElement(e));
+class w extends a {
+  constructor(t) {
+    super(document.createElement(t));
   }
-  __children(e) {
+  __children(t) {
     this.children = [];
   }
 }
-class O extends f {
-  constructor(e = []) {
-    super(document.createElement("template")), this.children = e;
+class O extends a {
+  constructor(t = []) {
+    super(document.createElement("template")), this.children = t;
   }
-  mount(e) {
-    const n = document.querySelector(e);
+  mount(t) {
+    const n = document.querySelector(t);
     if (!n)
       throw new Error("Root element does not exist");
-    this.__runOnInit(), d(n, this.children), this.__runOnMount();
+    this.__runOnInit(), f(n, this.children), this.__runOnMount();
   }
 }
-function R(t) {
-  return new O(t);
+function ee(e) {
+  return new O(e);
 }
-class S extends E {
+class S extends w {
   constructor(n, s) {
     super();
     c(this, "el");
@@ -610,39 +612,39 @@ class S extends E {
     return p.call(this, "required", n), this;
   }
 }
-function ee(t = "text") {
-  const e = document.createElement("input");
-  return new S(e, t);
+function te(e = "text") {
+  const t = document.createElement("input");
+  return new S(t, e);
 }
-function te() {
-  const t = document.createElement("textarea");
-  return new S(t);
+function ne() {
+  const e = document.createElement("textarea");
+  return new S(e);
 }
-class ne extends E {
-  constructor(e, n) {
-    super("option"), e && (this.el.value = String(e), this.el.textContent = String(e)), n && (this.el.textContent = String(n));
+class se extends w {
+  constructor(t, n) {
+    super("option"), t && (this.el.value = String(t), this.el.textContent = String(t)), n && (this.el.textContent = String(n));
   }
-  value(e) {
-    return p.call(this, "value", e), this;
+  value(t) {
+    return p.call(this, "value", t), this;
   }
   selected() {
     return this.attr("selected"), this;
   }
 }
-function se(t, e) {
-  return new ne(t, e);
+function ie(e, t) {
+  return new se(e, t);
 }
-const ie = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "shadow", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "var", "video"], oe = ["area", "base", "br", "col", "embed", "hr", "img", "link", "meta", "source", "track", "wbr"], re = ie.reduce((t, e) => (t[e] = (n) => {
-  const s = document.createElement(e), o = new f(s);
+const oe = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "shadow", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "var", "video"], re = ["area", "base", "br", "col", "embed", "hr", "img", "link", "meta", "source", "track", "wbr"], ce = oe.reduce((e, t) => (e[t] = (n) => {
+  const s = document.createElement(t), o = new a(s);
   return n && o.__children(n), o;
-}, t), {}), ce = oe.reduce((t, e) => (t[e] = () => new E(e), t), {}), de = Object.assign(re, ce, {
-  fragment: R,
-  input: ee,
-  textarea: te,
-  option: se
+}, e), {}), le = re.reduce((e, t) => (e[t] = () => new w(t), e), {}), fe = Object.assign(ce, le, {
+  fragment: ee,
+  input: te,
+  textarea: ne,
+  option: ie
 });
 export {
-  f as Component,
-  de as El,
-  ae as getInstance
+  a as Component,
+  fe as El,
+  de as getInstance
 };
