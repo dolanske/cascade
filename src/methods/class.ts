@@ -1,4 +1,3 @@
-import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isArray, isFunction, isObject } from '../util'
 
@@ -62,12 +61,10 @@ export function class_impl(this: Component, classNames: ClassNames | (() => Clas
   }
 
   if (isFunction(classNames)) {
-    const release = watch(classNames, val => processClass(val), {
+    this.__watch(classNames, val => processClass(val), {
       immediate: true,
       deep: true,
     })
-
-    this.onDestroy(release)
   }
   else {
     processClass(classNames)

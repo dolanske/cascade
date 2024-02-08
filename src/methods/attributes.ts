@@ -1,5 +1,4 @@
 import { type Primitive, type Ref, isRef } from '@vue/reactivity'
-import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isFunction, isNil, isObject } from '../util'
 
@@ -30,12 +29,12 @@ export function setAttribute(el: HTMLElement, key: string | Attributes, value?: 
 export function attrs(this: Component, attrData: Attributes | (() => Attributes)) {
   this.onInit(() => {
     if (isFunction(attrData)) {
-      const release = watch(attrData, value => setAttribute(this.el, value), {
+      this.__watch(attrData, value => setAttribute(this.el, value), {
         immediate: true,
         deep: true,
       })
 
-      this.onDestroy(release)
+      // this.onDestroy(release)
     }
     else {
       setAttribute(this.el, attrData)
@@ -48,12 +47,10 @@ export function attrs(this: Component, attrData: Attributes | (() => Attributes)
 export function attr(this: Component, key: string, value?: Primitive | (() => Primitive) | Ref<Primitive>) {
   this.onInit(() => {
     if (isFunction(value) || isRef(value)) {
-      const release = watch(value, value => setAttribute(this.el, key, value), {
+      this.__watch(value, value => setAttribute(this.el, key, value), {
         immediate: true,
         deep: true,
       })
-
-      this.onDestroy(release)
     }
     else {
       setAttribute(this.el, key, value)

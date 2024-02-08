@@ -1,4 +1,3 @@
-import { watch } from '@vue-reactivity/watch'
 import { computed } from '@vue/reactivity'
 import type { Component } from '../component'
 import { isFunction } from '../util'
@@ -26,12 +25,10 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
 
     if (isFunction(expr)) {
       const cachedExpr = computed(expr)
-      const release = watch(cachedExpr, process, {
+      this.__watch(cachedExpr, process, {
         immediate: true,
         deep: true,
       })
-
-      this.onDestroy(release)
     }
     else {
       process(expr)

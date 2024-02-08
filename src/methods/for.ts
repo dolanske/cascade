@@ -1,6 +1,5 @@
 import type { Ref, UnwrapRef } from '@vue/reactivity'
 import { isRef } from '@vue/reactivity'
-import { watch } from '@vue-reactivity/watch'
 import { Component } from '../component'
 import type { ComponentChildren } from '../types'
 import { isArray, isObject } from '../util'
@@ -75,10 +74,9 @@ export function for_impl(
     // Assign parent element when element is created
     parent = this.el.parentElement!
     if (isRef(source)) {
-      const release = watch(source, (updatedSrc: Source) => {
+      this.__watch(source, (updatedSrc: Source) => {
         processFor(updatedSrc)
       }, { immediate: true, deep: true })
-      this.onDestroy(release)
     }
     else {
       processFor(source)

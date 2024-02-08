@@ -1,4 +1,6 @@
 import type { UnwrapRef } from '@vue/reactivity'
+import type { WatchStopHandle } from '@vue-reactivity/watch'
+import { watch } from '@vue-reactivity/watch'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
@@ -110,6 +112,9 @@ export class Component {
   onDestroyCbs: GenericCallback[] = []
   onInitCbs: GenericCallback[] = []
 
+  registeredWatchers: Set<() => WatchStopHandle> = new Set()
+  runningWatchers: Set<WatchStopHandle> = new Set()
+
   // __isElse?: boolean
   // __isElseIf?: ConditionalExpr
 
@@ -138,6 +143,32 @@ export class Component {
   __runOnInit() {
     for (const cb of this.onInitCbs)
       cb()
+  }
+
+  __watch = (...params: Parameters<typeof watch>) => {
+    const fn = () => watch(...params)
+    // Starts watcher
+    this.runningWatchers.add(fn())
+    // Saves it
+    this.registeredWatchers.add(fn)
+  }
+
+  // Will start watchers which aren't currently running, but are registered.
+  // This will not have much effect on first render, but if we clone or re-mount
+  // component, all watchers will be re-registered.
+  __restartWatchers() {
+    for (const watcher of this.registeredWatchers) {
+      if (this.runningWatchers.has(watcher))
+        continue
+
+      this.runningWatchers.add(watcher())
+    }
+  }
+
+  __stopWatchers() {
+    for (const stopper of this.runningWatchers)
+      stopper()
+    this.runningWatchers = new Set()
   }
 
   /////////////////////////////////////////////////////////////
@@ -184,6 +215,10 @@ export class Component {
     const domRoot = document.querySelector(selector)
     if (!domRoot)
       throw new Error('Root element does not exist')
+
+    this.__restartWatchers()
+
+    console.log(this.registeredWatchers)
 
     domRoot.appendChild(this.el)
     this.__runOnInit()
@@ -253,6 +288,7 @@ export class Fragment extends Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
+    this.__restartWatchers()
     this.__runOnInit()
     render(domRoot, this.children)
     this.__runOnMount()

@@ -1,5 +1,4 @@
 import type { Primitive, Ref } from '@vue/reactivity'
-import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isArray } from '../util'
 
@@ -79,13 +78,12 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
              */
 
             // Update the UI based on change in the ref from outside the component
-            const release = watch(defaultRef, (value) => {
+            this.__watch(defaultRef, (value) => {
               if (value === root.value || (isArray(value) && value.includes(root.value)))
                 root.checked = true
               else
                 root.checked = false
             }, { deep: true })
-            this.onDestroy(release)
 
             // Listen for changes in the UI element
             root.addEventListener('change', (event) => {
@@ -103,10 +101,9 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
             const root = this.el as HTMLInputElement
 
             // Update the UI based on change in the ref from outside the component
-            const release = watch(defaultRef, (value) => {
+            this.__watch(defaultRef, (value) => {
               root.checked = value === root.value
             }, { deep: true })
-            this.onDestroy(release)
 
             // Listen for changes in the UI element
             root.addEventListener('change', (event) => {
@@ -125,10 +122,9 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
             const root = this.el as HTMLInputElement | HTMLTextAreaElement
 
             // Watch for changes from the ref
-            const release = watch(defaultRef, (value) => {
+            this.__watch(defaultRef, (value) => {
               root.value = String(value)
             }, { deep: true })
-            this.onDestroy(release)
 
             // Watch for changes from UI
             root.addEventListener(options.lazy ? 'change' : 'input', (event) => {
@@ -151,10 +147,9 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
         const root = this.el as HTMLSelectElement
 
         // Watch for outside changes to the ref
-        const release = watch(defaultRef, (value) => {
+        this.__watch(defaultRef, (value) => {
           defaultRef.value = value
         }, { deep: true })
-        this.onDestroy(release)
 
         // Watch for changes from the UI
         root.addEventListener('change', (event) => {
@@ -186,10 +181,9 @@ export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>,
         const root = this.el as HTMLDetailsElement
 
         // Watch for outside changes to the ref
-        const release = watch(defaultRef, (value) => {
+        this.__watch(defaultRef, (value) => {
           root.open = Boolean(value)
         }, { deep: true })
-        this.onDestroy(release)
 
         // Watch for changes from the UI
         root.addEventListener('toggle', () => {

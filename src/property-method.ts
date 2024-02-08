@@ -1,4 +1,3 @@
-import { watch } from '@vue-reactivity/watch'
 import { isRef } from '@vue/reactivity'
 import type { Primitive, Ref } from '@vue/reactivity'
 import { isFunction } from './util'
@@ -16,14 +15,13 @@ export function registerWatchedProp<T extends DefaultWatchedValue>(this: Compone
   }
 
   if (isFunction(value) || isRef(value)) {
-    const release = watch(value, (computedVal: Primitive) => {
+    this.__watch(value, (computedVal: Primitive) => {
+      console.log('here')
       setValue(stringifyValue ? String(computedVal) : computedVal)
     }, {
       immediate: true,
       deep: true,
     })
-
-    this.onDestroy(release)
   }
   else {
     setValue(stringifyValue ? String(value) : value)

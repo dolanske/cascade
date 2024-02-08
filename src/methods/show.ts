@@ -1,4 +1,3 @@
-import { watch } from '@vue-reactivity/watch'
 import { isRef } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { RefOrvalue } from '../types'
@@ -23,11 +22,10 @@ export function show(this: Component, defaultValue: RefOrvalue<boolean>) {
     }
 
     if (isFunction(defaultValue) || isRef(defaultValue)) {
-      const release = watch(defaultValue, set, {
+      this.__watch(defaultValue, set, {
         deep: true,
         immediate: true,
       })
-      this.onDestroy(release)
     }
     else {
       set(defaultValue)
