@@ -16,7 +16,8 @@ export function registerWatchedProp<T extends DefaultWatchedValue>(this: Compone
 
   if (isFunction(value) || isRef(value)) {
     this.__watch(value, (computedVal: Primitive) => {
-      console.log('here')
+      console.log('Updated property')
+      // console.log(this.el, key, value)
       setValue(stringifyValue ? String(computedVal) : computedVal)
     }, {
       immediate: true,

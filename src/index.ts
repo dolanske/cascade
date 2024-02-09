@@ -11,17 +11,6 @@ export {
   Children,
 }
 
-// TODO
-// This is happening because each time a reactive watch/watcheffect method is
-// registered, it is not re-run after re-mounting the compoennt. The watcher is
-// set when the component is created. Not mounted
-
-// FIXME
-// The fix is to collect all of the methods and store them in an array. And run
-// them each time a component is mounted.
-
-// Could the fix be to wrap every watcher with onInit() ?
-
 const text = ref('hello')
 
 const el = El.div().setup((ctx) => {
@@ -36,9 +25,6 @@ const cloned = el.clone()
 
 el.destroy()
 
-cloned.mount('#app')
+cloned.mount('#app2')
 
-console.log('H')
 text.value = 'hhihihi'
-
-// el.mount('#app')

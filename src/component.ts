@@ -1,4 +1,4 @@
-import type { UnwrapRef } from '@vue/reactivity'
+import type { EffectScheduler, EffectScope, UnwrapRef } from '@vue/reactivity'
 import type { WatchStopHandle } from '@vue-reactivity/watch'
 import { watch } from '@vue-reactivity/watch'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
@@ -112,7 +112,9 @@ export class Component {
   onDestroyCbs: GenericCallback[] = []
   onInitCbs: GenericCallback[] = []
 
-  registeredWatchers: Set<() => WatchStopHandle> = new Set()
+  __setupCopes: Set<() => void> = new Set()
+
+  registeredWatcherParams: Set<() => Parameters<typeof watch>> = new Set()
   runningWatchers: Set<WatchStopHandle> = new Set()
 
   // __isElse?: boolean
@@ -145,23 +147,20 @@ export class Component {
       cb()
   }
 
-  __watch = (...params: Parameters<typeof watch>) => {
-    const fn = () => watch(...params)
+  __watch = (...params: Parameters<typeof watch<any>>) => {
     // Starts watcher
-    this.runningWatchers.add(fn())
+    this.runningWatchers.add(watch(...params))
     // Saves it
-    this.registeredWatchers.add(fn)
+    this.registeredWatcherParams.add(() => params)
   }
 
   // Will start watchers which aren't currently running, but are registered.
   // This will not have much effect on first render, but if we clone or re-mount
   // component, all watchers will be re-registered.
   __restartWatchers() {
-    for (const watcher of this.registeredWatchers) {
-      if (this.runningWatchers.has(watcher))
-        continue
-
-      this.runningWatchers.add(watcher())
+    for (const getParams of this.registeredWatcherParams) {
+      const params = getParams()
+      this.runningWatchers.add(watch(...params))
     }
   }
 
@@ -169,6 +168,11 @@ export class Component {
     for (const stopper of this.runningWatchers)
       stopper()
     this.runningWatchers = new Set()
+  }
+
+  __restartScopes() {
+    for (const start of this.__setupCopes)
+      start()
   }
 
   /////////////////////////////////////////////////////////////
@@ -216,10 +220,8 @@ export class Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
+    this.__restartScopes()
     this.__restartWatchers()
-
-    console.log(this.registeredWatchers)
-
     domRoot.appendChild(this.el)
     this.__runOnInit()
     render(this, this.children)
