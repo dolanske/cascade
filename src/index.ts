@@ -9,23 +9,3 @@ export {
   Component,
   Children,
 }
-
-// const text = ref('hello')
-
-// const el = El.div().setup((ctx) => {
-//   ctx.text(text)
-// })
-
-// el.mount('#app')
-
-// text.value = 'cum'
-
-// const cloned = el.clone()
-
-// el.destroy()
-
-// text.value = 'hhihihi'
-
-// cloned.mount('#app2')
-
-// text.value = 'bruh'
