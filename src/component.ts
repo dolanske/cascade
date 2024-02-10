@@ -145,7 +145,7 @@ export class Component {
       cb()
   }
 
-  __runSetup() {
+  __rerunSetup() {
     for (const runner of this.scopes) {
       const scope = effectScope()
       scope.run(() => {
@@ -208,7 +208,6 @@ export class Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
-    this.__runSetup()
     domRoot.appendChild(this.el)
     this.__runOnInit()
     render(this, this.children)
@@ -276,7 +275,7 @@ export class Fragment extends Component {
     const domRoot = document.querySelector(selector)
     if (!domRoot)
       throw new Error('Root element does not exist')
-    this.__runSetup()
+    // this.__runSetup()
 
     this.__runOnInit()
     render(domRoot, this.children)

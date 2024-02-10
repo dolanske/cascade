@@ -1,3 +1,4 @@
+import { effectScope } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { PropObject } from '../types'
 
@@ -13,6 +14,16 @@ export type SetupArguments = (componentInstance: Component, props: PropObject) =
 
 export function setup(this: Component, setupFn: SetupArguments) {
   this.scopes.add(setupFn)
+
+  const scope = effectScope()
+  scope.run(() => {
+    setupFn(this, this.componentProps)
+  })
+
+  this.onDestroy(() => {
+    scope.stop()
+  })
+
   return this
 }
 

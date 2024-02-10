@@ -108,7 +108,7 @@ export declare class Component {
     __runOnMount(): void;
     __runOnDestroy(): void;
     __runOnInit(): void;
-    __runSetup(): void;
+    __rerunSetup(): void;
     __closeScopes(): void;
     /**
      * Executes provided callback function when the component is initialized.

@@ -1,7 +1,7 @@
-var j = Object.defineProperty;
-var A = (t, e, n) => e in t ? j(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
-var c = (t, e, n) => (A(t, typeof e != "symbol" ? e + "" : e, n), n);
-import { isRef as y, computed as I, effectScope as L } from "@vue/reactivity";
+var A = Object.defineProperty;
+var P = (t, e, n) => e in t ? A(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
+var c = (t, e, n) => (P(t, typeof e != "symbol" ? e + "" : e, n), n);
+import { isRef as y, effectScope as D, computed as I } from "@vue/reactivity";
 import { watch as h } from "@vue-reactivity/watch";
 function g(t) {
   const e = typeof t;
@@ -35,7 +35,7 @@ function p(t, e, n) {
     s(n ? String(e) : e);
   return this;
 }
-function P(t) {
+function L(t) {
   return p.call(this, "textContent", t), this;
 }
 function M(t, e, n) {
@@ -85,7 +85,13 @@ function q(t) {
   return p.call(this, "innerHTML", t), this;
 }
 function F(t) {
-  return this.scopes.add(t), this;
+  this.scopes.add(t);
+  const e = D();
+  return e.run(() => {
+    t(this, this.componentProps);
+  }), this.onDestroy(() => {
+    e.stop();
+  }), this;
 }
 function V(t, e) {
   return Object.assign(this.componentProps, { [t]: e }), this;
@@ -98,14 +104,14 @@ function B(t) {
 function H(t) {
   return this.__children(t), this;
 }
-function C(t, e) {
+function S(t, e) {
   return !e || e.length === 0 ? t : e.reduce((n, s) => s(n), t);
 }
-function D(t, e, n) {
+function x(t, e, n) {
   m(t.value) ? t.value.includes(e) ? t.value.splice(t.value.indexOf(e), 1) : t.value.push(e) : n ? t.value = e : t.value = null;
 }
 function k(t, e) {
-  (!t.value || m(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (D(t, e.value, !0), e.removeAttribute("checked"));
+  (!t.value || m(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (x(t, e.value, !0), e.removeAttribute("checked"));
 }
 function z(t, e = {}) {
   return this.onMount(() => {
@@ -119,7 +125,7 @@ function z(t, e = {}) {
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener("change", (o) => {
               const { checked: i, value: r } = o.target;
-              D(t, r, i);
+              x(t, r, i);
             }, e.eventOptions), k(t, n);
             break;
           }
@@ -139,7 +145,7 @@ function z(t, e = {}) {
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener(e.lazy ? "change" : "input", (o) => {
               let i = o.target.value;
-              i = C(i, e.transforms), t.value = i;
+              i = S(i, e.transforms), t.value = i;
             }, e.eventOptions), n.value = String(t.value ?? "");
             break;
           }
@@ -152,7 +158,7 @@ function z(t, e = {}) {
         }, { deep: !0 });
         this.onDestroy(s), n.addEventListener("change", (i) => {
           let r = i.target.value;
-          r = C(r, e.transforms), t.value = r;
+          r = S(r, e.transforms), t.value = r;
         }, e.eventOptions);
         const o = m(t.value) ? t.value[0] : t.value;
         if (o)
@@ -301,12 +307,12 @@ function Y(t, e) {
     } else if (g(i)) {
       const l = Object.keys(i), u = l.length;
       for (let d = 0; d < u; d++) {
-        const E = l[d], S = s();
-        e(S, {
+        const E = l[d], C = s();
+        e(C, {
           value: Reflect.get(i, E),
           key: E,
           index: d
-        }), r.push(S);
+        }), r.push(C);
       }
     } else if (typeof i == "number")
       for (let l = 0; l < i; l++) {
@@ -389,7 +395,7 @@ function $(t) {
 }
 function R() {
   const t = new a(this.el);
-  return t.children = this.children, t.el = this.el.cloneNode(!0), t;
+  return t.children = this.children, t.el = this.el.cloneNode(!0), t.scopes = this.scopes, t.__rerunSetup(), t;
 }
 class a {
   // __isElse?: boolean
@@ -400,7 +406,7 @@ class a {
      *
      * @param text {string | () => string}
      */
-    c(this, "text", P.bind(this));
+    c(this, "text", L.bind(this));
     /**
      * Set `innerHTML` of the current node.
      */
@@ -502,9 +508,9 @@ class a {
     for (const e of this.onInitCbs)
       e();
   }
-  __runSetup() {
+  __rerunSetup() {
     for (const e of this.scopes) {
-      const n = L();
+      const n = D();
       n.run(() => {
         e(this, this.componentProps);
       }), this.runningScopes.add(n);
@@ -554,7 +560,7 @@ class a {
     const n = document.querySelector(e);
     if (!n)
       throw new Error("Root element does not exist");
-    this.__runSetup(), n.appendChild(this.el), this.__runOnInit(), f(this, this.children), this.__runOnMount();
+    n.appendChild(this.el), this.__runOnInit(), f(this, this.children), this.__runOnMount();
   }
   // Removes the root node and its desendants. It also
   destroy() {
@@ -595,13 +601,13 @@ class w extends a {
     const n = document.querySelector(e);
     if (!n)
       throw new Error("Root element does not exist");
-    this.__runSetup(), this.__runOnInit(), f(n, this.children), this.__runOnMount();
+    this.__runOnInit(), f(n, this.children), this.__runOnMount();
   }
 }
 function ee(t) {
   return new w(t);
 }
-class x extends O {
+class j extends O {
   constructor(n, s) {
     super();
     c(this, "el");
@@ -622,11 +628,11 @@ class x extends O {
 }
 function te(t = "text") {
   const e = document.createElement("input");
-  return new x(e, t);
+  return new j(e, t);
 }
 function ne() {
   const t = document.createElement("textarea");
-  return new x(t);
+  return new j(t);
 }
 class se extends O {
   constructor(e, n) {
