@@ -1,6 +1,5 @@
-import type { EffectScheduler, EffectScope, UnwrapRef } from '@vue/reactivity'
+import type { UnwrapRef } from '@vue/reactivity'
 import type { WatchStopHandle } from '@vue-reactivity/watch'
-import { watch } from '@vue-reactivity/watch'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
@@ -112,13 +111,8 @@ export class Component {
   onDestroyCbs: GenericCallback[] = []
   onInitCbs: GenericCallback[] = []
 
-  __setupCopes: Set<() => void> = new Set()
-
-  registeredWatcherParams: Set<() => Parameters<typeof watch>> = new Set()
-  runningWatchers: Set<WatchStopHandle> = new Set()
-
-  // __isElse?: boolean
-  // __isElseIf?: ConditionalExpr
+  watchers: Set<WatchStopHandle> = new Set()
+  // methodQueue: Set<GenericCallback> = new Set()
 
   constructor(el: HTMLElement, props: PropObject = {}) {
     this.el = el
@@ -147,33 +141,20 @@ export class Component {
       cb()
   }
 
-  __watch = (...params: Parameters<typeof watch<any>>) => {
-    // Starts watcher
-    this.runningWatchers.add(watch(...params))
-    // Saves it
-    this.registeredWatcherParams.add(() => params)
-  }
-
-  // Will start watchers which aren't currently running, but are registered.
-  // This will not have much effect on first render, but if we clone or re-mount
-  // component, all watchers will be re-registered.
-  __restartWatchers() {
-    for (const getParams of this.registeredWatcherParams) {
-      const params = getParams()
-      this.runningWatchers.add(watch(...params))
-    }
-  }
-
   __stopWatchers() {
-    for (const stopper of this.runningWatchers)
+    for (const stopper of this.watchers)
       stopper()
-    this.runningWatchers = new Set()
+    this.watchers = new Set()
   }
 
-  __restartScopes() {
-    for (const start of this.__setupCopes)
-      start()
-  }
+  // __queue(fn: GenericCallback) {
+  //   this.methodQueue.add(fn)
+  // }
+
+  // __executeQueue() {
+  //   for (const fn of this.methodQueue)
+  //     fn()
+  // }
 
   /////////////////////////////////////////////////////////////
   // Public API
@@ -220,8 +201,10 @@ export class Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
-    this.__restartScopes()
-    this.__restartWatchers()
+    console.log(this.el)
+    console.log(this.children)
+
+    // this.__executeQueue()
     domRoot.appendChild(this.el)
     this.__runOnInit()
     render(this, this.children)
@@ -290,7 +273,7 @@ export class Fragment extends Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
-    this.__restartWatchers()
+    // this.__executeQueue()
     this.__runOnInit()
     render(domRoot, this.children)
     this.__runOnMount()

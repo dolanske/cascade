@@ -1,4 +1,5 @@
 import { isRef } from '@vue/reactivity'
+import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import type { RefOrvalue } from '../types'
 import { isFunction, isNil } from '../util'
@@ -22,10 +23,10 @@ export function show(this: Component, defaultValue: RefOrvalue<boolean>) {
     }
 
     if (isFunction(defaultValue) || isRef(defaultValue)) {
-      this.__watch(defaultValue, set, {
+      this.watchers.add(watch(defaultValue, set, {
         deep: true,
         immediate: true,
-      })
+      }))
     }
     else {
       set(defaultValue)

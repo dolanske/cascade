@@ -12,12 +12,15 @@ import type { Component } from '../component'
 // }
 
 export function on(this: Component, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
-  this.onMount(() => {
-    this.el.addEventListener(type, listener, options)
+  this.onInit(() => {
+    this.onMount(() => {
+      this.el.addEventListener(type, listener, options)
+    })
+    this.onDestroy(() => {
+      this.el.removeEventListener(type, listener)
+    })
   })
-  this.onDestroy(() => {
-    this.el.removeEventListener(type, listener)
-  })
+
   return this
 }
 

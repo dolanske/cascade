@@ -8,17 +8,16 @@ import type { PropObject } from '../types'
 type SetupArguments = (componentInstance: Component, props: PropObject) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
-  const runScope = () => {
+  this.onInit(() => {
     const scope = effectScope()
     scope.run(() => setupFn(this, this.componentProps))
     this.onDestroy(() => scope.stop())
-  }
-  runScope()
-  this.__setupCopes.add(runScope)
+  })
+
   return this
 }
 
-// Assign a key value pair into the
+// Assign a key value pair into the component
 export function prop(this: Component, key: string, value: unknown) {
   Object.assign(this.componentProps, { [key]: value })
   return this

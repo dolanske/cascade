@@ -22,9 +22,11 @@ el.mount('#app')
 text.value = 'cum'
 
 const cloned = el.clone()
+text.value = 'hhihihi'
 
 el.destroy()
 
 cloned.mount('#app2')
 
-text.value = 'hhihihi'
+// requestAnimationFrame(() => {
+// })

@@ -1,3 +1,4 @@
+import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isArray, isFunction, isObject } from '../util'
 
@@ -10,65 +11,66 @@ export type ClassNames = string | ClassObject | Array<string | ClassObject> | un
 // class("name", boolean | Ref<boolean>)
 
 export function class_impl(this: Component, classNames: ClassNames | (() => ClassNames)) {
-  let prevString = ''
-  const prevObj: Record<number, string | null> = Object.create(null)
+  this.onInit(() => {
+    let prevString = ''
+    const prevObj: Record<number, string | null> = Object.create(null)
 
-  const assignObjectClasses = (parsed: ClassObject) => {
-    for (const key of Object.keys(parsed)) {
-      if (parsed[key])
-        this.el.classList.add(key)
-      else
-        this.el.classList.remove(key)
-    }
-  }
-
-  const processClass = (results: ClassNames) => {
-    if (!results)
-      return
-
-    if (typeof results === 'string') {
-      if (prevString)
-        this.el.classList.remove(prevString)
-
-      prevString = results
-      this.el.classList.add(prevString)
-    }
-    else if (isArray(results)) {
-      const len = results.length
-      for (let i = 0; i < len; i++) {
-        const result = results[i]
-
-        if (!result) {
-          const prevResult = prevObj[i]
-
-          if (prevResult) {
-            this.el.classList.remove(prevResult)
-            prevObj[i] = null
-          }
-        }
-        else if (typeof result === 'string') {
-          this.el.classList.add(result)
-          prevObj[i] = result
-        }
-        else if (isObject(results)) {
-          assignObjectClasses(result)
-        }
+    const assignObjectClasses = (parsed: ClassObject) => {
+      for (const key of Object.keys(parsed)) {
+        if (parsed[key])
+          this.el.classList.add(key)
+        else
+          this.el.classList.remove(key)
       }
     }
-    else if (isObject(results)) {
-      assignObjectClasses(results)
-    }
-  }
 
-  if (isFunction(classNames)) {
-    this.__watch(classNames, val => processClass(val), {
-      immediate: true,
-      deep: true,
-    })
-  }
-  else {
-    processClass(classNames)
-  }
+    const processClass = (results: ClassNames) => {
+      if (!results)
+        return
+
+      if (typeof results === 'string') {
+        if (prevString)
+          this.el.classList.remove(prevString)
+
+        prevString = results
+        this.el.classList.add(prevString)
+      }
+      else if (isArray(results)) {
+        const len = results.length
+        for (let i = 0; i < len; i++) {
+          const result = results[i]
+
+          if (!result) {
+            const prevResult = prevObj[i]
+
+            if (prevResult) {
+              this.el.classList.remove(prevResult)
+              prevObj[i] = null
+            }
+          }
+          else if (typeof result === 'string') {
+            this.el.classList.add(result)
+            prevObj[i] = result
+          }
+          else if (isObject(results)) {
+            assignObjectClasses(result)
+          }
+        }
+      }
+      else if (isObject(results)) {
+        assignObjectClasses(results)
+      }
+    }
+    if (isFunction(classNames)) {
+      this.watchers.add(watch(classNames, val => processClass(val), {
+        immediate: true,
+        deep: true,
+      }))
+    }
+    else {
+      processClass(classNames)
+    }
+  })
 
   return this
 }

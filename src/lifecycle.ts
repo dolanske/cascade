@@ -26,9 +26,6 @@ export function destroy(component: Component) {
   }
 
   stop(component)
-
-  // Remove root
   component.el.remove()
-
   component.__stopWatchers()
 }

@@ -1,4 +1,5 @@
 import { computed } from '@vue/reactivity'
+import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isFunction } from '../util'
 
@@ -6,9 +7,10 @@ export type ConditionalExpr = boolean | (() => boolean)
 
 export function if_impl(this: Component, expr: ConditionalExpr) {
   // Anchors are used to correctly re-insert nodes back to the dom
-  const anchor = new Comment('if')
 
   this.onInit(() => {
+    const anchor = new Comment('if')
+
     const parent = this.parent
 
     if (!parent)
@@ -25,10 +27,10 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
 
     if (isFunction(expr)) {
       const cachedExpr = computed(expr)
-      this.__watch(cachedExpr, process, {
+      this.watchers.add(watch(cachedExpr, process, {
         immediate: true,
         deep: true,
-      })
+      }))
     }
     else {
       process(expr)
