@@ -1,7 +1,7 @@
 var A = Object.defineProperty;
-var P = (t, e, n) => e in t ? A(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
-var c = (t, e, n) => (P(t, typeof e != "symbol" ? e + "" : e, n), n);
-import { isRef as y, effectScope as D, computed as I } from "@vue/reactivity";
+var I = (t, e, n) => e in t ? A(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
+var c = (t, e, n) => (I(t, typeof e != "symbol" ? e + "" : e, n), n);
+import { isRef as y, effectScope as D, computed as P } from "@vue/reactivity";
 import { watch as h } from "@vue-reactivity/watch";
 function g(t) {
   const e = typeof t;
@@ -85,12 +85,13 @@ function q(t) {
   return p.call(this, "innerHTML", t), this;
 }
 function F(t) {
-  this.scopes.add(t);
-  const e = D();
-  return e.run(() => {
-    t(this, this.componentProps);
-  }), this.onDestroy(() => {
-    e.stop();
+  return this.scopes.add(t), this.onInit(() => {
+    const e = D();
+    e.run(() => {
+      t(this, this.componentProps);
+    }), this.onDestroy(() => {
+      e.stop();
+    });
   }), this;
 }
 function V(t, e) {
@@ -384,7 +385,7 @@ function $(t) {
       o ? n.el.insertBefore(this.el, e) : this.el.remove();
     };
     if (n.el.insertBefore(e, this.el), b(t)) {
-      const o = I(t), i = h(o, s, {
+      const o = P(t), i = h(o, s, {
         immediate: !0,
         deep: !0
       });
@@ -394,8 +395,8 @@ function $(t) {
   }), this;
 }
 function R() {
-  const t = new a(this.el);
-  return t.children = this.children, t.el = this.el.cloneNode(!0), t.scopes = this.scopes, t.__rerunSetup(), t;
+  const t = new a(this.el.cloneNode(!0));
+  return t.children = this.children, t.scopes = this.scopes, t;
 }
 class a {
   // __isElse?: boolean
@@ -560,7 +561,7 @@ class a {
     const n = document.querySelector(e);
     if (!n)
       throw new Error("Root element does not exist");
-    n.appendChild(this.el), this.__runOnInit(), f(this, this.children), this.__runOnMount();
+    n.appendChild(this.el), this.__rerunSetup(), this.__runOnInit(), f(this, this.children), this.__runOnMount();
   }
   // Removes the root node and its desendants. It also
   destroy() {

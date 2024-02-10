@@ -15,13 +15,15 @@ export type SetupArguments = (componentInstance: Component, props: PropObject) =
 export function setup(this: Component, setupFn: SetupArguments) {
   this.scopes.add(setupFn)
 
-  const scope = effectScope()
-  scope.run(() => {
-    setupFn(this, this.componentProps)
-  })
+  this.onInit(() => {
+    const scope = effectScope()
+    scope.run(() => {
+      setupFn(this, this.componentProps)
+    })
 
-  this.onDestroy(() => {
-    scope.stop()
+    this.onDestroy(() => {
+      scope.stop()
+    })
   })
 
   return this

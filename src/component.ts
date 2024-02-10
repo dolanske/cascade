@@ -209,6 +209,7 @@ export class Component {
       throw new Error('Root element does not exist')
 
     domRoot.appendChild(this.el)
+    this.__rerunSetup()
     this.__runOnInit()
     render(this, this.children)
     this.__runOnMount()
