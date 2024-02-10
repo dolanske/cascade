@@ -85,13 +85,13 @@ function q(e) {
   return p.call(this, "innerHTML", e), this;
 }
 function F(e) {
-  const t = I();
   return this.onInit(() => {
+    const t = I();
     t.run(() => {
       e(this, this.componentProps);
+    }), this.onDestroy(() => {
+      t.stop();
     });
-  }), this.onDestroy(() => {
-    t.stop();
   }), this;
 }
 function V(e, t) {

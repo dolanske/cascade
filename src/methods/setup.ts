@@ -13,9 +13,8 @@ import type { PropObject } from '../types'
 type SetupArguments = (componentInstance: Component, props: PropObject) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
-  const scope = effectScope()
-
   this.onInit(() => {
+    const scope = effectScope()
     scope.run(() => {
       setupFn(this, this.componentProps)
       // setupFn(this, {
@@ -23,10 +22,10 @@ export function setup(this: Component, setupFn: SetupArguments) {
       //   element: this.el,
       // })
     })
-  })
 
-  this.onDestroy(() => {
-    scope.stop()
+    this.onDestroy(() => {
+      scope.stop()
+    })
   })
 
   return this
