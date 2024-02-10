@@ -1,10 +1,12 @@
-import type { UnwrapRef } from '@vue/reactivity'
+import { effectScope } from '@vue/reactivity'
+import type { EffectScope, UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
 
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
+import type { SetupArguments } from './methods/setup'
 import { prop, props, setup } from './methods/setup'
 import { nest } from './methods/nest'
 import { model } from './methods/model'
@@ -110,6 +112,9 @@ export class Component {
   onDestroyCbs: GenericCallback[] = []
   onInitCbs: GenericCallback[] = []
 
+  scopes = new Set<SetupArguments>()
+  runningScopes = new Set<EffectScope>()
+
   // __isElse?: boolean
   // __isElseIf?: ConditionalExpr
 
@@ -138,6 +143,24 @@ export class Component {
   __runOnInit() {
     for (const cb of this.onInitCbs)
       cb()
+  }
+
+  __runSetup() {
+    for (const runner of this.scopes) {
+      const scope = effectScope()
+      scope.run(() => {
+        runner(this, this.componentProps)
+      })
+
+      this.runningScopes.add(scope)
+    }
+  }
+
+  __closeScopes() {
+    for (const scope of this.runningScopes)
+      scope.stop()
+
+    this.runningScopes = new Set()
   }
 
   /////////////////////////////////////////////////////////////
@@ -185,6 +208,7 @@ export class Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
+    this.__runSetup()
     domRoot.appendChild(this.el)
     this.__runOnInit()
     render(this, this.children)
@@ -252,6 +276,7 @@ export class Fragment extends Component {
     const domRoot = document.querySelector(selector)
     if (!domRoot)
       throw new Error('Root element does not exist')
+    this.__runSetup()
 
     this.__runOnInit()
     render(domRoot, this.children)

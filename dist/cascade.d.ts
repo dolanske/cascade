@@ -1,3 +1,4 @@
+import { EffectScope } from '@vue/reactivity';
 import { Primitive } from '@vue/reactivity';
 import type { Properties } from 'csstype';
 import type { PropertiesHyphen } from 'csstype';
@@ -43,7 +44,7 @@ export declare class Component {
      * the component is removed from the DOM, all of the scope properties get
      * removed. This is the best way to declare reusable components.
      */
-    setup: (setupFn: (componentInstance: Component, props: PropObject) => void) => Component;
+    setup: (setupFn: SetupArguments) => Component;
     /**
      * Pass a single prop value into the component. You can also pass in refs, but
      * make sure to use the `.value` in the components, as these refs are directly
@@ -100,11 +101,15 @@ export declare class Component {
     onMountCbs: GenericCallback[];
     onDestroyCbs: GenericCallback[];
     onInitCbs: GenericCallback[];
+    scopes: Set<SetupArguments>;
+    runningScopes: Set<EffectScope>;
     constructor(el: HTMLElement, props?: PropObject);
     __children(value: Children): void;
     __runOnMount(): void;
     __runOnDestroy(): void;
     __runOnInit(): void;
+    __runSetup(): void;
+    __closeScopes(): void;
     /**
      * Executes provided callback function when the component is initialized.
      * Before being rendered in the dom.
@@ -242,6 +247,8 @@ declare class Option_2 extends VoidComponent {
 declare type PropObject = Record<string, any>;
 
 declare type RefOrvalue<T> = T | (() => T) | Ref<T>;
+
+declare type SetupArguments = (componentInstance: Component, props: PropObject) => void;
 
 declare function textarea(): InputElement<HTMLTextAreaElement>;
 

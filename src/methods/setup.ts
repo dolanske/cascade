@@ -1,4 +1,3 @@
-import { effectScope } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { PropObject } from '../types'
 
@@ -10,24 +9,10 @@ import type { PropObject } from '../types'
 // TODO
 // Return child nodes?
 
-type SetupArguments = (componentInstance: Component, props: PropObject) => void
+export type SetupArguments = (componentInstance: Component, props: PropObject) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
-  this.onInit(() => {
-    const scope = effectScope()
-    scope.run(() => {
-      setupFn(this, this.componentProps)
-      // setupFn(this, {
-      //   props: this.componentProps,
-      //   element: this.el,
-      // })
-    })
-
-    this.onDestroy(() => {
-      scope.stop()
-    })
-  })
-
+  this.scopes.add(setupFn)
   return this
 }
 
