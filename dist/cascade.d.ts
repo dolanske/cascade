@@ -53,13 +53,13 @@ export declare class Component {
      * @param propKey {string}
      * @param propValue {any}
      */
-    prop: (key: string, value: unknown) => Component;
+    prop: (key: string, value: any) => Component;
     /**
      * Pass an object of props into the component. You can also pass in refs, but
      * make sure to use the `.value` in the components, as these refs are directly
      * passed through.
      */
-    props: (props: PropObject) => Component;
+    props: (props: Record<string, any>) => Component;
     /**
      * Simple helper which allows you to insert component's children anywhere in
      * the chain. This was made mainly because it feels less natural to add
@@ -96,14 +96,14 @@ export declare class Component {
     clone: () => Component;
     el: HTMLElement;
     children: Children;
-    componentProps: PropObject;
+    componentProps: object;
     parent: Component | null;
     onMountCbs: GenericCallback[];
     onDestroyCbs: GenericCallback[];
     onInitCbs: GenericCallback[];
     scopes: Set<SetupArguments>;
     runningScopes: Set<EffectScope>;
-    constructor(el: HTMLElement, props?: PropObject);
+    constructor(el: HTMLElement, props?: object);
     __children(value: Children): void;
     __runOnMount(): void;
     __runOnDestroy(): void;
@@ -244,11 +244,9 @@ declare class Option_2 extends VoidComponent {
     selected(): this;
 }
 
-declare type PropObject = Record<string, any>;
-
 declare type RefOrvalue<T> = T | (() => T) | Ref<T>;
 
-declare type SetupArguments = (componentInstance: Component, props: PropObject) => void;
+declare type SetupArguments = (componentInstance: Component, props: any) => void;
 
 declare function textarea(): InputElement<HTMLTextAreaElement>;
 

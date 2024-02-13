@@ -1,16 +1,7 @@
 import { effectScope } from '@vue/reactivity'
 import type { Component } from '../component'
-import type { PropObject } from '../types'
 
-// interface SetupArgs {
-//   element: HTMLElement
-//   props: PropObject
-// }
-
-// TODO
-// Return child nodes?
-
-export type SetupArguments = (componentInstance: Component, props: PropObject) => void
+export type SetupArguments = (componentInstance: Component, props: any) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
   this.scopes.add(setupFn)
@@ -30,12 +21,12 @@ export function setup(this: Component, setupFn: SetupArguments) {
 }
 
 // Assign a key value pair into the
-export function prop(this: Component, key: string, value: unknown) {
+export function prop(this: Component, key: string, value: any) {
   Object.assign(this.componentProps, { [key]: value })
   return this
 }
 
-export function props(this: Component, props: PropObject) {
+export function props(this: Component, props: Record<string, any>) {
   for (const key of Object.keys(props))
     this.prop(key, props[key])
   return this

@@ -1,6 +1,6 @@
 import { effectScope } from '@vue/reactivity'
 import type { EffectScope, UnwrapRef } from '@vue/reactivity'
-import type { ComponentChildren, GenericCallback, HtmlVoidtags, PropObject } from './types'
+import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
 
@@ -104,7 +104,7 @@ export class Component {
 
   el: HTMLElement
   children: ComponentChildren = []
-  componentProps: PropObject
+  componentProps: object
   parent: Component | null = null
 
   // Lifecycle
@@ -118,7 +118,7 @@ export class Component {
   // __isElse?: boolean
   // __isElseIf?: ConditionalExpr
 
-  constructor(el: HTMLElement, props: PropObject = {}) {
+  constructor(el: HTMLElement, props: object = {}) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
     this.componentProps = props
