@@ -21,6 +21,7 @@ import { for_impl } from './methods/for'
 import { style } from './methods/style'
 import { if_impl } from './methods/if'
 import { clone } from './methods/clone'
+import { createId } from './id'
 
 export class Component {
   /**
@@ -115,13 +116,13 @@ export class Component {
   scopes = new Set<SetupArguments>()
   runningScopes = new Set<EffectScope>()
 
-  // __isElse?: boolean
-  // __isElseIf?: ConditionalExpr
+  __identifier: string
 
   constructor(el: HTMLElement, props: object = {}) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
     this.componentProps = props
+    this.__identifier = createId(true)
   }
 
   /////////////////////////////////////////////////////////////
