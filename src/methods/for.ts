@@ -57,7 +57,7 @@ export function for_impl(
     }
     // Assign parent element when element is created
     if (isRef(source)) {
-      const release = watch(source, (updatedSrc: Source) => {
+      const release = watch(source, (updatedSrc: UnwrapRef<Source>) => {
         processFor(updatedSrc)
       }, { immediate: true, deep: true })
       this.onDestroy(release)
