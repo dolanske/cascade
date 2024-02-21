@@ -8,7 +8,7 @@ export type HtmlVoidtags = 'area' | 'base' | 'br' | 'col' | 'embed' | 'hr' | 'im
 export type CustomTags = 'fragment'
 export type AvailableTags = HtmlTags | HtmlVoidtags | CustomTags
 
-type ComponentChildrenItems = string | number | Component | Element | Fragment | (() => string | number)
+export type ComponentChildrenItems = string | number | Component | Element | Fragment | (() => string | number)
 export type ComponentChildren = ComponentChildrenItems | ComponentChildrenItems[]
 export type ComponentInstance = (children?: ComponentChildren) => Component
 export type ValueOf<T> = T[keyof T]

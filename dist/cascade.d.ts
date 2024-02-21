@@ -3,7 +3,8 @@ import { Primitive } from '@vue/reactivity';
 import type { Properties } from 'csstype';
 import type { PropertiesHyphen } from 'csstype';
 import { Ref } from '@vue/reactivity';
-import { UnwrapRef } from '@vue/reactivity';
+
+declare type CallbackType<T> = T extends any[] ? (value: T[number], index: number) => ComponentChildrenItems : T extends object ? (value: keyof T, key: string, index: number) => ComponentChildrenItems : (index: number) => ComponentChildrenItems;
 
 export declare type Children = ComponentChildrenItems | ComponentChildrenItems[];
 
@@ -103,6 +104,7 @@ export declare class Component {
     onInitCbs: GenericCallback[];
     scopes: Set<SetupArguments>;
     runningScopes: Set<EffectScope>;
+    __identifier: string;
     constructor(el: HTMLElement, props?: object);
     __children(value: Children): void;
     __runOnMount(): void;
@@ -154,7 +156,7 @@ export declare class Component {
      *
      *
      */
-    for<S extends readonly any[] | number | object>(source: S, callback: (element: Component, item: ItemCallbackValue<UnwrapRef<S>>) => void): Component;
+    for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<S>): Component;
 }
 
 declare type ComponentChildrenItems = string | number | Component | Element | Fragment | (() => string | number);
@@ -218,15 +220,6 @@ declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> ext
 
 declare type InputType = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
 
-declare type ItemCallbackValue<S> = S extends any[] ? {
-    value: S[number];
-    index: number;
-} : S extends object ? {
-    value: keyof S;
-    key: string;
-    index: number;
-} : number;
-
 declare interface ModelOptions {
     lazy?: boolean;
     transforms?: ModelTransform[];
@@ -245,6 +238,10 @@ declare class Option_2 extends VoidComponent {
 }
 
 declare type RefOrvalue<T> = T | (() => T) | Ref<T>;
+
+export declare function reusable(el: keyof typeof El, setupFn: SetupArguments): ReusableComponent;
+
+declare type ReusableComponent = (children?: ComponentChildrenItems) => Component;
 
 declare type SetupArguments = (componentInstance: Component, props: any) => void;
 
