@@ -1,5 +1,5 @@
 import { effectScope } from '@vue/reactivity'
-import type { EffectScope, UnwrapRef } from '@vue/reactivity'
+import type { EffectScope } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
@@ -16,7 +16,7 @@ import { disabled } from './methods/disabled'
 import { id } from './methods/id'
 import { destroy } from './lifecycle'
 import { show } from './methods/show'
-import type { ItemCallbackValue } from './methods/for'
+import type { CallbackType } from './methods/for'
 import { for_impl } from './methods/for'
 import { style } from './methods/style'
 import { if_impl } from './methods/if'
@@ -236,14 +236,7 @@ export class Component {
    *
    *
    */
-  for<S extends readonly any[] | number | object>(source: S, callback: (
-    element: Component,
-    item: ItemCallbackValue<UnwrapRef<S>>
-  ) => void) {
-    // @ts-expect-error The issue here is that tyhe type mismatch happens from a
-    // generic type being passed in. I have ran into an issue where if a
-    // function has a `this` as the first argument, the generic type infer does
-    // not work. I am not sure why.
+  for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<S>) {
     return for_impl.call(this, source, callback)
   }
 }
