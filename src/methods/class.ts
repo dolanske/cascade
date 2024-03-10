@@ -1,16 +1,15 @@
 import { watch } from '@vue-reactivity/watch'
+import { type Ref, isRef } from '@vue/reactivity'
 import type { Component } from '../component'
-import { isArray, isFunction, isObject } from '../util'
+import { WATCH_CONF, isArray, isNil, isObject } from '../util'
 
-// This will serialize vue-like class object/arrays into a string
-// So that the little cry-baby react can consume it uwu
-export type ClassObject = Record<string, boolean>
-export type ClassNames = string | ClassObject | Array<string | ClassObject> | undefined
+export type ClassObject = Record<string, boolean | Ref<boolean>>
+export type ClassNames = string | ClassObject
 
-// TODO
-// class("name", boolean | Ref<boolean>)
+export function class_impl(this: Component, classNames?: ClassNames, value?: boolean | Ref<boolean>) {
+  if (isObject(classNames) && !isNil(value))
+    throw new TypeError('Cannot use object notation with second argument.')
 
-export function class_impl(this: Component, classNames: ClassNames | (() => ClassNames)) {
   let prevString = ''
   const prevObj: Record<number, string | null> = Object.create(null)
 
@@ -23,7 +22,7 @@ export function class_impl(this: Component, classNames: ClassNames | (() => Clas
     }
   }
 
-  const processClass = (results: ClassNames) => {
+  const processClassAssignment = (results: ClassNames) => {
     if (!results)
       return
 
@@ -61,17 +60,28 @@ export function class_impl(this: Component, classNames: ClassNames | (() => Clas
     }
   }
 
-  if (isFunction(classNames)) {
-    const release = watch(classNames, val => processClass(val), {
-      immediate: true,
-      deep: true,
-    })
+  const checkPrimitive = (classNames: string, value?: boolean | Ref<boolean>) => {
+    if (isRef(value)) {
+      this.onDestroy(watch(value, (result) => {
+        processClassAssignment({ [classNames]: result })
+      }, WATCH_CONF))
+    }
+    else if (classNames && !!value) {
+      processClassAssignment(classNames)
+    }
+  }
 
-    this.onDestroy(release)
+  const checkObject = (classNames: ClassObject) => {
+    for (const [key, value] of Object.entries(classNames))
+      checkPrimitive(key, value)
   }
-  else {
-    processClass(classNames)
-  }
+
+  // Extract any Refs within object of classes
+  if (isObject(classNames))
+    checkObject(classNames)
+
+  else if (typeof classNames === 'string')
+    checkPrimitive(classNames, value)
 
   return this
 }

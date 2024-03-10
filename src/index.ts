@@ -1,3 +1,4 @@
+import { ref } from '@vue/reactivity'
 import { El } from './factory'
 import { getInstance } from './util'
 import { Component } from './component'
@@ -5,7 +6,7 @@ import type { ComponentChildren as Children } from './types'
 import { reusable } from './reusable'
 
 export {
-  El,
+  El as $,
   reusable,
   getInstance,
   Component,
@@ -30,3 +31,16 @@ export {
 // })
 
 // App.mount('#app')
+
+// const Test = reusable('div', (ctx) => {
+//   const change = ref(false)
+
+//   ctx.text('henlo')
+//   ctx.class({ pink: change }, false)
+//   ctx.nest([
+//     'hello',
+//     El.button('change').click(() => change.value = !change.value),
+//   ])
+// })
+
+// Test().mount('#app')

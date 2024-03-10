@@ -1,9 +1,10 @@
 import { watch } from '@vue-reactivity/watch'
-import { computed } from '@vue/reactivity'
+import type { Ref } from '@vue/reactivity'
+import { isRef } from '@vue/reactivity'
 import type { Component } from '../component'
-import { isFunction } from '../util'
+import { WATCH_CONF, isNil } from '../util'
 
-export type ConditionalExpr = boolean | (() => boolean)
+export type ConditionalExpr = boolean | Ref<boolean | undefined> | undefined
 
 export function if_impl(this: Component, expr: ConditionalExpr) {
   // Anchors are used to correctly re-insert nodes back to the dom
@@ -15,8 +16,8 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
     if (!parent)
       return console.warn('Parent element not found. `if()` will not work.')
 
-    const process = (res: boolean) => {
-      if (!res)
+    const process = (res: boolean | undefined) => {
+      if (res === false || isNil(res))
         this.el.remove()
       else
         parent.el.insertBefore(this.el, anchor)
@@ -24,12 +25,8 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
 
     parent.el.insertBefore(anchor, this.el)
 
-    if (isFunction(expr)) {
-      const cachedExpr = computed(expr)
-      const release = watch(cachedExpr, process, {
-        immediate: true,
-        deep: true,
-      })
+    if (isRef(expr)) {
+      const release = watch(expr, process, WATCH_CONF)
 
       this.onDestroy(release)
     }
@@ -38,33 +35,5 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
     }
   })
 
-  // this.parent.onMount(() => {
-  //   const parent = this.el.parentElement!
-  //   const elseElements = []
-
-  //   requestAnimationFrame(() => {
-  //     let sibling = this.el.nextElementSibling
-  //     while (sibling) {
-  //       const inst = getInstance(sibling)
-
-  //       if (inst && (inst.__isElse || inst.__isElseIf))
-  //         elseElements.push(inst)
-
-  //       sibling = sibling.nextElementSibling
-  //     }
-
-  //     console.log(elseElements)
-  //   })
-
   return this
 }
-
-// export function else_impl(this: Component) {
-//   this.__isElse = true
-//   return this
-// }
-
-// export function elseif_impl(this: Component, expr: ConditionalExpr) {
-//   this.__isElseIf = expr
-//   return this
-// }

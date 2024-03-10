@@ -2,7 +2,7 @@ import { watch } from '@vue-reactivity/watch'
 import { isRef } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { RefOrvalue } from '../types'
-import { isFunction, isNil } from '../util'
+import { isNil } from '../util'
 
 export function show(this: Component, defaultValue: RefOrvalue<boolean>) {
   this.onMount(() => {
@@ -22,7 +22,7 @@ export function show(this: Component, defaultValue: RefOrvalue<boolean>) {
       else { this.el.style.setProperty('display', 'none') }
     }
 
-    if (isFunction(defaultValue) || isRef(defaultValue)) {
+    if (isRef(defaultValue)) {
       const release = watch(defaultValue, set, {
         deep: true,
         immediate: true,

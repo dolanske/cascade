@@ -10,10 +10,10 @@ export type Source = any[] | number | object
 
 export type CallbackType<T> =
   T extends any[]
-  ? (value: T[number], index: number) => ComponentChildrenItems
-  : T extends object
-  ? (value: keyof T, key: string, index: number) => ComponentChildrenItems
-  : (index: number) => ComponentChildrenItems
+    ? (value: T[number], index: number) => ComponentChildrenItems
+    : T extends object
+      ? (value: keyof T, key: string, index: number) => ComponentChildrenItems
+      : (index: number) => ComponentChildrenItems
 
 export function for_impl(
   this: Component,

@@ -1,7 +1,8 @@
 import { watch } from '@vue-reactivity/watch'
+import { isRef } from '@vue/reactivity'
 import { Component, Fragment } from './component'
 import type { ComponentChildren } from './types'
-import { isFunction, isNil } from './util'
+import { isNil } from './util'
 
 // Returns wether node was replaced or not
 function replaceChildAt(parent: Element, newChild: Element | Text, index: number): boolean {
@@ -62,7 +63,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
       else if (child instanceof Fragment) {
         render(root, child.children)
       }
-      else if (isFunction(child)) {
+      else if (isRef(child)) {
         watch(child, value => render(root, value, i), {
           immediate: true,
           deep: true,
@@ -79,7 +80,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
     }
   }
 
-  else if (isFunction(children)) {
+  else if (isRef(children)) {
     watch(children, value => render(root, value), {
       immediate: true,
       deep: true,

@@ -1,10 +1,10 @@
 import { watch } from '@vue-reactivity/watch'
 import { isRef } from '@vue/reactivity'
 import type { Primitive, Ref } from '@vue/reactivity'
-import { isFunction } from './util'
 import type { Component } from './component'
+import { WATCH_CONF } from './util'
 
-type DefaultWatchedValue = Primitive | (() => Primitive) | Ref<Primitive>
+type DefaultWatchedValue = Primitive | Ref<Primitive>
 
 /**
  * Many methods set a single property on the root element. This function should
@@ -15,13 +15,10 @@ export function registerWatchedProp<T extends DefaultWatchedValue>(this: Compone
     Reflect.set(this.el, key, value)
   }
 
-  if (isFunction(value) || isRef(value)) {
+  if (isRef(value)) {
     const release = watch(value, (computedVal: Primitive) => {
       setValue(stringifyValue ? String(computedVal) : computedVal)
-    }, {
-      immediate: true,
-      deep: true,
-    })
+    }, WATCH_CONF)
 
     this.onDestroy(release)
   }

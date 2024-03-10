@@ -10,7 +10,6 @@ export function clone(this: Component): Component {
   // fragment.innerHTML = clonedDom
   // const cloned = new Component(fragment.firstElementChild! as HTMLElement)
   const cloned = new Component(this.el)
-
   cloned.children = this.children
   cloned.scopes = new Set(this.scopes)
 

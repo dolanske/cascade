@@ -21,17 +21,17 @@ export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> exte
       this.el.type = type
   }
 
-  value(value: RefOrvalue<Primitive>) {
+  value(value: RefOrvalue<Primitive | undefined>) {
     registerWatchedProp.call(this, 'value', value)
     return this
   }
 
-  placeholder(value: RefOrvalue<string>) {
+  placeholder(value: RefOrvalue<string | undefined>) {
     registerWatchedProp.call(this, 'placeholder', value)
     return this
   }
 
-  name(value: RefOrvalue<Primitive>) {
+  name(value: RefOrvalue<Primitive | undefined>) {
     registerWatchedProp.call(this, 'name', value)
     return this
   }

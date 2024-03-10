@@ -1,7 +1,7 @@
 {
   "name": "@dolanske/cascade",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.1.9",
   "private": true,
   "description": "Write reactive UI components using render functions.",
   "author": "dolanske",
@@ -27,7 +27,7 @@
   },
   "main": "./dist/cascade.js",
   "module": "./dist/cascade.js",
-  "types": "./dist/cascade.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
