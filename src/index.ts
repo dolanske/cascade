@@ -1,4 +1,3 @@
-import { ref } from '@vue/reactivity'
 import { El } from './factory'
 import { getInstance } from './util'
 import { Component } from './component'
