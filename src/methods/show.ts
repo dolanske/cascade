@@ -4,12 +4,12 @@ import type { Component } from '../component'
 import type { RefOrvalue } from '../types'
 import { isNil } from '../util'
 
-export function show(this: Component, defaultValue: RefOrvalue<boolean>) {
+export function show(this: Component, defaultValue: RefOrvalue<any>) {
   this.onMount(() => {
     // Store the current inline style property, in case the element is using it
     const originalDisplay = this.el.style.getPropertyValue('display')
 
-    const set = (result: boolean) => {
+    const set = (result: any) => {
       if (result) {
         // If the element was not using any inline style dispaly property,
         // simply remove the display from style completel

@@ -2,9 +2,9 @@ import { watch } from '@vue-reactivity/watch'
 import type { Ref } from '@vue/reactivity'
 import { isRef } from '@vue/reactivity'
 import type { Component } from '../component'
-import { WATCH_CONF, isNil } from '../util'
+import { WATCH_CONF } from '../util'
 
-export type ConditionalExpr = boolean | Ref<boolean | undefined> | undefined
+export type ConditionalExpr = any | Ref<any>
 
 export function if_impl(this: Component, expr: ConditionalExpr) {
   // Anchors are used to correctly re-insert nodes back to the dom
@@ -16,11 +16,11 @@ export function if_impl(this: Component, expr: ConditionalExpr) {
     if (!parent)
       return console.warn('Parent element not found. `if()` will not work.')
 
-    const process = (res: boolean | undefined) => {
-      if (res === false || isNil(res))
-        this.el.remove()
-      else
+    const process = (res: any) => {
+      if (res)
         parent.el.insertBefore(this.el, anchor)
+      else
+        this.el.remove()
     }
 
     parent.el.insertBefore(anchor, this.el)

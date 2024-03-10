@@ -95,12 +95,12 @@ export declare class Component {
      *
      * This function also preserves the previously added inline styles.
      */
-    show: (defaultValue: RefOrvalue<boolean>) => Component;
+    show: (defaultValue: any) => Component;
     /**
      * Add reactive styling object to the current node.
      */
     style: (key: CSSStyle | keyof CSSStyle | Ref<CSSStyle>, value?: (string | number) | Ref<string | number> | undefined) => Component;
-    if: (expr: ConditionalExpr) => Component;
+    if: (expr: any) => Component;
     clone: () => Component;
     el: HTMLElement;
     children: Children;
@@ -169,8 +169,6 @@ export declare class Component {
 declare type ComponentChildrenItems = string | number | Component | Element | Fragment | Ref<string | number>;
 
 declare type ComponentInstance = (children?: Children) => Component;
-
-declare type ConditionalExpr = boolean | Ref<boolean | undefined> | undefined;
 
 declare interface CSSStyle extends Properties, PropertiesHyphen {
 }
