@@ -22,12 +22,12 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/cascade.js"
+      "import": "./dist/cascade"
     }
   },
-  "main": "./dist/cascade.js",
-  "module": "./dist/cascade.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/cascade",
+  "module": "./dist/cascade",
+  "types": "./dist/index",
   "files": [
     "dist"
   ],
