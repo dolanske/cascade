@@ -8,7 +8,7 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'cascade',
       formats: ['es'],
-      fileName: 'cascade',
+      fileName: 'index',
     },
     rollupOptions: {
       external: ['@vue/reactivity', '@vue-reactivity/watch'],
