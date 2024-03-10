@@ -22,11 +22,11 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/cascade"
+      "import": "./dist/index"
     }
   },
-  "main": "./dist/cascade",
-  "module": "./dist/cascade",
+  "main": "./dist/index",
+  "module": "./dist/index",
   "types": "./dist/index",
   "files": [
     "dist"
