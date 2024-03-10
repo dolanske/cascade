@@ -1,7 +1,7 @@
 var L = Object.defineProperty;
 var M = (e, t, n) => t in e ? L(e, t, { enumerable: !0, configurable: !0, writable: !0, value: n }) : e[t] = n;
 var c = (e, t, n) => (M(e, typeof t != "symbol" ? t + "" : t, n), n);
-import { isRef as d, effectScope as x } from "@vue/reactivity";
+import { isRef as f, effectScope as x } from "@vue/reactivity";
 import { watch as h } from "@vue-reactivity/watch";
 function y(e) {
   const t = typeof e;
@@ -24,7 +24,7 @@ function g(e, t, n) {
   const s = (i) => {
     Reflect.set(this.el, e, i);
   };
-  if (d(t)) {
+  if (f(t)) {
     const i = h(t, (o) => {
       s(n ? String(o) : o);
     }, C);
@@ -59,24 +59,24 @@ function B(e, t) {
         n && this.el.classList.remove(n), n = l, this.el.classList.add(n);
       else if (b(l)) {
         const a = l.length;
-        for (let f = 0; f < a; f++) {
-          const _ = l[f];
+        for (let d = 0; d < a; d++) {
+          const _ = l[d];
           if (_)
-            typeof _ == "string" ? (this.el.classList.add(_), s[f] = _) : y(l) && i(_);
+            typeof _ == "string" ? (this.el.classList.add(_), s[d] = _) : y(l) && i(_);
           else {
-            const E = s[f];
-            E && (this.el.classList.remove(E), s[f] = null);
+            const E = s[d];
+            E && (this.el.classList.remove(E), s[d] = null);
           }
         }
       } else
         y(l) && i(l);
   }, r = (l, a) => {
-    d(a) ? this.onDestroy(h(a, (f) => {
-      o({ [l]: f });
-    }, C)) : l && a && o(l);
+    f(a) ? this.onDestroy(h(a, (d) => {
+      o({ [l]: d });
+    }, C)) : l && a !== !1 && o(l);
   }, u = (l) => {
-    for (const [a, f] of Object.entries(l))
-      r(a, f);
+    for (const [a, d] of Object.entries(l))
+      r(a, d);
   };
   return y(e) ? u(e) : typeof e == "string" && r(e, t), this;
 }
@@ -212,13 +212,13 @@ function p(e, t, n) {
       const i = t.length;
       for (let o = 0; o < i; o++) {
         const r = t[o];
-        r instanceof Element || typeof r == "string" || typeof r == "number" ? p(s, r, o) : r instanceof O ? p(s, r.children) : d(r) ? h(r, (u) => p(s, u, o), {
+        r instanceof Element || typeof r == "string" || typeof r == "number" ? p(s, r, o) : r instanceof O ? p(s, r.children) : f(r) ? h(r, (u) => p(s, u, o), {
           immediate: !0,
           deep: !0
         }) : (e instanceof m && (r.parent = e), s.appendChild(r.el), r.__runOnInit(), p(r, r.children), r.__runOnMount());
       }
     } else
-      d(t) && h(t, (i) => p(s, i), {
+      f(t) && h(t, (i) => p(s, i), {
         immediate: !0,
         deep: !0
       });
@@ -234,7 +234,7 @@ function w(e, t, n) {
 }
 function G(e) {
   return this.onInit(() => {
-    if (d(e)) {
+    if (f(e)) {
       const t = h(e, (n) => w(this.el, n), {
         immediate: !0,
         deep: !0
@@ -246,7 +246,7 @@ function G(e) {
 }
 function J(e, t) {
   return this.onInit(() => {
-    if (d(t)) {
+    if (f(t)) {
       const n = h(t, (s) => w(this.el, e, s), {
         immediate: !0,
         deep: !0
@@ -282,7 +282,7 @@ function $(e) {
     const t = this.el.style.getPropertyValue("display"), n = (s) => {
       s ? v(t) ? this.el.style.removeProperty("display") : this.el.style.setProperty("display", t) : this.el.style.setProperty("display", "none");
     };
-    if (d(e)) {
+    if (f(e)) {
       const s = h(e, n, {
         deep: !0,
         immediate: !0
@@ -315,7 +315,7 @@ function Y(e, t) {
         }
       this.el.replaceChildren(), p(this.el, i);
     };
-    if (d(e)) {
+    if (f(e)) {
       const s = h(e, (i) => {
         n(i);
       }, { immediate: !0, deep: !0 });
@@ -335,14 +335,14 @@ function R(e, t) {
       this.el.style.setProperty(o, Reflect.get(s, o));
   };
   if (typeof e == "string")
-    if (d(t)) {
+    if (f(t)) {
       const s = h(t, (i) => {
         n({ [e]: i });
       });
       this.onDestroy(s);
     } else
       t && n({ [e]: t });
-  else if (d(e))
+  else if (f(e))
     if (t)
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
     else {
@@ -356,7 +356,7 @@ function R(e, t) {
     const s = Object.keys(e);
     for (const i of s) {
       const o = Reflect.get(e, i);
-      if (d(o)) {
+      if (f(o)) {
         const r = h(o, (u) => {
           v(u) || this.el.style.setProperty(i, String(u));
         });
@@ -376,7 +376,7 @@ function tt(e) {
     const s = (i) => {
       i ? n.el.insertBefore(this.el, t) : this.el.remove();
     };
-    if (n.el.insertBefore(t, this.el), d(e)) {
+    if (n.el.insertBefore(t, this.el), f(e)) {
       const i = h(e, s, C);
       this.onDestroy(i);
     } else
@@ -651,10 +651,10 @@ class ut extends S {
 function at(e, t) {
   return new ut(e, t);
 }
-const dt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "shadow", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "var", "video"], P = ["area", "base", "br", "col", "embed", "hr", "img", "link", "meta", "source", "track", "wbr"], ft = dt.reduce((e, t) => (e[t] = (n) => {
+const ft = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "shadow", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "var", "video"], P = ["area", "base", "br", "col", "embed", "hr", "img", "link", "meta", "source", "track", "wbr"], dt = ft.reduce((e, t) => (e[t] = (n) => {
   const s = document.createElement(t), i = new m(s);
   return n && i.__children(n), i;
-}, e), {}), pt = P.reduce((e, t) => (e[t] = () => new S(t), e), {}), A = Object.assign(ft, pt, {
+}, e), {}), pt = P.reduce((e, t) => (e[t] = () => new S(t), e), {}), A = Object.assign(dt, pt, {
   fragment: ct,
   input: lt,
   textarea: ht,

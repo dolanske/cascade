@@ -66,7 +66,7 @@ export function class_impl(this: Component, classNames?: ClassNames, value?: boo
         processClassAssignment({ [classNames]: result })
       }, WATCH_CONF))
     }
-    else if (classNames && !!value) {
+    else if (classNames && value !== false) {
       processClassAssignment(classNames)
     }
   }
