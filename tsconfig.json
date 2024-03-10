@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "target": "ES2022",
     "lib": [
       "ES2022",
@@ -17,11 +18,13 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "declarationMap": true,
     "noEmit": true,
     "isolatedModules": true,
     "skipLibCheck": true
   },
   "include": [
-    "src"
+    "src",
+    "./dist/index.d.ts"
   ]
 }

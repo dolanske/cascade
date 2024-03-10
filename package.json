@@ -22,12 +22,13 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index"
+      "import": "./dist/index.js"
     }
   },
-  "main": "./dist/index",
-  "module": "./dist/index",
-  "types": "./dist/index",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
