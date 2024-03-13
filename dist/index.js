@@ -819,6 +819,7 @@ export {
   On as col,
   Nt as colgroup,
   Wt as content,
+  lt as createId,
   zt as data,
   Ut as datalist,
   Xt as dd,

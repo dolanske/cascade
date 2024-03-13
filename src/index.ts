@@ -5,6 +5,7 @@ import { reusable } from './reusable'
 import { htmlNormalElFactory, htmlVoidElFactory } from './factory'
 import { input, textarea } from './components/input'
 import { option } from './components/select'
+import { createId } from './id'
 
 const {
   a,
@@ -132,6 +133,7 @@ const {
 export {
   reusable,
   getInstance,
+  createId,
   Component,
   Children,
   fragment,

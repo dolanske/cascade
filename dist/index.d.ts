@@ -215,6 +215,8 @@ declare type ComponentInstance = (children?: Children) => Component;
 
 export declare const content: ComponentInstance;
 
+export declare function createId(limited?: boolean): string;
+
 declare interface CSSStyle extends Properties, PropertiesHyphen {
 }
 
