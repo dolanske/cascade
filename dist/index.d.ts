@@ -4,20 +4,63 @@ import type { Properties } from 'csstype';
 import type { PropertiesHyphen } from 'csstype';
 import { Ref } from '@vue/reactivity';
 
-export declare const $: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidtags, () => VoidComponent> & {
-    fragment: typeof fragment;
-    input: typeof input;
-    textarea: typeof textarea;
-    option: typeof option;
-};
+export declare const a: ComponentInstance;
+
+export declare const abbr: ComponentInstance;
+
+export declare const address: ComponentInstance;
+
+export declare const applet: ComponentInstance;
+
+export declare const area: () => VoidComponent;
+
+export declare const article: ComponentInstance;
+
+export declare const aside: ComponentInstance;
+
+export declare const audio: ComponentInstance;
+
+export declare const b: ComponentInstance;
+
+export declare const base: () => VoidComponent;
+
+export declare const basefont: ComponentInstance;
+
+export declare const bdi: ComponentInstance;
+
+export declare const bdo: ComponentInstance;
+
+export declare const bgsound: ComponentInstance;
+
+export declare const blink: ComponentInstance;
+
+export declare const blockquote: ComponentInstance;
+
+export declare const body: ComponentInstance;
+
+export declare const br: () => VoidComponent;
+
+export declare const button: ComponentInstance;
 
 declare type CallbackType<T> = T extends any[] ? (value: T[number], index: number) => ComponentChildrenItems : T extends object ? (value: keyof T, key: string, index: number) => ComponentChildrenItems : (index: number) => ComponentChildrenItems;
 
+export declare const canvas: ComponentInstance;
+
+export declare const caption: ComponentInstance;
+
 export declare type Children = ComponentChildrenItems | ComponentChildrenItems[];
+
+export declare const cite: ComponentInstance;
 
 declare type ClassNames = string | ClassObject;
 
 declare type ClassObject = Record<string, boolean | Ref<boolean>>;
+
+export declare const code: ComponentInstance;
+
+export declare const col: () => VoidComponent;
+
+export declare const colgroup: ComponentInstance;
 
 export declare class Component {
     /**
@@ -170,8 +213,53 @@ declare type ComponentChildrenItems = string | number | Component | Element | Fr
 
 declare type ComponentInstance = (children?: Children) => Component;
 
+export declare const content: ComponentInstance;
+
 declare interface CSSStyle extends Properties, PropertiesHyphen {
 }
+
+export declare const data: ComponentInstance;
+
+export declare const datalist: ComponentInstance;
+
+export declare const dd: ComponentInstance;
+
+export declare const decorator: ComponentInstance;
+
+export declare const del: ComponentInstance;
+
+export declare const details: ComponentInstance;
+
+export declare const dfn: ComponentInstance;
+
+export declare const div: ComponentInstance;
+
+export declare const dl: ComponentInstance;
+
+export declare const dt: ComponentInstance;
+
+declare const El: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidtags, () => VoidComponent> & {
+    fragment: typeof fragment;
+    input: typeof input;
+    textarea: typeof textarea;
+    option: typeof option;
+};
+
+export declare const element: ComponentInstance;
+
+export declare const em: ComponentInstance;
+
+export declare const embed: () => VoidComponent;
+
+export declare const fieldset: ComponentInstance;
+
+export declare const figcaption: ComponentInstance;
+
+export declare const figure: ComponentInstance;
+
+export declare const footer: ComponentInstance;
+
+export declare const form: ComponentInstance;
 
 /**
  * Fragment does not have any DOM node associated within it. All of its children
@@ -189,7 +277,7 @@ declare class Fragment extends Component {
  *
  * @param children {ComponentChildren}
  */
-declare function fragment(children?: Children): Fragment;
+export declare function fragment(children?: Children): Fragment;
 
 declare type GenericCallback = () => void;
 
@@ -201,11 +289,39 @@ declare type GenericCallback = () => void;
  */
 export declare function getInstance(el: HTMLElement | Element): Component | null;
 
+export declare const h1: ComponentInstance;
+
+export declare const h2: ComponentInstance;
+
+export declare const h3: ComponentInstance;
+
+export declare const h4: ComponentInstance;
+
+export declare const h5: ComponentInstance;
+
+export declare const h6: ComponentInstance;
+
+export declare const head: ComponentInstance;
+
+export declare const header: ComponentInstance;
+
+export declare const hgroup: ComponentInstance;
+
+export declare const hr: () => VoidComponent;
+
+export declare const html: ComponentInstance;
+
 declare type HtmlTags = 'a' | 'abbr' | 'address' | 'applet' | 'article' | 'aside' | 'audio' | 'b' | 'basefont' | 'bdi' | 'bdo' | 'bgsound' | 'blink' | 'blockquote' | 'body' | 'button' | 'canvas' | 'caption' | 'cite' | 'code' | 'colgroup' | 'content' | 'data' | 'datalist' | 'dd' | 'decorator' | 'del' | 'details' | 'dfn' | 'div' | 'dl' | 'dt' | 'element' | 'em' | 'fieldset' | 'figcaption' | 'figure' | 'footer' | 'form' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'head' | 'header' | 'hgroup' | 'html' | 'i' | 'iframe' | 'ins' | 'isindex' | 'kbd' | 'keygen' | 'label' | 'legend' | 'li' | 'listing' | 'main' | 'map' | 'mark' | 'menu' | 'meter' | 'nav' | 'noscript' | 'object' | 'ol' | 'optgroup' | 'output' | 'p' | 'picture' | 'pre' | 'progress' | 'q' | 'rp' | 'rt' | 'ruby' | 's' | 'samp' | 'script' | 'section' | 'select' | 'shadow' | 'small' | 'spacer' | 'span' | 'strong' | 'style' | 'sub' | 'summary' | 'sup' | 'table' | 'tbody' | 'td' | 'template' | 'tfoot' | 'th' | 'thead' | 'time' | 'title' | 'tr' | 'u' | 'ul' | 'var' | 'video';
 
 declare type HtmlVoidtags = 'area' | 'base' | 'br' | 'col' | 'embed' | 'hr' | 'img' | 'link' | 'meta' | 'source' | 'track' | 'wbr';
 
-declare function input(type?: InputType): InputElement<HTMLInputElement>;
+export declare const i: ComponentInstance;
+
+export declare const iframe: ComponentInstance;
+
+export declare const img: () => VoidComponent;
+
+export declare function input(type?: InputType): InputElement<HTMLInputElement>;
 
 declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> extends VoidComponent {
     el: T;
@@ -218,6 +334,36 @@ declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> ext
 
 declare type InputType = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
 
+export declare const ins: ComponentInstance;
+
+export declare const isindex: ComponentInstance;
+
+export declare const kbd: ComponentInstance;
+
+export declare const keygen: ComponentInstance;
+
+export declare const label: ComponentInstance;
+
+export declare const legend: ComponentInstance;
+
+export declare const li: ComponentInstance;
+
+export declare const link: () => VoidComponent;
+
+export declare const listing: ComponentInstance;
+
+export declare const main: ComponentInstance;
+
+export declare const map: ComponentInstance;
+
+export declare const mark: ComponentInstance;
+
+export declare const menu: ComponentInstance;
+
+export declare const meta: () => VoidComponent;
+
+export declare const meter: ComponentInstance;
+
 declare interface ModelOptions {
     lazy?: boolean;
     transforms?: ModelTransform[];
@@ -226,7 +372,17 @@ declare interface ModelOptions {
 
 declare type ModelTransform<T = string> = (value: string) => T;
 
-declare function option(value?: string, label?: string): Option_2;
+export declare const nav: ComponentInstance;
+
+export declare const noscript: ComponentInstance;
+
+export declare const object: ComponentInstance;
+
+export declare const ol: ComponentInstance;
+
+export declare const optgroup: ComponentInstance;
+
+export declare function option(value?: string, label?: string): Option_2;
 
 declare class Option_2 extends VoidComponent {
     el: HTMLOptionElement;
@@ -235,15 +391,91 @@ declare class Option_2 extends VoidComponent {
     selected(): this;
 }
 
+export declare const output: ComponentInstance;
+
+export declare const p: ComponentInstance;
+
+export declare const picture: ComponentInstance;
+
+export declare const pre: ComponentInstance;
+
+export declare const progress: ComponentInstance;
+
+export declare const q: ComponentInstance;
+
 declare type RefOrvalue<T> = T | Ref<T>;
 
-export declare function reusable(el: keyof typeof $, setupFn: SetupArguments): ReusableComponent;
+export declare function reusable(el: keyof typeof El, setupFn: SetupArguments): ReusableComponent;
 
 declare type ReusableComponent = (children?: ComponentChildrenItems) => Component;
 
+export declare const rp: ComponentInstance;
+
+export declare const rt: ComponentInstance;
+
+export declare const ruby: ComponentInstance;
+
+export declare const s: ComponentInstance;
+
+export declare const samp: ComponentInstance;
+
+export declare const script: ComponentInstance;
+
+export declare const section: ComponentInstance;
+
+export declare const select: ComponentInstance;
+
 declare type SetupArguments = (componentInstance: Component, props: any) => void;
 
-declare function textarea(): InputElement<HTMLTextAreaElement>;
+export declare const shadow: ComponentInstance;
+
+export declare const small: ComponentInstance;
+
+export declare const source: () => VoidComponent;
+
+export declare const spacer: ComponentInstance;
+
+export declare const span: ComponentInstance;
+
+export declare const strong: ComponentInstance;
+
+export declare const style: ComponentInstance;
+
+export declare const sub: ComponentInstance;
+
+export declare const summary: ComponentInstance;
+
+export declare const sup: ComponentInstance;
+
+export declare const table: ComponentInstance;
+
+export declare const tbody: ComponentInstance;
+
+export declare const td: ComponentInstance;
+
+export declare const template: ComponentInstance;
+
+export declare function textarea(): InputElement<HTMLTextAreaElement>;
+
+export declare const tfoot: ComponentInstance;
+
+export declare const th: ComponentInstance;
+
+export declare const thead: ComponentInstance;
+
+export declare const time: ComponentInstance;
+
+export declare const title: ComponentInstance;
+
+export declare const tr: ComponentInstance;
+
+export declare const track: () => VoidComponent;
+
+export declare const u: ComponentInstance;
+
+export declare const ul: ComponentInstance;
+
+export declare const video: ComponentInstance;
 
 /**
  * Void components are those which can not contain any more child nodes. The
@@ -254,5 +486,7 @@ declare class VoidComponent extends Component {
     constructor(type: HtmlVoidtags | 'option');
     __children(_value: Children): void;
 }
+
+export declare const wbr: () => VoidComponent;
 
 export { }
