@@ -10,7 +10,7 @@ function y(e) {
 function v(e) {
   return e == null;
 }
-function b(e) {
+function m(e) {
   return Array.isArray(e);
 }
 function vt(e) {
@@ -57,7 +57,7 @@ function H(e, t) {
     if (l)
       if (typeof l == "string")
         n && this.el.classList.remove(n), n = l, this.el.classList.add(n);
-      else if (b(l)) {
+      else if (m(l)) {
         const u = l.length;
         for (let f = 0; f < u; f++) {
           const _ = l[f];
@@ -102,17 +102,17 @@ function U(e) {
   return this;
 }
 function X(e, ...t) {
-  const n = b(e) ? e.concat(t) : [e].concat(t);
+  const n = m(e) ? e.concat(t) : [e].concat(t);
   return this.__children(n), this;
 }
 function E(e, t) {
   return !t || t.length === 0 ? e : t.reduce((n, s) => s(n), e);
 }
 function j(e, t, n) {
-  b(e.value) ? e.value.includes(t) ? e.value.splice(e.value.indexOf(t), 1) : e.value.push(t) : n ? e.value = t : e.value = null;
+  m(e.value) ? e.value.includes(t) ? e.value.splice(e.value.indexOf(t), 1) : e.value.push(t) : n ? e.value = t : e.value = null;
 }
 function D(e, t) {
-  (!e.value || b(e.value) && e.value.length === 0) && t.hasAttribute("checked") && (j(e, t.value, !0), t.removeAttribute("checked"));
+  (!e.value || m(e.value) && e.value.length === 0) && t.hasAttribute("checked") && (j(e, t.value, !0), t.removeAttribute("checked"));
 }
 function $(e, t = {}) {
   return this.onMount(() => {
@@ -122,7 +122,7 @@ function $(e, t = {}) {
         switch (this.el.type) {
           case "checkbox": {
             const n = this.el, s = h(e, (i) => {
-              i === n.value || b(i) && i.includes(n.value) ? n.checked = !0 : n.checked = !1;
+              i === n.value || m(i) && i.includes(n.value) ? n.checked = !0 : n.checked = !1;
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener("change", (i) => {
               const { checked: o, value: r } = i.target;
@@ -161,7 +161,7 @@ function $(e, t = {}) {
           let r = o.target.value;
           r = E(r, t.transforms), e.value = r;
         }, t.eventOptions);
-        const i = b(e.value) ? e.value[0] : e.value;
+        const i = m(e.value) ? e.value[0] : e.value;
         if (i)
           n.value = i.toString();
         else if (n.childElementCount > 0) {
@@ -181,7 +181,7 @@ function $(e, t = {}) {
         this.onDestroy(s), n.addEventListener("toggle", () => {
           e.value = n.open;
         }, t.eventOptions);
-        const i = b(e.value) ? e.value[0] : e.value;
+        const i = m(e.value) ? e.value[0] : e.value;
         n.open = !!i;
         break;
       }
@@ -206,8 +206,8 @@ function p(e, t, n) {
       p(s, t.children);
     else if (t instanceof Element)
       s.appendChild(t);
-    else if (t instanceof m)
-      e instanceof m && (t.parent = e), s.appendChild(t.el), t.__runOnInit(), p(t, t.children), t.__runOnMount();
+    else if (t instanceof b)
+      e instanceof b && (t.parent = e), s.appendChild(t.el), t.__runOnInit(), p(t, t.children), t.__runOnMount();
     else if (Array.isArray(t)) {
       const i = t.length;
       for (let o = 0; o < i; o++) {
@@ -215,7 +215,7 @@ function p(e, t, n) {
         r instanceof Element || typeof r == "string" || typeof r == "number" ? p(s, r, o) : r instanceof O ? p(s, r.children) : d(r) ? h(r, (a) => p(s, a, o), {
           immediate: !0,
           deep: !0
-        }) : (e instanceof m && (r.parent = e), s.appendChild(r.el), r.__runOnInit(), p(r, r.children), r.__runOnMount());
+        }) : (e instanceof b && (r.parent = e), s.appendChild(r.el), r.__runOnInit(), p(r, r.children), r.__runOnMount());
       }
     } else
       d(t) && h(t, (i) => p(s, i), {
@@ -264,16 +264,16 @@ function Z(e) {
 }
 function Y(e) {
   function t(n) {
-    if (!(n instanceof m))
+    if (!(n instanceof b))
       return;
     for (const i of n.onDestroyCbs)
       i();
     const { children: s } = n;
-    if (s instanceof m)
+    if (s instanceof b)
       t(s);
-    else if (b(s))
+    else if (m(s))
       for (const i of s)
-        i instanceof m && t(i);
+        i instanceof b && t(i);
   }
   t(e), e.__runOnDestroy(), e.el.remove();
 }
@@ -296,7 +296,7 @@ function tt(e, t) {
   return this.onInit(() => {
     const n = (s) => {
       const i = [];
-      if (b(s)) {
+      if (m(s)) {
         const o = s.length;
         for (let r = 0; r < o; r++) {
           const a = t(s[r], r);
@@ -384,7 +384,7 @@ function nt(e) {
   }), this;
 }
 function st() {
-  const e = new m(this.el);
+  const e = new b(this.el);
   return e.children = this.children, e.scopes = new Set(this.scopes), e;
 }
 const it = /* @__PURE__ */ new Set(), ot = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split(""), rt = "abcdefghiklmnopqrstuvwxyz".split("");
@@ -401,7 +401,7 @@ function lt(e = !1) {
     t = ct(e);
   return t;
 }
-class m {
+class b {
   constructor(t, n = {}) {
     /**
      * Set `textContent` of the current node.
@@ -588,7 +588,7 @@ class m {
     return tt.call(this, t, n);
   }
 }
-class C extends m {
+class C extends b {
   constructor(t) {
     super(document.createElement(t));
   }
@@ -596,7 +596,7 @@ class C extends m {
     this.children = [];
   }
 }
-class O extends m {
+class O extends b {
   constructor(t = []) {
     super(document.createElement("template")), this.children = t;
   }
@@ -651,9 +651,9 @@ class dt extends C {
 function ft(e, t) {
   return new dt(e, t);
 }
-const pt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "shadow", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], P = ["area", "base", "br", "col", "embed", "hr", "img", "link", "meta", "source", "track", "wbr"], L = pt.reduce((e, t) => (e[t] = (n) => {
-  const s = document.createElement(t), i = new m(s);
-  return n && i.__children(n), i;
+const pt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "content", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "shadow", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], P = ["area", "base", "br", "col", "embed", "hr", "img", "link", "meta", "source", "track", "wbr"], L = pt.reduce((e, t) => (e[t] = (n = [], ...s) => {
+  const i = document.createElement(t), o = new b(i), r = m(n) ? n.concat(s) : [n].concat(s);
+  return o.__children(r), o;
 }, e), {}), M = P.reduce((e, t) => (e[t] = () => new C(t), e), {}), x = Object.assign(L, M, {
   fragment: ht,
   input: at,
@@ -792,7 +792,7 @@ const {
   wbr: jn
 } = M;
 export {
-  m as Component,
+  b as Component,
   wt as a,
   Ot as abbr,
   kt as address,

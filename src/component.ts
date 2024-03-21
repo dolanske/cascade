@@ -1,9 +1,8 @@
 import { effectScope } from '@vue/reactivity'
-import type { EffectScope } from '@vue/reactivity'
+import type { EffectScope, UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
 import { text } from './methods/text'
 import { click, on } from './methods/on'
-
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
 import type { SetupArguments } from './methods/setup'
@@ -236,7 +235,7 @@ export class Component {
    *
    *
    */
-  for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<S>) {
+  for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>) {
     return for_impl.call(this, source, callback)
   }
 }
@@ -270,8 +269,6 @@ export class Fragment extends Component {
     const domRoot = document.querySelector(selector)
     if (!domRoot)
       throw new Error('Root element does not exist')
-    // this.__runSetup()
-
     this.__runOnInit()
     render(domRoot, this.children)
     this.__runOnMount()

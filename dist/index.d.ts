@@ -3,6 +3,7 @@ import { Primitive } from '@vue/reactivity';
 import type { Properties } from 'csstype';
 import type { PropertiesHyphen } from 'csstype';
 import { Ref } from '@vue/reactivity';
+import { UnwrapRef } from '@vue/reactivity';
 
 export declare const a: ComponentInstance;
 
@@ -206,7 +207,7 @@ export declare class Component {
      *
      *
      */
-    for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<S>): Component;
+    for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>): Component;
 }
 
 declare type ComponentChildrenItems = string | number | Component | Element | Fragment | Ref<string | number>;
