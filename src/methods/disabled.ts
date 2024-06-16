@@ -1,7 +1,7 @@
 import type { Component } from '../component'
-import type { RefOrvalue } from '../types'
+import type { RefOrValue } from '../types'
 
-export function disabled(this: Component, value?: RefOrvalue<boolean>) {
+export function disabled(this: Component, value?: RefOrValue<boolean>) {
   this.attr('disabled', value)
   return this
 }

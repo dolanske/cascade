@@ -15,4 +15,4 @@ export type ValueOf<T> = T[keyof T]
 export interface CSSStyle extends Properties, PropertiesHyphen { }
 export type GenericCallbackWithThis = (this: Component) => void
 export type GenericCallback = () => void
-export type RefOrvalue<T> = T | Ref<T>
+export type RefOrValue<T> = T | Ref<T>

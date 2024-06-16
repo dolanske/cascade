@@ -1,6 +1,6 @@
 import type { Primitive } from '@vue/reactivity'
 import { VoidComponent } from '../component'
-import type { RefOrvalue } from '../types'
+import type { RefOrValue } from '../types'
 import { registerWatchedProp } from '../property-method'
 
 export class Option extends VoidComponent {
@@ -18,7 +18,7 @@ export class Option extends VoidComponent {
       this.el.textContent = String(label)
   }
 
-  value(inputValue: RefOrvalue<Primitive>) {
+  value(inputValue: RefOrValue<Primitive>) {
     registerWatchedProp.call(this, 'value', inputValue)
     return this
   }

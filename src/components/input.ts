@@ -1,7 +1,7 @@
 import type { Primitive } from '@vue/reactivity'
 import { VoidComponent } from '../component'
 import { registerWatchedProp } from '../property-method'
-import type { RefOrvalue } from '../types'
+import type { RefOrValue } from '../types'
 
 type InputType = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week'
 
@@ -21,22 +21,27 @@ export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> exte
       this.el.type = type
   }
 
-  value(value: RefOrvalue<Primitive | undefined>) {
+  type(type: InputType) {
+    //@ts-expect-error Assign it anyway
+    this.el.type = type
+  }
+
+  value(value: RefOrValue<Primitive | undefined>) {
     registerWatchedProp.call(this, 'value', value)
     return this
   }
 
-  placeholder(value: RefOrvalue<string | undefined>) {
+  placeholder(value: RefOrValue<string | undefined>) {
     registerWatchedProp.call(this, 'placeholder', value)
     return this
   }
 
-  name(value: RefOrvalue<Primitive | undefined>) {
+  name(value: RefOrValue<Primitive | undefined>) {
     registerWatchedProp.call(this, 'name', value)
     return this
   }
 
-  required(value: RefOrvalue<boolean>) {
+  required(value: RefOrValue<boolean>) {
     registerWatchedProp.call(this, 'required', value)
     return this
   }

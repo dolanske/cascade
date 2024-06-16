@@ -69,11 +69,11 @@ export declare class Component {
      *
      * @param text {string | () => string}
      */
-    text: (value: RefOrvalue<Primitive>) => Component;
+    text: (value: RefOrValue<Primitive>) => Component;
     /**
      * Set `innerHTML` of the current node.
      */
-    html: (value: RefOrvalue<string>) => Component;
+    html: (value: RefOrValue<string>) => Component;
     /**
      * Add an event listener to the current node.
      *
@@ -128,11 +128,11 @@ export declare class Component {
     /**
      * Dynamically bind a `disabled` attribute to the node.
      */
-    disabled: (value?: RefOrvalue<boolean> | undefined) => Component;
+    disabled: (value?: RefOrValue<boolean> | undefined) => Component;
     /**
      * Dynamically bind an `id` attribute to the node.
      */
-    id: (value: RefOrvalue<Primitive>) => Component;
+    id: (value: RefOrValue<Primitive>) => Component;
     /**
      * Toggle between showing or hiding the current node. The node is still
      * rendered, but has `display: none` applied to it.
@@ -246,6 +246,7 @@ declare const El: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidtags, () 
     input: typeof input;
     textarea: typeof textarea;
     option: typeof option;
+    img: typeof img;
 };
 
 export declare const element: ComponentInstance;
@@ -322,17 +323,25 @@ export declare const i: ComponentInstance;
 
 export declare const iframe: ComponentInstance;
 
-export declare const img: () => VoidComponent;
+export declare function img(src: string): ImgElement;
+
+declare class ImgElement extends VoidComponent {
+    el: HTMLImageElement;
+    constructor(el: HTMLImageElement);
+    src(value: RefOrValue<string>): this;
+    alt(value: RefOrValue<string>): this;
+}
 
 export declare function input(type?: InputType): InputElement<HTMLInputElement>;
 
 declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> extends VoidComponent {
     el: T;
     constructor(el: T, type?: InputType);
-    value(value: RefOrvalue<Primitive | undefined>): this;
-    placeholder(value: RefOrvalue<string | undefined>): this;
-    name(value: RefOrvalue<Primitive | undefined>): this;
-    required(value: RefOrvalue<boolean>): this;
+    type(type: InputType): void;
+    value(value: RefOrValue<Primitive | undefined>): this;
+    placeholder(value: RefOrValue<string | undefined>): this;
+    name(value: RefOrValue<Primitive | undefined>): this;
+    required(value: RefOrValue<boolean>): this;
 }
 
 declare type InputType = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
@@ -390,7 +399,7 @@ export declare function option(value?: string, label?: string): Option_2;
 declare class Option_2 extends VoidComponent {
     el: HTMLOptionElement;
     constructor(value?: string, label?: string);
-    value(inputValue: RefOrvalue<Primitive>): this;
+    value(inputValue: RefOrValue<Primitive>): this;
     selected(): this;
 }
 
@@ -406,7 +415,7 @@ export declare const progress: ComponentInstance;
 
 export declare const q: ComponentInstance;
 
-declare type RefOrvalue<T> = T | Ref<T>;
+declare type RefOrValue<T> = T | Ref<T>;
 
 export declare function reusable(el: keyof typeof El, setupFn: SetupArguments): ReusableComponent;
 

@@ -3,10 +3,11 @@ import type { ComponentChildren, ComponentChildrenItems, ComponentInstance, Html
 import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { isArray } from './util'
+import { img } from './components/img'
 
 // List all available HTML elements
-export const htmlNormalTags: HtmlTags[] = ['a', 'abbr', 'address', 'applet', 'article', 'aside', 'audio', 'b', 'basefont', 'bdi', 'bdo', 'bgsound', 'blink', 'blockquote', 'body', 'button', 'canvas', 'caption', 'cite', 'code', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'html', 'i', 'iframe', 'ins', 'isindex', 'kbd', 'keygen', 'label', 'legend', 'li', 'listing', 'main', 'map', 'mark', 'menu', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'shadow', 'small', 'spacer', 'span', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'u', 'ul', 'video'] as const
-export const htmlVoidTags: HtmlVoidtags[] = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'link', 'meta', 'source', 'track', 'wbr'] as const
+export const htmlNormalTags: HtmlTags[] = ['a', 'abbr', 'address', 'applet', 'article', 'aside', 'audio', 'b', 'basefont', 'bdi', 'bdo', 'bgsound', 'blink', 'blockquote', 'body', 'button', 'canvas', 'caption', 'cite', 'code', 'colgroup', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'html', 'i', 'iframe', 'ins', 'isindex', 'kbd', 'keygen', 'label', 'legend', 'li', 'listing', 'main', 'map', 'mark', 'menu', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'spacer', 'span', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'u', 'ul', 'video'] as const
+export const htmlVoidTags: HtmlVoidtags[] = ['area', 'base', 'br', 'col', 'embed', 'hr', 'link', 'meta', 'source', 'track', 'wbr'] as const
 
 // Create all elements with possible child elements
 export const htmlNormalElFactory = htmlNormalTags.reduce((group, type) => {
@@ -36,4 +37,5 @@ export const El = Object.assign(htmlNormalElFactory, htmlVoidElFactory, {
   input,
   textarea,
   option,
+  img
 })

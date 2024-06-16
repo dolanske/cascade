@@ -5,6 +5,7 @@ import { reusable } from './reusable'
 import { htmlNormalElFactory, htmlVoidElFactory } from './factory'
 import { input, textarea } from './components/input'
 import { option } from './components/select'
+import { img } from './components/img'
 import { createId } from './id'
 
 const {
@@ -122,7 +123,6 @@ const {
   col,
   embed,
   hr,
-  img,
   link,
   meta,
   source,
@@ -251,10 +251,10 @@ export {
   col,
   embed,
   hr,
-  img,
   link,
   meta,
   source,
   track,
   wbr,
+  img
 }
