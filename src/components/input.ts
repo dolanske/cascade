@@ -22,7 +22,7 @@ export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> exte
   }
 
   type(type: InputType) {
-    //@ts-expect-error Assign it anyway
+    // @ts-expect-error Assign it anyway
     this.el.type = type
   }
 

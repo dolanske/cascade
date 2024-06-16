@@ -1,6 +1,6 @@
-import { VoidComponent } from "../component";
-import { registerWatchedProp } from "../property-method";
-import { RefOrValue } from "../types";
+import { VoidComponent } from '../component'
+import { registerWatchedProp } from '../property-method'
+import type { RefOrValue } from '../types'
 
 export class ImgElement extends VoidComponent {
   el: HTMLImageElement
@@ -22,11 +22,10 @@ export class ImgElement extends VoidComponent {
 }
 
 export function img(src: string) {
-  const el = document.createElement("img")
+  const el = document.createElement('img')
   const component = new ImgElement(el)
-  if (src) {
+  if (src)
     component.src(src)
-  }
+
   return component
 }
-  

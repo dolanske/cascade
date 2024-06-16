@@ -256,5 +256,5 @@ export {
   source,
   track,
   wbr,
-  img
+  img,
 }

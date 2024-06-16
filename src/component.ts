@@ -116,6 +116,7 @@ export class Component {
   runningScopes = new Set<EffectScope>()
 
   __identifier: string
+  __portal?: string
 
   constructor(el: HTMLElement, props: object = {}) {
     this.el = el
