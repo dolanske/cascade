@@ -16,7 +16,22 @@ function replaceChildAt(parent: Element, newChild: Element | Text, index: number
 }
 
 export function render(parent: Component | Element, children?: ComponentChildren, index?: number) {
-  const root = parent instanceof Element ? parent : parent.el
+  // const root = parent instanceof Element ? parent : parent.el
+  let root: Element;
+
+  // Assign root based on the parent type & if it's a portal
+  if (parent instanceof Component) {
+    if (parent.__portal) {
+      const target = document.querySelector(parent.__portal)
+      if (!target)
+        throw new Error('Portal target element does not exist')
+      root = target
+    } else {
+      root = parent.el
+    }
+  } else {
+    root = parent
+  }
 
   if (!children)
     return

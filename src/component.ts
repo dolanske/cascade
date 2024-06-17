@@ -21,6 +21,7 @@ import { style } from './methods/style'
 import { if_impl } from './methods/if'
 import { clone } from './methods/clone'
 import { createId } from './id'
+import { portal } from './methods/portal'
 
 export class Component {
   /**
@@ -101,6 +102,7 @@ export class Component {
   style = style.bind(this)
   if = if_impl.bind(this)
   clone = clone.bind(this)
+  portal = portal.bind(this)
 
   el: HTMLElement
   children: ComponentChildren = []

@@ -7,6 +7,7 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
+import { ref } from '@vue/reactivity'
 
 const {
   a,
@@ -258,3 +259,22 @@ export {
   wbr,
   img,
 }
+
+// Test
+const test = div().setup((ctx) => {
+  const target = ref<string | undefined>("#green")
+
+  ctx.nest(
+    button("Hello").click(() => {
+      if (target.value === '#green') {
+        target.value = undefined
+      } else {
+        target.value = '#green'
+
+      }
+    }),
+    span("World").portal(target)
+  )
+})  
+
+test.mount("#pink")

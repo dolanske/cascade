@@ -7,18 +7,21 @@ import type { RefOrValue } from '../types'
 // element anywhere in the DOM
 export function portal(
   this: Component,
-  target: RefOrValue<string>,
+  target: RefOrValue<string | undefined>,
 ) {
   this.onInit(() => {
     if (isRef(target)) {
-      const release = watch(target, (result: string) => {
-        this.__portal = result
+      const release = watch(target, (result) => {
+        console.log(result)
+        this.__portal = result || undefined
       })
 
       this.onDestroy(release)
     }
     else {
-      this.__portal = target
+      this.__portal = target || undefined
     }
   })
+
+  return this
 }

@@ -12,18 +12,38 @@
       filter: invert(1);
     }
 
-    .pink {
-      color: green;
+    #app {
+      display: flex;
+      gap: 0.5rem;
     }
 
-    .green {
-      color: pink;
+    #pink,
+    #green {
+      width: 156px;
+      height: 156px;
+    }
+
+    #pink {
+      background: green;
+    }
+
+    #green {
+      background: pink;
     }
   </style>
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div id="pink">
+
+    </div>
+
+    <div id="green">
+
+    </div> 
+
+  </div>
   <!-- <hr>
   <div id="app2"></div> -->
   <script type="module" src="/src/index.ts"></script>
