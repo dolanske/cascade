@@ -1,4 +1,5 @@
 import type { Component } from '../component'
+import { isFn } from '../util'
 
 // TODO: modifiers
 // TODO: modifiers with parameters
@@ -49,7 +50,7 @@ export interface KeyInputOptions {
   detect?: 'some' | 'every'
 }
 
-function keyPressImplementation(this: Component, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) {
+function keyEventImpl(this: Component, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) {
   // Store pressed keys in case there are multiple keys to check for
   const history: string[] = []
 
@@ -68,7 +69,7 @@ function keyPressImplementation(this: Component, eventType: 'keydown' | 'keyup' 
     const key = (event as KeyboardEvent).key 
 
     function callListener() {
-      if (listener instanceof Function) {
+      if (isFn(listener)) {
         listener(event)
       } else {
         listener.handleEvent(event)
@@ -80,7 +81,7 @@ function keyPressImplementation(this: Component, eventType: 'keydown' | 'keyup' 
         addKeyToHistory(key)
 
         const passed = keyOrArrayOfKeys.every((expectedKey, index) => {
-          if (expectedKey === keyOrArrayOfKeys[index])
+          if (expectedKey === history[index])
             return true
         })
 
@@ -100,14 +101,26 @@ function keyPressImplementation(this: Component, eventType: 'keydown' | 'keyup' 
   }, options as EventListenerOptions)
 }
 
-export function keydown(this: Component, keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) { 
-  return keyPressImplementation.call(this, 'keydown' ,keyOrArrayOfKeys, listener, options)
+export function keydown(this: Component, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+  return this.on("keydown", listener, options)
 }
 
-export function keyup(this: Component, keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) { 
-  return keyPressImplementation.call(this, 'keyup' ,keyOrArrayOfKeys, listener, options)
+export function keydownExact(this: Component, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) { 
+  return keyEventImpl.call(this, 'keydown' ,requiredKeyOrKeys, listener, options)
 }
 
-export function keypress(this: Component, keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) { 
-  return keyPressImplementation.call(this, 'keypress' ,keyOrArrayOfKeys, listener, options)
+export function keyup(this: Component, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+  return this.on("keyup", listener, options)
+}
+
+export function keyupExact(this: Component, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) { 
+  return keyEventImpl.call(this, 'keyup' ,requiredKeyOrKeys, listener, options)
+}
+
+export function keypress(this: Component, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+  return this.on("keyup", listener, options)
+}
+
+export function keypressExact(this: Component, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) { 
+  return keyEventImpl.call(this, 'keypress' ,requiredKeyOrKeys, listener, options)
 }

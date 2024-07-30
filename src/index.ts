@@ -263,13 +263,13 @@ export {
 // Test
 
 const CC = input().setup((ctx) => {
-  const data = ref('')
-  ctx.model(data)
-  ctx.class({
-    green: () => data.value === 'green',
-    red: true
+  ctx.keydown((e: any) => {
+    console.log(e.key)
   })
-  ctx.text(data)
+
+  ctx.keydownExact(["Alt","c"], () => {
+    console.log("C!!!")
+  })
 })
 
 CC.mount("#app")

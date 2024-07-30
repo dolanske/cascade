@@ -2,7 +2,7 @@ import { effectScope } from '@vue/reactivity'
 import type { EffectScope, UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
 import { text } from './methods/text'
-import { change, click, focus, input, keydown, keypress, keyup, on, submit } from './methods/on'
+import { change, click, focus, input, keydown, keydownExact, keypress, keypressExact, keyup, keyupExact, on, submit } from './methods/on'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
 import type { SetupArguments } from './methods/setup'
@@ -24,17 +24,17 @@ import { createId } from './id'
 
 export class Component {
   /**
-   * Set `textContent` of the current node.
+   * Set `textContent` of the current component.
    *
    * @param text {string | () => string}
    */
   text = text.bind(this)
   /**
-   * Set `innerHTML` of the current node.
+   * Set `innerHTML` of the current component.
    */
   html = html.bind(this)
   /**
-   * Add an event listener to the current node.
+   * Add an event listener to the current component.
    *
    * @param on {keyof HTMLElementEventMap} Event name
    * @param listener {EventListenerOrEventListenerObject} Function which runs on event trigger
@@ -43,20 +43,66 @@ export class Component {
    */
   on = on.bind(this)
   /**
-   * Shorthand for binding `on("click")` event listener to the current node.
+   * Shorthand for binding `on("click")` event listener to the current component.
    */
   click = click.bind(this)
- 
-  // Experimental event shorthands
-  submit = submit.bind(this)
-  focus = focus.bind(this)
-  change = change.bind(this)
-  input = input.bind(this)
-  keydown = keydown.bind(this)
-  keyup = keyup.bind(this)
-  keypress = keypress.bind(this)
   /**
-   * Bind reactive class object to the current node.
+   * Shorthand for binding `on("submit")` event listener to the current component.
+   */
+  submit = submit.bind(this)
+  /**
+   * Shorthand for binding `on("focus")` event listener to the current component.
+   */
+  focus = focus.bind(this)
+  /**
+   * Shorthand for binding `on("change")` event listener to the current component.
+   */
+  change = change.bind(this)
+  /**
+   * Shorthand for binding `on("input")` event listener to the current component.
+   */
+  input = input.bind(this)
+  /**
+   * Shorthand for binding `on("keydown")` event listener to the current component.
+   */
+  keydown = keydown.bind(this)
+  /**
+   * Shorthand for binding `on("keydown")` event listener to the current
+   * component and listening for specific keys to be pressed down.
+   * 
+   * ```
+   * Component.keydownExact(["Shift", "T"], () => ...)
+   * ```
+   */
+  keydownExact = keydownExact.bind(this)
+  /**
+   * Shorthand for binding `on("keyup")` event listener to the current component.
+   */
+  keyup = keyup.bind(this)
+    /**
+   * Shorthand for binding `on("keyup")` event listener to the current
+   * component and listening for specific keys to be released.
+   * 
+   * ```
+   * Component.keyupExact(["Shift", "T"], () => ...)
+   * ```
+   */
+  keyupExact = keyupExact.bind(this)
+  /**
+   * Shorthand for binding `on("keypress")` event listener to the current component.
+   */
+  keypress = keypress.bind(this)
+    /**
+   * Shorthand for binding `on("keypress")` event listener to the current
+   * component and listening for specific keys to be pressed.
+   * 
+   * ```
+   * Component.keypressExact(["Shift", "T"], () => ...)
+   * ```
+   */
+  keypressExact = keypressExact.bind(this)
+  /**
+   * Bind reactive class object to the current component.
    */
   class = class_impl.bind(this)
   /**
@@ -99,22 +145,22 @@ export class Component {
    */
   attr = attr.bind(this)
   /**
-   * Dynamically bind a `disabled` attribute to the node.
+   * Dynamically bind a `disabled` attribute to the component.
    */
   disabled = disabled.bind(this)
   /**
-   * Dynamically bind an `id` attribute to the node.
+   * Dynamically bind an `id` attribute to the component.
    */
   id = id.bind(this)
   /**
-   * Toggle between showing or hiding the current node. The node is still
+   * Toggle between showing or hiding the current component. the component is still
    * rendered, but has `display: none` applied to it.
    *
    * This function also preserves the previously added inline styles.
    */
   show = show.bind(this)
   /**
-   * Add reactive styling object to the current node.
+   * Add reactive styling object to the current component.
    */
   style = style.bind(this)
   /**
@@ -239,7 +285,7 @@ export class Component {
     this.__runOnMount()
   }
 
-  // Removes the root node and its desendants. It also
+  // Removes the root component and its desendants. It also
   destroy() {
     destroy(this)
   }
@@ -265,7 +311,7 @@ export class Component {
 }
 
 /**
- * Void components are those which can not contain any more child nodes. The
+ * Void components are those which can not contain any more child components. The
  * implementation is the same as normal elements, except it is not possible to
  * provide any child elements. The
  */
@@ -280,8 +326,8 @@ export class VoidComponent extends Component {
 }
 
 /**
- * Fragment does not have any DOM node associated within it. All of its children
- * are appended to fragment's parent node.
+ * Fragment does not have any DOM element associated within it. All of its children
+ * are appended to fragment's parent element.
  */
 export class Fragment extends Component {
   constructor(children: ComponentChildren = []) {
@@ -301,8 +347,8 @@ export class Fragment extends Component {
 
 /**
  * Fragment is not inserted into the DOM. Its children are appended to
- * fragment's parent node. Any methods which require DOM element to be present
- * will not work.
+ * fragment's parent element. Any methods which require DOM element to be
+ * present will not work.
  *
  * @param children {ComponentChildren}
  */
