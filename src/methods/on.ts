@@ -63,7 +63,7 @@ function keyEventImpl(this: Component, eventType: 'keydown' | 'keyup' | 'keypres
   }
 
   // Turn options into array either way
-  keyOrArrayOfKeys = Array.isArray(keyOrArrayOfKeys) ? keyOrArrayOfKeys : [keyOrArrayOfKeys]
+  const keysInArray = Array.isArray(keyOrArrayOfKeys) ? keyOrArrayOfKeys : [keyOrArrayOfKeys]
 
   return this.on(eventType, (event) => {
     const key = (event as KeyboardEvent).key 
@@ -80,7 +80,7 @@ function keyEventImpl(this: Component, eventType: 'keydown' | 'keyup' | 'keypres
       case 'every': {
         addKeyToHistory(key)
 
-        const passed = keyOrArrayOfKeys.every((expectedKey, index) => {
+        const passed = keysInArray.every((expectedKey, index) => {
           if (expectedKey === history[index])
             return true
         })
@@ -92,7 +92,7 @@ function keyEventImpl(this: Component, eventType: 'keydown' | 'keyup' | 'keypres
       }
 
       case 'some': {
-        if (keyOrArrayOfKeys.includes(key)) {
+        if (keysInArray.includes(key)) {
           callListener()
         }
         break
