@@ -7,6 +7,7 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
+import { ref, } from '@vue/reactivity'
 
 const {
   a,
@@ -258,3 +259,17 @@ export {
   wbr,
   img
 }
+
+// Test
+
+const CC = input().setup((ctx) => {
+  const data = ref('')
+  ctx.model(data)
+  ctx.class({
+    green: () => data.value === 'green',
+    red: true
+  })
+  ctx.text(data)
+})
+
+CC.mount("#app")

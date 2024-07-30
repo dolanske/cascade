@@ -1,12 +1,12 @@
 import { watch } from '@vue-reactivity/watch'
-import { type Ref, isRef } from '@vue/reactivity'
+import { MaybeRefOrGetter, toValue } from '@vue/reactivity'
 import type { Component } from '../component'
-import { WATCH_CONF, isArray, isNil, isObject } from '../util'
+import { WATCH_CONF, isArray, isNil, isObject, isWatchSource } from '../util'
 
-export type ClassObject = Record<string, boolean | Ref<boolean>>
-export type ClassNames = string | ClassObject
+export type ClassObject = Record<string, MaybeRefOrGetter<boolean>>
+export type ClassnameOrCLassObject = string | ClassObject
 
-export function class_impl(this: Component, classNames?: ClassNames, value?: boolean | Ref<boolean>) {
+export function class_impl(this: Component, classNames?: ClassnameOrCLassObject, value?: MaybeRefOrGetter<boolean>) {
   if (isObject(classNames) && !isNil(value))
     throw new TypeError('Cannot use object notation with second argument.')
 
@@ -22,7 +22,7 @@ export function class_impl(this: Component, classNames?: ClassNames, value?: boo
     }
   }
 
-  const processClassAssignment = (results: ClassNames) => {
+  const processClassAssignment = (results: ClassnameOrCLassObject) => {
     if (!results)
       return
 
@@ -60,9 +60,9 @@ export function class_impl(this: Component, classNames?: ClassNames, value?: boo
     }
   }
 
-  const checkPrimitive = (classNames: string, value?: boolean | Ref<boolean>) => {
-    if (isRef(value)) {
-      this.onDestroy(watch(value, (result) => {
+  const checkPrimitive = (classNames: string, value?: MaybeRefOrGetter<boolean>) => {
+    if (isWatchSource(value)) {
+      this.onDestroy(watch(() => toValue(value!), (result) => {
         processClassAssignment({ [classNames]: result })
       }, WATCH_CONF))
     }

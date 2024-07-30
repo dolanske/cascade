@@ -1,9 +1,9 @@
-import type { Ref, UnwrapRef } from '@vue/reactivity'
-import { isRef } from '@vue/reactivity'
+import type { MaybeRefOrGetter, UnwrapRef } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import type { ComponentChildrenItems } from '../types'
-import { isArray, isObject } from '../util'
+import { isArray, isObject, isWatchSource } from '../util'
 import { render } from '../render'
 
 export type Source = any[] | number | object
@@ -17,7 +17,7 @@ export type CallbackType<T> =
 
 export function for_impl(
   this: Component,
-  source: Source | Ref<Source>,
+  source: MaybeRefOrGetter<Source>,
   callback: CallbackType<UnwrapRef<Source>>,
 ) {
   this.onInit(() => {
@@ -56,8 +56,8 @@ export function for_impl(
       render(this.el, childrenToRender)
     }
     // Assign parent element when element is created
-    if (isRef(source)) {
-      const release = watch(source, (updatedSrc: UnwrapRef<Source>) => {
+    if (isWatchSource(source)) {
+      const release = watch(() => toValue(source), (updatedSrc: UnwrapRef<Source>) => {
         processFor(updatedSrc)
       }, { immediate: true, deep: true })
       this.onDestroy(release)

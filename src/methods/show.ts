@@ -1,10 +1,9 @@
 import { watch } from '@vue-reactivity/watch'
-import { isRef } from '@vue/reactivity'
+import { MaybeRefOrGetter, toValue } from '@vue/reactivity'
 import type { Component } from '../component'
-import type { RefOrValue } from '../types'
-import { isNil } from '../util'
+import { isNil, isWatchSource, WATCH_CONF } from '../util'
 
-export function show(this: Component, defaultValue: RefOrValue<any>) {
+export function show(this: Component, defaultValue: MaybeRefOrGetter) {
   this.onMount(() => {
     // Store the current inline style property, in case the element is using it
     const originalDisplay = this.el.style.getPropertyValue('display')
@@ -22,11 +21,8 @@ export function show(this: Component, defaultValue: RefOrValue<any>) {
       else { this.el.style.setProperty('display', 'none') }
     }
 
-    if (isRef(defaultValue)) {
-      const release = watch(defaultValue, set, {
-        deep: true,
-        immediate: true,
-      })
+    if (isWatchSource(defaultValue)) {
+      const release = watch(() => toValue(defaultValue), set, WATCH_CONF)
       this.onDestroy(release)
     }
     else {

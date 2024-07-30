@@ -2,7 +2,7 @@ import { effectScope } from '@vue/reactivity'
 import type { EffectScope, UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
 import { text } from './methods/text'
-import { click, on } from './methods/on'
+import { change, click, focus, input, keydown, keypress, keyup, on, submit } from './methods/on'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
 import type { SetupArguments } from './methods/setup'
@@ -46,6 +46,15 @@ export class Component {
    * Shorthand for binding `on("click")` event listener to the current node.
    */
   click = click.bind(this)
+ 
+  // Experimental event shorthands
+  submit = submit.bind(this)
+  focus = focus.bind(this)
+  change = change.bind(this)
+  input = input.bind(this)
+  keydown = keydown.bind(this)
+  keyup = keyup.bind(this)
+  keypress = keypress.bind(this)
   /**
    * Bind reactive class object to the current node.
    */
@@ -77,8 +86,17 @@ export class Component {
    * children to a component and only then use methods like `if` or `for` on it.
    */
   nest = nest.bind(this)
+  /**
+   * Two way binding of a reactive variable to the inputs / selects value.
+   */
   model = model.bind(this)
+  /**
+   * Bind attribute object to the component.
+   */
   attrs = attrs.bind(this)
+  /**
+   * Bind a single attribute to the component.
+   */
   attr = attr.bind(this)
   /**
    * Dynamically bind a `disabled` attribute to the node.
@@ -99,7 +117,13 @@ export class Component {
    * Add reactive styling object to the current node.
    */
   style = style.bind(this)
+  /**
+   * Conditionally render a component.
+   */
   if = if_impl.bind(this)
+  /**
+   * Clone the component
+   */
   clone = clone.bind(this)
 
   el: HTMLElement
