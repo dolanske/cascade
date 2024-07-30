@@ -2,7 +2,7 @@ import { effectScope } from '@vue/reactivity'
 import type { EffectScope, UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
 import { text } from './methods/text'
-import { change, click, focus, input, keydown, keydownExact, keypress, keypressExact, keyup, keyupExact, on, submit } from './methods/on'
+import { blur, change, click, focus, input, keydown, keydownExact, keypress, keypressExact, keyup, keyupExact, on, submit } from './methods/on'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
 import type { SetupArguments } from './methods/setup'
@@ -54,6 +54,10 @@ export class Component {
    * Shorthand for binding `on("focus")` event listener to the current component.
    */
   focus = focus.bind(this)
+  /**
+   * Shorthand for binding `on("blur")` event listener to the current component.
+   */
+  blur = blur.bind(this)
   /**
    * Shorthand for binding `on("change")` event listener to the current component.
    */

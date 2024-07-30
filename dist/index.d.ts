@@ -97,6 +97,10 @@ export declare class Component {
      */
     focus: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
     /**
+     * Shorthand for binding `on("blur")` event listener to the current component.
+     */
+    blur: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
      * Shorthand for binding `on("change")` event listener to the current component.
      */
     change: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;

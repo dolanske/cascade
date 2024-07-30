@@ -36,6 +36,10 @@ export function focus(this: Component, listener: EventListenerOrEventListenerObj
   return this.on('focus', listener, options)
 }
 
+export function blur(this: Component, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+  return this.on('blur', listener, options)
+}
+
 export function change(this: Component, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
   return this.on('change', listener, options)
 }
