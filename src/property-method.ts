@@ -2,7 +2,7 @@ import { watch } from '@vue-reactivity/watch'
 import { toValue } from '@vue/reactivity'
 import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from './component'
-import { isWatchSource, WATCH_CONF } from './util'
+import { WATCH_CONF, isWatchSource } from './util'
 
 /**
  * Many methods set a single property on the root element. This function should

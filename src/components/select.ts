@@ -1,4 +1,4 @@
-import { toValue, type MaybeRefOrGetter, type Primitive } from '@vue/reactivity'
+import { type MaybeRefOrGetter, type Primitive, toValue } from '@vue/reactivity'
 import { VoidComponent } from '../component'
 import { registerWatchedProp } from '../property-method'
 import { isWatchSource } from '../util'
@@ -15,9 +15,8 @@ export class Option extends VoidComponent {
       this.el.textContent = String(parsedValue)
 
       // Automatically watch in case it's a ref
-      if (isWatchSource(value)) {
+      if (isWatchSource(value))
         this.value(value)
-      }
     }
 
     if (label)

@@ -1,8 +1,10 @@
-import { MaybeRefOrGetter, type Ref, toValue } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
+import type { MaybeRefOrGetter, type Ref } from '@vue/reactivity'
+
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import type { CSSStyle } from '../types'
-import { isNil, isObject, isWatchSource, WATCH_CONF } from '../util'
+import { WATCH_CONF, isNil, isObject, isWatchSource } from '../util'
 
 type LimitedPrimitive = string | number
 

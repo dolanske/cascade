@@ -1,7 +1,8 @@
 import { watch } from '@vue-reactivity/watch'
-import { MaybeRefOrGetter, toValue } from '@vue/reactivity'
+import type { MaybeRefOrGetter } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
-import { isNil, isWatchSource, WATCH_CONF } from '../util'
+import { WATCH_CONF, isNil, isWatchSource } from '../util'
 
 export function show(this: Component, defaultValue: MaybeRefOrGetter) {
   this.onMount(() => {

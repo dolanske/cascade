@@ -7,14 +7,14 @@ Create simple, reusable and reactive UI components using render functions and ad
 ## Example
 
 ```ts
-import { div, h1, reusable } from "@dolanske/cascade"
+import { div, h1, reusable } from '@dolanske/cascade'
 
 // Define a reusable button component
 interface Props {
-  startingCount: number,
+  startingCount: number
 }
 
-const Counter = reusable("button", (ctx, props: Props) => {
+const Counter = reusable('button', (ctx, props: Props) => {
   // Reactive variable (see vue's reactivity)
   const count = ref(props.startingCount)
   // Reactively set the text content of the component
@@ -34,20 +34,34 @@ const App = div()
     // Nest elements inside
     ctx.nest(
       h1('Counter'),
-      // Reusable components 
+      // Reusable components
       Counter().props({ startingCount: 5 }),
     )
   })
 
 // App entry does not need to be reusable, hence we can define it as dumb
-// component and use once. 
+// component and use once.
 App.mount('#app')
 ```
 ---
 
 ## API
 
-Each component instance exposes plethora
+Each component instance exposes a plethora of useful methods. These are largely inspired from Vue and how it works, so you will notice a lot of overlap.
+
+#### `ctx.text(value: MaybeRefOrGetter<Primitive>)`
+
+Reactively sets the `textContent` property on the component.
+
+```ts
+ctx.text(() => hasError.value ? 'Sorry' : 'All good')
+```
+
+#### `ctx.html(value: MaybeRefOrGetter<Primitive>)`
+
+Reactively sets the `innerHTML` property on the component.
+
+---
 
 ## Custom components
 

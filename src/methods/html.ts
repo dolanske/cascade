@@ -1,4 +1,4 @@
-import { MaybeRefOrGetter } from '@vue/reactivity'
+import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from '../component'
 import { registerWatchedProp } from '../property-method'
 

@@ -1,4 +1,5 @@
-import { isRef, Ref } from '@vue/reactivity'
+import type { Ref } from '@vue/reactivity'
+import { isRef } from '@vue/reactivity'
 import type { Component } from './component'
 
 export function isObject(value: any): value is object {
@@ -38,4 +39,8 @@ export function getInstance(el: HTMLElement | Element) {
 export const WATCH_CONF = {
   immediate: true,
   deep: true,
+}
+
+export function capitalizeString(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1)
 }

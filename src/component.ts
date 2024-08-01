@@ -73,7 +73,7 @@ export class Component {
   /**
    * Shorthand for binding `on("keydown")` event listener to the current
    * component and listening for specific keys to be pressed down.
-   * 
+   *
    * ```
    * Component.keydownExact(["Shift", "T"], () => ...)
    * ```
@@ -83,10 +83,10 @@ export class Component {
    * Shorthand for binding `on("keyup")` event listener to the current component.
    */
   keyup = keyup.bind(this)
-    /**
+  /**
    * Shorthand for binding `on("keyup")` event listener to the current
    * component and listening for specific keys to be released.
-   * 
+   *
    * ```
    * Component.keyupExact(["Shift", "T"], () => ...)
    * ```
@@ -96,10 +96,10 @@ export class Component {
    * Shorthand for binding `on("keypress")` event listener to the current component.
    */
   keypress = keypress.bind(this)
-    /**
+  /**
    * Shorthand for binding `on("keypress")` event listener to the current
    * component and listening for specific keys to be pressed.
-   * 
+   *
    * ```
    * Component.keypressExact(["Shift", "T"], () => ...)
    * ```

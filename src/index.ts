@@ -1,3 +1,4 @@
+import { ref } from '@vue/reactivity'
 import { getInstance } from './util'
 import { Component, fragment } from './component'
 import type { ComponentChildren as Children } from './types'
@@ -7,6 +8,7 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
+import { Transform } from './methods/model'
 
 const {
   a,
@@ -256,19 +258,19 @@ export {
   source,
   track,
   wbr,
-  img
+  img,
 }
 
 // Test
 
 const CC = input().setup((ctx) => {
-  ctx.keydown((e: any) => {
-    console.log(e.key)
-  })
-
-  ctx.keydownExact(["Alt","c"], () => {
-    console.log("C!!!")
+  const text = ref('')
+  ctx.model(text, {
+    transforms: [
+      Transform.trim,
+      Transform.truncate(5),
+    ],
   })
 })
 
-CC.mount("#app")
+CC.mount('#app')

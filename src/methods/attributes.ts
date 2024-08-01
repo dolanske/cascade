@@ -1,4 +1,6 @@
-import { MaybeRefOrGetter, type Primitive, toValue } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
+import type { MaybeRefOrGetter, type Primitive } from '@vue/reactivity'
+
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { isNil, isObject, isWatchSource } from '../util'

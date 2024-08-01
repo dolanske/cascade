@@ -1,5 +1,6 @@
 import { watch } from '@vue-reactivity/watch'
-import { MaybeRefOrGetter, toValue } from '@vue/reactivity'
+import type { MaybeRefOrGetter } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
 import { WATCH_CONF, isArray, isNil, isObject, isWatchSource } from '../util'
 
