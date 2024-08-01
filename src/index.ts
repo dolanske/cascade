@@ -263,14 +263,13 @@ export {
 
 // Test
 
-const CC = input().setup((ctx) => {
-  const text = ref('')
-  ctx.model(text, {
-    transforms: [
-      Transform.trim,
-      Transform.truncate(5),
-    ],
-  })
+const Comp = div().setup((ctx) => {
+  const state = ref(true)
+
+  ctx.nest(
+    button("Switch").click(() => state.value = !state.value),
+    () => state.value ? span("true") : span("false")
+  )
 })
 
-CC.mount('#app')
+Comp.mount('#app')

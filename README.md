@@ -61,6 +61,8 @@ ctx.text(() => hasError.value ? 'Sorry' : 'All good')
 
 Reactively sets the `innerHTML` property on the component.
 
+#### `ctx.nest(...children: C)
+
 ---
 
 ## Custom components

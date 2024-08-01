@@ -64,7 +64,14 @@ export function render(parent: Component | Element, children?: ComponentChildren
         render(root, child.children)
       }
       else if (isWatchSource(child)) {
-        watch(() => toValue(child), value => render(root, value, i), {
+        watch(() => toValue(child), (value) => {
+          // TODO: cleanup previous component before rendering new 
+          // if (value instanceof Component)
+          //   value.destroy()
+          // else root.innerHTML = ''
+
+          render(root, value, i)
+        }, {
           immediate: true,
           deep: true,
         })
@@ -81,7 +88,14 @@ export function render(parent: Component | Element, children?: ComponentChildren
   }
 
   else if (isWatchSource(children)) {
-    watch(() => toValue(children), value => render(root, value), {
+    watch(() => toValue(children), (value) => {
+      // TODO: cleanup previous component before rendering new \
+      if (value instanceof Component)
+        value.destroy()
+      else root.innerHTML = ''
+
+      render(root, value)
+    }, {
       immediate: true,
       deep: true,
     })
