@@ -37,5 +37,5 @@ export const El = Object.assign(htmlNormalElFactory, htmlVoidElFactory, {
   input,
   textarea,
   option,
-  img
+  img,
 })

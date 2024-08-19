@@ -1,3 +1,5 @@
+import type { Ref } from '@vue/reactivity'
+import { isRef } from '@vue/reactivity'
 import type { Component } from './component'
 
 export function isObject(value: any): value is object {
@@ -11,6 +13,14 @@ export function isNil(value: any): value is null | undefined {
 
 export function isArray(value: any): value is Array<any> {
   return Array.isArray(value)
+}
+
+export function isFn(value: any): value is Function {
+  return typeof value === 'function'
+}
+
+export function isWatchSource(value: any): value is Ref<any> | Function {
+  return isRef(value) || isFn(value)
 }
 
 /**
@@ -29,4 +39,8 @@ export function getInstance(el: HTMLElement | Element) {
 export const WATCH_CONF = {
   immediate: true,
   deep: true,
+}
+
+export function capitalizeString(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1)
 }

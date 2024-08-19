@@ -1,15 +1,17 @@
-import { type Ref, isRef } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
+import type { MaybeRefOrGetter, type Ref } from '@vue/reactivity'
+
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import type { CSSStyle } from '../types'
-import { isNil, isObject } from '../util'
+import { WATCH_CONF, isNil, isObject, isWatchSource } from '../util'
 
 type LimitedPrimitive = string | number
 
 export function style(
   this: Component,
-  key: keyof CSSStyle | CSSStyle | Ref<CSSStyle>,
-  value?: LimitedPrimitive | Ref<LimitedPrimitive>,
+  key: keyof CSSStyle | CSSStyle | MaybeRefOrGetter<CSSStyle>,
+  value?: MaybeRefOrGetter<LimitedPrimitive>,
 ) {
   const setStyleProperties = (props: CSSStyle) => {
     if (!isObject(props)) {
@@ -21,8 +23,8 @@ export function style(
       this.el.style.setProperty(key, Reflect.get(props, key))
   }
   if (typeof key === 'string') {
-    if (isRef(value)) {
-      const release = watch(value, (updatedValue) => {
+    if (isWatchSource(value)) {
+      const release = watch(() => toValue(value), (updatedValue) => {
         setStyleProperties({ [key]: updatedValue })
       })
       this.onDestroy(release)
@@ -31,15 +33,12 @@ export function style(
       setStyleProperties({ [key]: value })
     }
   }
-  else if (isRef(key)) {
+  else if (isWatchSource(key)) {
     if (value) {
       console.warn('[El.style] Refs which don\'t contain a style object are not allowed')
     }
     else {
-      const release = watch(key, setStyleProperties, {
-        immediate: true,
-        deep: true,
-      })
+      const release = watch(() => toValue(key), setStyleProperties, WATCH_CONF)
       this.onDestroy(release)
     }
   }
@@ -47,8 +46,8 @@ export function style(
     const keyProps = Object.keys(key)
     for (const keyProp of keyProps) {
       const value: LimitedPrimitive | Ref<LimitedPrimitive> = Reflect.get(key, keyProp)
-      if (isRef(value)) {
-        const release = watch(value, (updatedValue) => {
+      if (isWatchSource(value)) {
+        const release = watch(() => toValue(value), (updatedValue) => {
           if (isNil(updatedValue))
             return
           this.el.style.setProperty(keyProp, String(updatedValue))

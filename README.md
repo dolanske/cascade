@@ -4,63 +4,67 @@ I swear this is the last DOM library I make (for now)
 
 Create simple, reusable and reactive UI components using render functions and add more complex functionality through method chaining. These methods can be mounted anywhere in the DOM, static applications, with added reactivity only where needed.
 
-```ts
-// Define reusable component with props
-const CounterComponent = El.button().setup(({ self, props }) => {
-  const data = ref(props.startingCount as number)
+## Example
 
-  self.text(() => `Clicked ${data.value} times`)
-  self.click(() => {
-    if (props.canIncrement.value)
-      data.value++
-  })
+```ts
+import { div, h1, reusable } from '@dolanske/cascade'
+
+// Define a reusable button component
+interface Props {
+  startingCount: number
+}
+
+const Counter = reusable('button', (ctx, props: Props) => {
+  // Reactive variable (see vue's reactivity)
+  const count = ref(props.startingCount)
+  // Reactively set the text content of the component
+  ctx.text(() => `Clicked ${count.value} times`)
+  // Attach event listener for a click
+  ctx.click(() => count.value++)
 })
 
 ///////////////
 
-// Use component somewhere
-const App = El.div().setup(({ self }) => {
-  const canIncrement = ref(true)
+// Instance-less components (stupid components, such as just nesting random HTML
+// elements) do not need to be defined via `reusable` function, but once you add
+// reactive state please remember, they will be used as a single instance
 
-  // This is the same as adding the children inside the El.div(...children).
-  // But being able to define this AFTER defining the component logic is much more ergonomic
-  self.nest([
-    El.h1('Counter'),
-    CounterComponent.props({
-      // Static prop
-      startingCount: 5,
-      // Dynamic prop (reactive)
-      canIncrement,
-    }),
-    El.button('Toggle').click(() => canIncrement.value = !canIncrement.value),
-  ])
-})
+const App = div()
+  .setup((ctx) => {
+    // Nest elements inside
+    ctx.nest(
+      h1('Counter'),
+      // Reusable components
+      Counter().props({ startingCount: 5 }),
+    )
+  })
 
+// App entry does not need to be reusable, hence we can define it as dumb
+// component and use once.
 App.mount('#app')
 ```
+---
 
-## TODO
+## API
 
-This project started during Christmas, without much thinking through. So far it's been fun and smooth sailing. If this syntax is viable is something future me needs to worry about.
+Each component instance exposes a plethora of useful methods. These are largely inspired from Vue and how it works, so you will notice a lot of overlap.
 
-- [] Props
-  - [x] Add passing static data into components
-  - [] Correctly type props (using the builder TS pattern)
-- [] else() / elseif() (just complete if() implementation)
-- [x] show()
-- [x] model()
-  - [x] input
-    - [x] checkbox
-    - [x] radio
-    - [x] other
-  - [x] select
-  - [x] details
-- [x] attr()
-- [x] style()
-- [x] Split elements into void and normal components
-- [] destroying and re-mounting components
-  Maybe wrapping every nested method into a function, which saves the whole function and re-runs it on re-mount could work?
+#### `ctx.text(value: MaybeRefOrGetter<Primitive>)`
 
-- [] Add template()
-  - contains selector for the template defined in the DOM
-  -
+Reactively sets the `textContent` property on the component.
+
+```ts
+ctx.text(() => hasError.value ? 'Sorry' : 'All good')
+```
+
+#### `ctx.html(value: MaybeRefOrGetter<Primitive>)`
+
+Reactively sets the `innerHTML` property on the component.
+
+#### `ctx.nest(...children: C)
+
+---
+
+## Custom components
+
+Cascade has a few custom components.

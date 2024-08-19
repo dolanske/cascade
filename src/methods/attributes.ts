@@ -1,7 +1,9 @@
-import { type Primitive, type Ref, isRef } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
+import type { MaybeRefOrGetter, type Primitive } from '@vue/reactivity'
+
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
-import { isNil, isObject } from '../util'
+import { isNil, isObject, isWatchSource } from '../util'
 
 type Attributes = Record<string, Primitive>
 
@@ -27,10 +29,10 @@ export function setAttribute(el: HTMLElement, key: string | Attributes, value?: 
   }
 }
 
-export function attrs(this: Component, attrData: Attributes | Ref<Attributes>) {
+export function attrs(this: Component, attrData: MaybeRefOrGetter<Attributes>) {
   this.onInit(() => {
-    if (isRef(attrData)) {
-      const release = watch(attrData, value => setAttribute(this.el, value), {
+    if (isWatchSource(attrData)) {
+      const release = watch(() => toValue(attrData), value => setAttribute(this.el, value), {
         immediate: true,
         deep: true,
       })
@@ -45,10 +47,10 @@ export function attrs(this: Component, attrData: Attributes | Ref<Attributes>) {
   return this
 }
 
-export function attr(this: Component, key: string, value?: Primitive | Ref<Primitive>) {
+export function attr(this: Component, key: string, value?: MaybeRefOrGetter<Primitive>) {
   this.onInit(() => {
-    if (isRef(value)) {
-      const release = watch(value, value => setAttribute(this.el, key, value), {
+    if (isWatchSource(value)) {
+      const release = watch(() => toValue(value), value => setAttribute(this.el, key, value), {
         immediate: true,
         deep: true,
       })

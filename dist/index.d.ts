@@ -1,4 +1,5 @@
 import { EffectScope } from '@vue/reactivity';
+import { MaybeRefOrGetter } from '@vue/reactivity';
 import { Primitive } from '@vue/reactivity';
 import type { Properties } from 'csstype';
 import type { PropertiesHyphen } from 'csstype';
@@ -53,9 +54,9 @@ export declare type Children = ComponentChildrenItems | ComponentChildrenItems[]
 
 export declare const cite: ComponentInstance;
 
-declare type ClassNames = string | ClassObject;
+declare type ClassnameOrCLassObject = string | ClassObject;
 
-declare type ClassObject = Record<string, boolean | Ref<boolean>>;
+declare type ClassObject = Record<string, MaybeRefOrGetter<boolean>>;
 
 export declare const code: ComponentInstance;
 
@@ -65,17 +66,17 @@ export declare const colgroup: ComponentInstance;
 
 export declare class Component {
     /**
-     * Set `textContent` of the current node.
+     * Set `textContent` of the current component.
      *
      * @param text {string | () => string}
      */
     text: (value: RefOrValue<Primitive>) => Component;
     /**
-     * Set `innerHTML` of the current node.
+     * Set `innerHTML` of the current component.
      */
     html: (value: RefOrValue<string>) => Component;
     /**
-     * Add an event listener to the current node.
+     * Add an event listener to the current component.
      *
      * @param on {keyof HTMLElementEventMap} Event name
      * @param listener {EventListenerOrEventListenerObject} Function which runs on event trigger
@@ -84,13 +85,72 @@ export declare class Component {
      */
     on: (type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
     /**
-     * Shorthand for binding `on("click")` event listener to the current node.
+     * Shorthand for binding `on("click")` event listener to the current component.
      */
     click: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
     /**
-     * Bind reactive class object to the current node.
+     * Shorthand for binding `on("submit")` event listener to the current component.
      */
-    class: (classNames?: ClassNames | undefined, value?: boolean | Ref<boolean> | undefined) => Component;
+    submit: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("focus")` event listener to the current component.
+     */
+    focus: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("blur")` event listener to the current component.
+     */
+    blur: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("change")` event listener to the current component.
+     */
+    change: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("input")` event listener to the current component.
+     */
+    input: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("keydown")` event listener to the current component.
+     */
+    keydown: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("keydown")` event listener to the current
+     * component and listening for specific keys to be pressed down.
+     *
+     * ```
+     * Component.keydownExact(["Shift", "T"], () => ...)
+     * ```
+     */
+    keydownExact: (requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: (EventListenerOptions & KeyInputOptions) | undefined) => Component;
+    /**
+     * Shorthand for binding `on("keyup")` event listener to the current component.
+     */
+    keyup: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("keyup")` event listener to the current
+     * component and listening for specific keys to be released.
+     *
+     * ```
+     * Component.keyupExact(["Shift", "T"], () => ...)
+     * ```
+     */
+    keyupExact: (requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: (EventListenerOptions & KeyInputOptions) | undefined) => Component;
+    /**
+     * Shorthand for binding `on("keypress")` event listener to the current component.
+     */
+    keypress: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    /**
+     * Shorthand for binding `on("keypress")` event listener to the current
+     * component and listening for specific keys to be pressed.
+     *
+     * ```
+     * Component.keypressExact(["Shift", "T"], () => ...)
+     * ```
+     */
+    keypressExact: (requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: (EventListenerOptions & KeyInputOptions) | undefined) => Component;
+    /**
+     * Bind reactive class object to the current component.
+     */
+    class: (classNames?: ClassnameOrCLassObject | undefined, value?: MaybeRefOrGetter<boolean> | undefined) => Component;
     /**
      * Create a component scope, in which you can declare reactive variables. When
      * the component is removed from the DOM, all of the scope properties get
@@ -118,33 +178,46 @@ export declare class Component {
      * children to a component and only then use methods like `if` or `for` on it.
      */
     nest: (children: Children, ...rest: ComponentChildrenItems[]) => Component;
+    /**
+     * Two way binding of a reactive variable to the inputs / selects value.
+     */
     model: (defaultRef: Ref<Primitive | Primitive[]>, options?: ModelOptions | undefined) => Component;
-    attrs: (attrData: {
-        [x: string]: Primitive;
-    } | Ref<{
+    /**
+     * Bind attribute object to the component.
+     */
+    attrs: (attrData: MaybeRefOrGetter<{
         [x: string]: Primitive;
     }>) => Component;
-    attr: (key: string, value?: Primitive | Ref<Primitive>) => Component;
     /**
-     * Dynamically bind a `disabled` attribute to the node.
+     * Bind a single attribute to the component.
+     */
+    attr: (key: string, value?: MaybeRefOrGetter<Primitive>) => Component;
+    /**
+     * Dynamically bind a `disabled` attribute to the component.
      */
     disabled: (value?: RefOrValue<boolean> | undefined) => Component;
     /**
-     * Dynamically bind an `id` attribute to the node.
+     * Dynamically bind an `id` attribute to the component.
      */
     id: (value: RefOrValue<Primitive>) => Component;
     /**
-     * Toggle between showing or hiding the current node. The node is still
+     * Toggle between showing or hiding the current component. the component is still
      * rendered, but has `display: none` applied to it.
      *
      * This function also preserves the previously added inline styles.
      */
     show: (defaultValue: any) => Component;
     /**
-     * Add reactive styling object to the current node.
+     * Add reactive styling object to the current component.
      */
-    style: (key: CSSStyle | keyof CSSStyle | Ref<CSSStyle>, value?: (string | number) | Ref<string | number> | undefined) => Component;
+    style: (key: keyof CSSStyle | MaybeRefOrGetter<CSSStyle>, value?: MaybeRefOrGetter<string | number> | undefined) => Component;
+    /**
+     * Conditionally render a component.
+     */
     if: (expr: any) => Component;
+    /**
+     * Clone the component
+     */
     clone: () => Component;
     el: HTMLElement;
     children: Children;
@@ -266,8 +339,8 @@ export declare const footer: ComponentInstance;
 export declare const form: ComponentInstance;
 
 /**
- * Fragment does not have any DOM node associated within it. All of its children
- * are appended to fragment's parent node.
+ * Fragment does not have any DOM element associated within it. All of its children
+ * are appended to fragment's parent element.
  */
 declare class Fragment extends Component {
     constructor(children?: Children);
@@ -276,8 +349,8 @@ declare class Fragment extends Component {
 
 /**
  * Fragment is not inserted into the DOM. Its children are appended to
- * fragment's parent node. Any methods which require DOM element to be present
- * will not work.
+ * fragment's parent element. Any methods which require DOM element to be
+ * present will not work.
  *
  * @param children {ComponentChildren}
  */
@@ -353,6 +426,10 @@ export declare const isindex: ComponentInstance;
 export declare const kbd: ComponentInstance;
 
 export declare const keygen: ComponentInstance;
+
+declare interface KeyInputOptions {
+    detect?: 'some' | 'every';
+}
 
 export declare const label: ComponentInstance;
 
@@ -490,7 +567,7 @@ export declare const ul: ComponentInstance;
 export declare const video: ComponentInstance;
 
 /**
- * Void components are those which can not contain any more child nodes. The
+ * Void components are those which can not contain any more child components. The
  * implementation is the same as normal elements, except it is not possible to
  * provide any child elements. The
  */

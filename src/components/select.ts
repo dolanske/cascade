@@ -1,24 +1,29 @@
-import type { Primitive } from '@vue/reactivity'
+import { type MaybeRefOrGetter, type Primitive, toValue } from '@vue/reactivity'
 import { VoidComponent } from '../component'
-import type { RefOrValue } from '../types'
 import { registerWatchedProp } from '../property-method'
+import { isWatchSource } from '../util'
 
 export class Option extends VoidComponent {
   declare el: HTMLOptionElement
 
-  constructor(value?: string, label?: string) {
+  constructor(label?: string, value?: MaybeRefOrGetter<Primitive>) {
     super('option')
 
     if (value) {
-      this.el.value = String(value)
-      this.el.textContent = String(value)
+      const parsedValue = toValue(value)
+      this.el.value = String(parsedValue)
+      this.el.textContent = String(parsedValue)
+
+      // Automatically watch in case it's a ref
+      if (isWatchSource(value))
+        this.value(value)
     }
 
     if (label)
       this.el.textContent = String(label)
   }
 
-  value(inputValue: RefOrValue<Primitive>) {
+  value(inputValue: MaybeRefOrGetter<Primitive>) {
     registerWatchedProp.call(this, 'value', inputValue)
     return this
   }
@@ -29,6 +34,6 @@ export class Option extends VoidComponent {
   }
 }
 
-export function option(value?: string, label?: string) {
-  return new Option(value, label)
+export function option(label?: string, value?: MaybeRefOrGetter<Primitive>) {
+  return new Option(label, value)
 }

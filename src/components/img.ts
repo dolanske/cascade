@@ -1,6 +1,6 @@
-import { VoidComponent } from "../component";
-import { registerWatchedProp } from "../property-method";
-import { RefOrValue } from "../types";
+import type { MaybeRefOrGetter } from '@vue/reactivity'
+import { VoidComponent } from '../component'
+import { registerWatchedProp } from '../property-method'
 
 export class ImgElement extends VoidComponent {
   el: HTMLImageElement
@@ -10,23 +10,22 @@ export class ImgElement extends VoidComponent {
     this.el = el
   }
 
-  src(value: RefOrValue<string>) {
+  src(value: MaybeRefOrGetter<string>) {
     registerWatchedProp.call(this, 'src', value)
     return this
   }
 
-  alt(value: RefOrValue<string>) {
+  alt(value: MaybeRefOrGetter<string>) {
     registerWatchedProp.call(this, 'alt', value)
     return this
   }
 }
 
 export function img(src: string) {
-  const el = document.createElement("img")
+  const el = document.createElement('img')
   const component = new ImgElement(el)
-  if (src) {
+  if (src)
     component.src(src)
-  }
+
   return component
 }
-  

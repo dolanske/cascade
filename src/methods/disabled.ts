@@ -1,7 +1,7 @@
+import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from '../component'
-import type { RefOrValue } from '../types'
 
-export function disabled(this: Component, value?: RefOrValue<boolean>) {
+export function disabled(this: Component, value?: MaybeRefOrGetter<boolean>) {
   this.attr('disabled', value)
   return this
 }

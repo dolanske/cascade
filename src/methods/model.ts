@@ -1,28 +1,99 @@
 import type { Primitive, Ref } from '@vue/reactivity'
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
-import { isArray } from '../util'
+import { capitalizeString, isArray } from '../util'
 
-type ModelTransform<T = string> = (value: string) => T
+type ModelTransform<Returns = string> = (value: string) => Returns
 
 //////////////////////////////
 // Transforms
-export const NUMBER: ModelTransform<number> = (val: string) => {
+
+/**
+ * Convert the output to a number
+ */
+const number: ModelTransform<number> = (val: string) => {
   return Number(val)
 }
 
-export const TRIM: ModelTransform = (val: string) => {
+/**
+ * Remove leading and trailing spaces from the output
+ */
+
+const trim: ModelTransform = (val: string) => {
   return val.trim()
 }
 
-export const UPPERCASE: ModelTransform = (val: string) => {
+/**
+ * Uppercase the output
+ */
+const uppercase: ModelTransform = (val: string) => {
   return val.toString().toUpperCase()
 }
+
+/**
+ * Lowercase the output
+ */
+const lowercase: ModelTransform = (val: string) => {
+  return val.toString().toUpperCase()
+}
+
+/**
+ * Capitalize each word
+ */
+function capitalizeAll(val: string) {
+  return val.split('\\s+').map(word => capitalizeString(word)).join('\\s+')
+}
+
+/**
+ * Capitalize the first word
+ */
+const capitalize = (val: string) => capitalizeString(val)
+
+/**
+ * Truncates the output at the given length
+ */
+function truncate(length: number) {
+  return (val: string) => {
+    return val.substring(0, length)
+  }
+}
+
+export const Transform = {
+  trim,
+  number,
+  uppercase,
+  lowercase,
+  truncate,
+  capitalize,
+  capitalizeAll,
+} as const
 
 //////////////////////////////
 // Implementation
 export interface ModelOptions {
+  /**
+   * Determine if event listeners use `change` or `input`
+   */
   lazy?: boolean
+  /**
+   *
+   * Transform the value coming from an input element.
+   *
+   * ```ts
+   * ctx.model(value, {
+   *    transforms: [
+   *      // If you write a number inside `<input type="text">` it'll be
+   *      // returned as a string. Eg.: "1234". Using a Number transform
+   *      // your reactive variable will receive an actual number type
+   *      Transform.number,
+   *      // You can also define your own transforms. You can pipe multiple
+   *      // transforms in a row and each will receive the output of the
+   *      // previous one
+   *      (value: number) => value / 2
+   *    ]
+   * })
+   * ```
+   */
   transforms?: ModelTransform[]
   eventOptions?: EventListenerOptions
 }
