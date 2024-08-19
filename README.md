@@ -45,6 +45,9 @@ App.mount('#app')
 ```
 ---
 
+> [!NOTE]  
+> API docs are work in progress
+
 ## API
 
 Each component instance exposes a plethora of useful methods. These are largely inspired from Vue and how it works, so you will notice a lot of overlap.
@@ -68,3 +71,5 @@ Reactively sets the `innerHTML` property on the component.
 ## Custom components
 
 Cascade has a few custom components.
+
+DOCS ARE WORK IN PROGRESS
