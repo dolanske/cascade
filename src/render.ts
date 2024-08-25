@@ -36,7 +36,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
   }
 
   else if (children instanceof Fragment) {
-    render(root, children.children)
+    render(root, children.componentChildren)
   }
 
   else if (children instanceof Element) {
@@ -48,7 +48,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
       children.parent = parent
     root.appendChild(children.el)
     children.__runOnInit()
-    render(children, children.children)
+    render(children, children.componentChildren)
     children.__runOnMount()
   }
 
@@ -61,7 +61,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
         render(root, child, i)
       }
       else if (child instanceof Fragment) {
-        render(root, child.children)
+        render(root, child.componentChildren)
       }
       else if (isWatchSource(child)) {
         watch(() => toValue(child), (value) => {
@@ -81,7 +81,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
           child.parent = parent
         root.appendChild(child.el)
         child.__runOnInit()
-        render(child, child.children)
+        render(child, child.componentChildren)
         child.__runOnMount()
       }
     }

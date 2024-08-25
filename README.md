@@ -14,12 +14,12 @@ There are two ways of creating components. The instanceless and reactive compone
 It is heavily discouraged to reuse instanceless components multiple times. Every single component has an instance.
 
 ```ts
-const Container = div().className("container")
+const Container = div().className('container')
 
 // In component A
-Container.nest(h1("Hello"))
+Container.nest(h1('Hello'))
 // In component B
-Container.nest(h2("World"))
+Container.nest(h2('World'))
 // Both components will have <h2>World</h2> as the `Container` component has just one instance.
 ```
 
@@ -28,17 +28,18 @@ To create a reusable component, you need to either use the `reusable` function. 
 ```ts
 const Container = reusable('div', (ctx, props) => {
   // Create a component which will wrap the provided child nodes in 3 divs
-  ctx.nest(div(div(props.children)))
+  ctx.nest(div(div(props.componentChildren)))
 })
 
 // Later used in a component
 App(
-  Container().prop('children', h1("Hello world"))
-).mount("#app")
+  Container().prop('children', h1('Hello world'))
+).mount('#app')
 ```
+
 ---
 
-> [!NOTE]  
+> [!NOTE]
 > API docs are work in progress
 
 ## API

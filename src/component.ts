@@ -177,6 +177,9 @@ export class Component {
   clone = clone.bind(this)
 
   el: HTMLElement
+  // Stores the currently nested children
+  componentChildren: ComponentChildren = []
+  // Stores the provided children when component was initialized
   children: ComponentChildren = []
   componentProps: object
   parent: Component | null = null
@@ -201,7 +204,7 @@ export class Component {
   /////////////////////////////////////////////////////////////
   // Private API
   __children(value: ComponentChildren) {
-    this.children = value
+    this.componentChildren = value
   }
 
   __runOnMount() {
@@ -285,7 +288,7 @@ export class Component {
     domRoot.appendChild(this.el)
     this.__rerunSetup()
     this.__runOnInit()
-    render(this, this.children)
+    render(this, this.componentChildren)
     this.__runOnMount()
   }
 
@@ -325,7 +328,7 @@ export class VoidComponent extends Component {
   }
 
   override __children(_value: ComponentChildren): void {
-    this.children = []
+    this.componentChildren = []
   }
 }
 
@@ -336,7 +339,7 @@ export class VoidComponent extends Component {
 export class Fragment extends Component {
   constructor(children: ComponentChildren = []) {
     super(document.createElement('template'))
-    this.children = children
+    this.componentChildren = children
   }
 
   override mount(selector: string) {
@@ -344,7 +347,7 @@ export class Fragment extends Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
     this.__runOnInit()
-    render(domRoot, this.children)
+    render(domRoot, this.componentChildren)
     this.__runOnMount()
   }
 }

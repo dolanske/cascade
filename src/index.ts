@@ -264,15 +264,15 @@ export {
 // Test
 
 const Comp = reusable('div', (ctx) => {
-  ctx.class("first")
+  ctx.class('first')
   ctx.nest(
     div(
       div(
-        ctx.children
-      ).class("third")
-    ).class("second")
+        ctx.children,
+      ).class('third'),
+    ).class('second'),
   )
 })
 Comp(
-  span("Hello world")
-).mount("#app")
+  span('Hello world'),
+).mount('#app')
