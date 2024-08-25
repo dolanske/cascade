@@ -4,6 +4,6 @@ import { isArray } from '../util'
 
 export function nest(this: Component, children: ComponentChildren, ...rest: ComponentChildrenItems[]) {
   const nested = isArray(children) ? children.concat(rest) : [children].concat(rest)
-  this.__children(nested)
+  this.__setComponentChildren(nested)
   return this
 }

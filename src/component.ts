@@ -25,8 +25,6 @@ import { createId } from './id'
 export class Component {
   /**
    * Set `textContent` of the current component.
-   *
-   * @param text {string | () => string}
    */
   text = text.bind(this)
   /**
@@ -176,34 +174,37 @@ export class Component {
    */
   clone = clone.bind(this)
 
+  //
+  // Public stuff which could be useful to users
+  identifier: string
   el: HTMLElement
-  // Stores the currently nested children
+  // Stores the component's children
   componentChildren: ComponentChildren = []
-  // Stores the provided children when component was initialized
+  // Stores the children which were provided when component was rendered. These
+  // will differ, if component does anything with `.nest()`.
   children: ComponentChildren = []
-  componentProps: object
   parent: Component | null = null
 
-  // Lifecycle
+  //
+  // Private stuff for implementation
   #onMountCbs: GenericCallback[] = []
   #onDestroyCbs: GenericCallback[] = []
   #onInitCbs: GenericCallback[] = []
 
-  scopes = new Set<SetupArguments>()
-  runningScopes = new Set<EffectScope>()
-
-  __identifier: string
+  __scopes = new Set<SetupArguments>()
+  __runningScopes = new Set<EffectScope>()
+  __componentProps: object
 
   constructor(el: HTMLElement, props: object = {}) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
-    this.componentProps = props
-    this.__identifier = createId(true)
+    this.__componentProps = props
+    this.identifier = createId(true)
   }
 
   /////////////////////////////////////////////////////////////
   // Private API
-  __children(value: ComponentChildren) {
+  __setComponentChildren(value: ComponentChildren) {
     this.componentChildren = value
   }
 
@@ -223,21 +224,21 @@ export class Component {
   }
 
   __rerunSetup() {
-    for (const runner of this.scopes) {
+    for (const runner of this.__scopes) {
       const scope = effectScope()
       scope.run(() => {
-        runner(this, this.componentProps)
+        runner(this, this.__componentProps)
       })
 
-      this.runningScopes.add(scope)
+      this.__runningScopes.add(scope)
     }
   }
 
   __closeScopes() {
-    for (const scope of this.runningScopes)
+    for (const scope of this.__runningScopes)
       scope.stop()
 
-    this.runningScopes = new Set()
+    this.__runningScopes = new Set()
   }
 
   /////////////////////////////////////////////////////////////
@@ -276,7 +277,7 @@ export class Component {
   /**
    * Mounts the current element in the DOM. Usually, you would use this function
    * either in the root App component, or a single component, if you're simply
-   * adding small reactive scopes into an otherwise static site.
+   * adding small reactive __scopes into an otherwise static site.
    *
    * @param selector {string} Default: "body" element
    */
@@ -327,7 +328,7 @@ export class VoidComponent extends Component {
     super(document.createElement(type))
   }
 
-  override __children(_value: ComponentChildren): void {
+  override __setComponentChildren(_value: ComponentChildren): void {
     this.componentChildren = []
   }
 }

@@ -4,12 +4,12 @@ import type { Component } from '../component'
 export type SetupArguments = (componentInstance: Component, props: any) => void
 
 export function setup(this: Component, setupFn: SetupArguments) {
-  this.scopes.add(setupFn)
+  this.__scopes.add(setupFn)
 
   this.onInit(() => {
     const scope = effectScope()
     scope.run(() => {
-      setupFn(this, this.componentProps)
+      setupFn(this, this.__componentProps)
     })
 
     this.onDestroy(() => {
@@ -22,7 +22,7 @@ export function setup(this: Component, setupFn: SetupArguments) {
 
 // Assign a key value pair into the
 export function prop(this: Component, key: string, value: any) {
-  Object.assign(this.componentProps, { [key]: value })
+  Object.assign(this.__componentProps, { [key]: value })
   return this
 }
 

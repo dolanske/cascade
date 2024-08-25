@@ -24,7 +24,6 @@ export function reusable(el: keyof typeof El, setupFn: SetupArguments): Reusable
         // @ts-expect-error We've already taken all void tag options out
         : El[el](children)
 
-    inst.children = children ?? []
     inst.setup(setupFn)
     return inst
   }
