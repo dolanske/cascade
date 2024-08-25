@@ -182,9 +182,9 @@ export class Component {
   parent: Component | null = null
 
   // Lifecycle
-  onMountCbs: GenericCallback[] = []
-  onDestroyCbs: GenericCallback[] = []
-  onInitCbs: GenericCallback[] = []
+  #onMountCbs: GenericCallback[] = []
+  #onDestroyCbs: GenericCallback[] = []
+  #onInitCbs: GenericCallback[] = []
 
   scopes = new Set<SetupArguments>()
   runningScopes = new Set<EffectScope>()
@@ -205,17 +205,17 @@ export class Component {
   }
 
   __runOnMount() {
-    for (const cb of this.onMountCbs)
+    for (const cb of this.#onMountCbs)
       cb()
   }
 
   __runOnDestroy() {
-    for (const cb of this.onDestroyCbs)
+    for (const cb of this.#onDestroyCbs)
       cb()
   }
 
   __runOnInit() {
-    for (const cb of this.onInitCbs)
+    for (const cb of this.#onInitCbs)
       cb()
   }
 
@@ -247,7 +247,7 @@ export class Component {
    * @param callback {function}
    */
   onInit(callback: GenericCallback) {
-    this.onInitCbs.push(callback)
+    this.#onInitCbs.push(callback)
   }
 
   /**
@@ -257,7 +257,7 @@ export class Component {
    * @param callback {function}
    */
   onMount(callback: GenericCallback) {
-    this.onMountCbs.push(callback)
+    this.#onMountCbs.push(callback)
   }
 
   /**
@@ -267,7 +267,7 @@ export class Component {
    */
 
   onDestroy(callback: GenericCallback) {
-    this.onDestroyCbs.push(callback)
+    this.#onDestroyCbs.push(callback)
   }
 
   /**

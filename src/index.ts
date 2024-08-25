@@ -263,13 +263,16 @@ export {
 
 // Test
 
-const Comp = div().setup((ctx) => {
-  const state = ref(true)
-
+const Comp = reusable('div', (ctx) => {
+  ctx.class("first")
   ctx.nest(
-    button("Switch").click(() => state.value = !state.value),
-    () => state.value ? span("true") : span("false")
+    div(
+      div(
+        ctx.children
+      ).class("third")
+    ).class("second")
   )
 })
-
-Comp.mount('#app')
+Comp(
+  span("Hello world")
+).mount("#app")

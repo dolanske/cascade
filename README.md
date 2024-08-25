@@ -4,44 +4,37 @@ I swear this is the last DOM library I make (for now)
 
 Create simple, reusable and reactive UI components using render functions and add more complex functionality through method chaining. These methods can be mounted anywhere in the DOM, static applications, with added reactivity only where needed.
 
-## Example
+## Components
+
+There are two ways of creating components. The instanceless and reactive components.
+
+- **Instanceless** components are basic UI. Think of it as scaffolding. For instance `<div class="wrapper"></div>` does not hold any state, it's there to provided a container with some styling, but that's where its journey ends
+- **Reusable** the meat of your application. These components for instance provide interactivity and/or fetch data. Based on their state, we want to update the UI.
+
+It is heavily discouraged to reuse instanceless components multiple times. Every single component has an instance.
 
 ```ts
-import { div, h1, reusable } from '@dolanske/cascade'
+const Container = div().className("container")
 
-// Define a reusable button component
-interface Props {
-  startingCount: number
-}
+// In component A
+Container.nest(h1("Hello"))
+// In component B
+Container.nest(h2("World"))
+// Both components will have <h2>World</h2> as the `Container` component has just one instance.
+```
 
-const Counter = reusable('button', (ctx, props: Props) => {
-  // Reactive variable (see vue's reactivity)
-  const count = ref(props.startingCount)
-  // Reactively set the text content of the component
-  ctx.text(() => `Clicked ${count.value} times`)
-  // Attach event listener for a click
-  ctx.click(() => count.value++)
+To create a reusable component, you need to either use the `reusable` function. This will create a unique component instance each time it is used.
+
+```ts
+const Container = reusable('div', (ctx, props) => {
+  // Create a component which will wrap the provided child nodes in 3 divs
+  ctx.nest(div(div(props.children)))
 })
 
-///////////////
-
-// Instance-less components (stupid components, such as just nesting random HTML
-// elements) do not need to be defined via `reusable` function, but once you add
-// reactive state please remember, they will be used as a single instance
-
-const App = div()
-  .setup((ctx) => {
-    // Nest elements inside
-    ctx.nest(
-      h1('Counter'),
-      // Reusable components
-      Counter().props({ startingCount: 5 }),
-    )
-  })
-
-// App entry does not need to be reusable, hence we can define it as dumb
-// component and use once.
-App.mount('#app')
+// Later used in a component
+App(
+  Container().prop('children', h1("Hello world"))
+).mount("#app")
 ```
 ---
 
@@ -52,24 +45,8 @@ App.mount('#app')
 
 Each component instance exposes a plethora of useful methods. These are largely inspired from Vue and how it works, so you will notice a lot of overlap.
 
-#### `ctx.text(value: MaybeRefOrGetter<Primitive>)`
+...
 
-Reactively sets the `textContent` property on the component.
+## Components
 
-```ts
-ctx.text(() => hasError.value ? 'Sorry' : 'All good')
-```
-
-#### `ctx.html(value: MaybeRefOrGetter<Primitive>)`
-
-Reactively sets the `innerHTML` property on the component.
-
-#### `ctx.nest(...children: C)
-
----
-
-## Custom components
-
-Cascade has a few custom components.
-
-DOCS ARE WORK IN PROGRESS
+...
