@@ -8,13 +8,13 @@ Create simple, reusable and reactive UI components using render functions and ad
 
 ## Concept
 
-Create UI components by calling a component function. All supported HTML elements have their own factory function. 
+Create UI components by calling a component function. All supported HTML elements have their own factory function.
 
 - Provide children when calling the component
 - Chain function to extend the functionality
 
 ```ts
-const button = button("Click me").on("click", () => console.log("I got clicked!!"))
+const button = button('Click me').on('click', () => console.log('I got clicked!!'))
 ```
 
 Many function allow you to pass a ref or a getter function. These allow you to reactively update the UI. To familiarize yourself with these concepts, read the [Vue documentation on this topic](https://vuejs.org/api/reactivity-core.html).
@@ -44,16 +44,16 @@ To create a reusable component, you need to either use the `reusable` function. 
 const Container = reusable('div', (ctx, props) => {
   // Create a component which will wrap the provided child nodes in 3 divs
   ctx.nest(
-    h1(props.title)
-    div(ctx.children).class("wrapper")
+    h1(props.title),
+    div(ctx.children).class('wrapper')
   )
 })
 
 // Later used in a component
 const app = App(
   Container(
-    span("Subtitle")
-  ).prop('title', "Hello world")
+    span('Subtitle')
+  ).prop('title', 'Hello world')
 )
 
 app.mount('#app')
@@ -64,13 +64,14 @@ app.mount('#app')
 > [!NOTE]
 > API docs are work in progress
 
-## API 
+## API
 
 Creating a component returns a component instance. This instance contains a few useful properties and a lot of methods.
 
 ### Instance
+
 ```ts
-const ctx = div(span("hi"))
+const ctx = div(span('hi'))
 
 // Unique ID of the component
 ctx.identifier
@@ -101,7 +102,7 @@ ctx.text(value: MaybeRefOrGetter<Primitive>)
 ```
 Example
 ```ts
-ctx.text("Hello world")
+ctx.text('Hello world')
 // Will update text each time `name` ref changes
 ctx.text(() => `Hello ${name.value}`)
 ```
@@ -115,7 +116,7 @@ ctx.html(value: MaybeRefOrGetter<Primitive>)
 ```
 Example
 ```ts
-ctx.html("Hello <b>world</b>")
+ctx.html('Hello <b>world</b>')
 ctx.html(() => SVGIcon.value)
 ```
 
@@ -131,9 +132,9 @@ ctx.nest(...value: ComponentChildren | ComponentChildren[])
 Example
 ```ts
 ctx.nest(
-  h1("Hi"),
-  "Hmm",
-  document.createElement("input"),
+  h1('Hi'),
+  'Hmm',
+  document.createElement('input'),
   ctx.children
 )
 ```
@@ -149,11 +150,11 @@ Register event listeners.
 Bind an event listener to the underlying HTML node. The event listener is removed when the component is destryoyed/unmounted. Event modifiers are planned and will be added later.
 
 ```ts
-ctx.on(type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.on(type: keyof HTMLElementEventMap, listener: ListenerFn, options?: Options)
 ```
 
 ```ts
-ctx.on("click" (e) => {
+ctx.on('click', (e) => {
   e.stopPropagation()
   clicked.value = true
 })
@@ -164,12 +165,12 @@ ctx.on("click" (e) => {
 A few event definition shorthands are available to make development faster
 
 ```ts
-ctx.click(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.submit(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.focus(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.blur(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.change(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.input(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.click(listener: ListenerFn, options?: Options)
+ctx.submit(listener: ListenerFn, options?: Options)
+ctx.focus(listener: ListenerFn, options?: Options)
+ctx.blur(listener: ListenerFn, options?: Options)
+ctx.change(listener: ListenerFn, options?: Options)
+ctx.input(listener: ListenerFn, options?: Options)
 ```
 
 #### Keyboard events
@@ -177,33 +178,50 @@ ctx.input(listener: EventListenerOrEventListenerObject, options?: EventListenerO
 Detect keyboard presses on the component.
 
 ```ts
-ctx.keydown(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.keyup(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.keypress(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.keydown(listener: ListenerFn, options?: Options)
+ctx.keyup(listener: ListenerFn, options?: Options)
+ctx.keypress(listener: ListenerFn, options?: Options)
 ```
 
-You can also listen for a specific key combination using the `exact` suffix. 
+You can also listen for a specific key combination using the `exact` suffix.
 The options object also receives a new property called `detect` which can be set to `every` or `some`. The default is `every` and it controls wether the function detects keys in the exact order, or any of the provided keys.
 
 ```ts
-ctx.keydownExact(requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.keyupExact(requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
-ctx.keypressExact(requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.keydownExact(requiredKeyOrKeys: string | string[], listener: ListenerFn, options?: Options)
+ctx.keyupExact(requiredKeyOrKeys: string | string[], listener: ListenerFn, options?: Options)
+ctx.keypressExact(requiredKeyOrKeys: string | string[], listener: ListenerFn, options?: Options)
 ```
 Example
 ```ts
-ctx.keypressExact(["Shift", "A"], () => {
+ctx.keypressExact(['Shift', 'A'], () => {
   // Fired when SHIFT and A are pressed in succession
 })
 
-ctx.keypressExact(["A", "B", "C"], () => {
+ctx.keypressExact(['A', 'B', 'C'], () => {
   // Fired whenever A, B or C are pressed
 }, { detect: 'some' })
 ```
 
 #### `.model()`
 
-Reactively bind an
+Two way binding to control and element's value with ref. You can use `mode()l` on `input`, `select`, `textarea` and `details`.
+
+```ts
+// A function which transforms the value of the element before it's assigned to the provided ref
+type ModelTransform<Returns = string> = (value: string) => Returns
+
+interface ModelOptions {
+  lazy?: boolean
+  transforms?: ModelTransform[]
+  eventOptions?: EventListenerOptions
+}
+
+ctx.model(value: Ref<Primitive | Primitive[]>, options: ModelOptions)
+```
+
+The implementation follows the [basic usage](https://vuejs.org/guide/essentials/forms#basic-usage) of Vue's `v-model` implementation.
+
+Additionally, you can control wether the `<details>` element is open using `model` by providing it a `Ref<Boolean>`.
 
 ---
 
@@ -225,7 +243,7 @@ Example
 ```ts
 // Single ref class
 const largeText = ref(false)
-ctx.class("text-xl", largeText)
+ctx.class('text-xl', largeText)
 
 // Object, which can contain both static and refs/getter functions
 ctx.class({
@@ -244,11 +262,11 @@ ctx.style(key: keyof CSSStyle | CSSStyle | MaybeRefOrGetter<CSSStyle>, value?: M
 Example
 ```ts
 // Single reactive property using getter function
-ctx.style("display", () => show.value ? 'block' : 'none')
+ctx.style('display', () => show.value ? 'block' : 'none')
 // Getter function returning a style object
 ctx.style(() => ({
   display: show.value,
-  width: width.value + 'px'
+  width: `${width.value}px`
 }))
 // Static style object
 ctx.style({
