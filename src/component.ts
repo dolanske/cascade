@@ -188,7 +188,7 @@ export class Component {
   /**
    * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
    * You can do this by using `ctx.children` in your component's `.nest()` call.
-   * 
+   *
    * ```ts
    * // Inside Wrapper component
    * ctx.nest(div(ctx.children).class("wrapper"))
@@ -334,7 +334,7 @@ export class Component {
    */
   for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>) {
     return for_impl.call(this, source, callback)
-}
+  }
 }
 
 /**

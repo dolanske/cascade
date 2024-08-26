@@ -65,7 +65,7 @@ export function render(parent: Component | Element, children?: ComponentChildren
       }
       else if (isWatchSource(child)) {
         watch(() => toValue(child), (value) => {
-          // TODO: cleanup previous component before rendering new 
+          // TODO: cleanup previous component before rendering new
           // if (value instanceof Component)
           //   value.destroy()
           // else root.innerHTML = ''

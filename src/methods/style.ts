@@ -1,6 +1,5 @@
 import { toValue } from '@vue/reactivity'
-import type { MaybeRefOrGetter, type Ref } from '@vue/reactivity'
-
+import type { MaybeRefOrGetter, Ref } from '@vue/reactivity'
 import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import type { CSSStyle } from '../types'
