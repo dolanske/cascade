@@ -26,6 +26,7 @@ export const htmlNormalElFactory = htmlNormalTags.reduce((group, type) => {
 export const htmlVoidElFactory = htmlVoidTags.reduce((group, type) => {
   group[type] = () => {
     const inst = new VoidComponent(type)
+    inst.isVoid = true
     return inst
   }
   return group

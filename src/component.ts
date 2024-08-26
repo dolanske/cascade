@@ -203,6 +203,10 @@ export class Component {
    * Stores the reference to the parent Component instance, if it has one.
    */
   parent: Component | null = null
+  /**
+   * If true, the component can not have any child components
+   */
+  isVoid: boolean = false
 
   //
   // Private stuff for implementation
@@ -224,6 +228,9 @@ export class Component {
   /////////////////////////////////////////////////////////////
   // Private API
   __setComponentChildren(value: ComponentChildren) {
+    if (this.isVoid)
+      return
+
     this.componentChildren = value
   }
 

@@ -420,3 +420,22 @@ Cascade divides all of its components into two groups
 
 - **normal**
 - **void** (can't have children)
+
+There are a few custom components which extend the base functionality
+
+### Image
+
+TODOTODOTODOTODO
+
+```ts
+const image = img(src: string)
+// Has extra two custom attributes
+image.alt("Alt text").src("image.png")
+```
+
+### Input
+
+```ts
+// The first argument is i
+const textInput = input('text')
+```
