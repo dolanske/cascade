@@ -177,12 +177,31 @@ export class Component {
   //
   // Public stuff which could be useful to users
   identifier: string
+  /**
+   * Stores reference to the mounted DOM Element of the current component.
+   */
   el: HTMLElement
-  // Stores the component's children
+  /**
+   * Stores child component instances.
+   */
   componentChildren: ComponentChildren = []
-  // Stores the children which were provided when component was rendered. These
-  // will differ, if component does anything with `.nest()`.
+  /**
+   * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
+   * You can do this by using `ctx.children` in your component's `.nest()` call.
+   * 
+   * ```ts
+   * // Inside Wrapper component
+   * ctx.nest(div(ctx.children).class("wrapper"))
+   * // Using the Wrapper component
+   * Wrapper(h1("Hello world"))
+   * // Will render
+   * <div><div><h1>"Hello world"</h1></div></div>
+   * ```
+   */
   children: ComponentChildren = []
+  /**
+   * Stores the reference to the parent Component instance, if it has one.
+   */
   parent: Component | null = null
 
   //
@@ -315,7 +334,7 @@ export class Component {
    */
   for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>) {
     return for_impl.call(this, source, callback)
-  }
+}
 }
 
 /**
