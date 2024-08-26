@@ -141,10 +141,35 @@ ctx.nest(
 
 #### `.for()`
 
-Creates a set of child elements based on the provided dataset.
-TODOTODOTODOTODOTODOTODO;;;;;
+Iterate over the provided object / array / number and execute the provided
+callback for each item. Components returned from the callback are then
+rendered.
+
+It is recommended not to use other chained methods when using `for`,
+because the base element is replaced with the return value of the callback
+function. All logic should therefore be handled there.
 
 ```ts
+export type Source = any[] | number | object
+
+export type CallbackType<T> =
+  T extends any[]
+    ? (value: T[number], index: number) => ComponentChildrenItems
+    : T extends object
+      ? (value: keyof T, key: string, index: number) => ComponentChildrenItems
+      : (index: number) => ComponentChildrenItems
+
+ctx.for(
+  source: MaybeRefOrGetter<Source>,
+  callback: CallbackType<UnwrapRef<Source>>,
+)
+```
+
+Example
+```ts
+ctx.for(["One", "Two", "Three"], (item, index) => {
+  return li(`${index + 1} ${item}`)
+})
 ``
 
 ---
@@ -386,3 +411,12 @@ ctx.destroy()
 // Copies the current instance and returns a fresh copy. This component instance is not mounted in the DOM and should be used as a child component elsewhere.
 const clonedEl = ctx.clone()
 ```
+
+---
+
+## Components
+
+Cascade divides all of its components into two groups
+
+- **normal**
+- **void** (can't have children)
