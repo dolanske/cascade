@@ -167,10 +167,10 @@ ctx.for(
 
 Example
 ```ts
-ctx.for(["One", "Two", "Three"], (item, index) => {
+ctx.for(['One', 'Two', 'Three'], (item, index) => {
   return li(`${index + 1} ${item}`)
 })
-``
+```
 
 ---
 
