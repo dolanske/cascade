@@ -139,6 +139,14 @@ ctx.nest(
 )
 ```
 
+#### `.for()`
+
+Creates a set of child elements based on the provided dataset.
+TODOTODOTODOTODOTODOTODO;;;;;
+
+```ts
+``
+
 ---
 
 ### Events
@@ -332,4 +340,49 @@ Works just like `if` but leaves the component in the DOM, but appends `display: 
 
 ```ts
 ctx.show(expression: MaybeRefOrGetter)
+```
+
+---
+
+### Lifecycle
+
+Hooks which can execute code at different stages of component's life cycle.
+
+#### `.onInit()`
+
+Executes provided callback function when the component is initialized. Before being mounted in the DOM.
+
+```ts
+ctx.oninit(callback: () => void)
+```
+
+#### `.onMount()`
+
+Fires the provided callback when the Component is mounted to the DOM.
+
+```ts
+ctx.onMount(callback: () => void)
+```
+
+#### `.onDestroy()`
+
+Fires the provided callback when the Component is removed from the DOM.
+
+```ts
+ctx.onDestroy(callback: () => void)
+```
+
+---
+
+### Utilities
+
+This set of utilities might be more useful for people who want to extend the functionality or build a library with Cascade.
+
+```ts
+// Mounts the selected Component to the DOM
+ctx.mount(selector: string)
+// Destroys the component instance and removes it from the DOM
+ctx.destroy()
+// Copies the current instance and returns a fresh copy. This component instance is not mounted in the DOM and should be used as a child component elsewhere.
+const clonedEl = ctx.clone()
 ```

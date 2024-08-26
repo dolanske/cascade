@@ -265,7 +265,7 @@ export class Component {
 
   /**
    * Executes provided callback function when the component is initialized.
-   * Before being rendered in the dom.
+   * Before being rendered in the DOM.
    *
    * @param callback {function}
    */
