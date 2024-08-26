@@ -201,6 +201,10 @@ ctx.keypressExact(["A", "B", "C"], () => {
 }, { detect: 'some' })
 ```
 
+#### `.model()`
+
+Reactively bind an
+
 ---
 
 ### Attributes
