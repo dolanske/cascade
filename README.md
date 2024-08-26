@@ -70,7 +70,7 @@ Creating a component returns a component instance. This instance contains a few 
 
 ### Instance
 ```ts
-const ctx = div()
+const ctx = div(span("hi"))
 
 // Unique ID of the component
 ctx.identifier
@@ -137,6 +137,70 @@ ctx.nest(
   ctx.children
 )
 ```
+
+---
+
+### Events
+
+Register event listeners.
+
+#### `.on()`
+
+Bind an event listener to the underlying HTML node. The event listener is removed when the component is destryoyed/unmounted. Event modifiers are planned and will be added later.
+
+```ts
+ctx.on(type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+```
+
+```ts
+ctx.on("click" (e) => {
+  e.stopPropagation()
+  clicked.value = true
+})
+```
+
+#### Event shorthands
+
+A few event definition shorthands are available to make development faster
+
+```ts
+ctx.click(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.submit(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.focus(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.blur(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.change(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.input(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+```
+
+#### Keyboard events
+
+Detect keyboard presses on the component.
+
+```ts
+ctx.keydown(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.keyup(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.keypress(listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+```
+
+You can also listen for a specific key combination using the `exact` suffix. 
+The options object also receives a new property called `detect` which can be set to `every` or `some`. The default is `every` and it controls wether the function detects keys in the exact order, or any of the provided keys.
+
+```ts
+ctx.keydownExact(requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.keyupExact(requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+ctx.keypressExact(requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions)
+```
+Example
+```ts
+ctx.keypressExact(["Shift", "A"], () => {
+  // Fired when SHIFT and A are pressed in succession
+})
+
+ctx.keypressExact(["A", "B", "C"], () => {
+  // Fired whenever A, B or C are pressed
+}, { detect: 'some' })
+```
+
 ---
 
 ### Attributes
@@ -210,6 +274,12 @@ ctx.attrs({
 })
 ```
 
+#### Attribute shorthands
+
+```ts
+ctx.id(MaybeRefOrGetter<Primitive>) // id attribute
+ctx.disabled(MaybeRefOrGetter<boolean>) // disabled attribute
+```
 
 ---
 
