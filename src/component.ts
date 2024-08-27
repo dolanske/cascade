@@ -25,8 +25,6 @@ import { createId } from './id'
 export class Component {
   /**
    * Set `textContent` of the current component.
-   *
-   * @param text {string | () => string}
    */
   text = text.bind(this)
   /**
@@ -176,65 +174,97 @@ export class Component {
    */
   clone = clone.bind(this)
 
+  //
+  // Public stuff which could be useful to users
+  identifier: string
+  /**
+   * Stores reference to the mounted DOM Element of the current component.
+   */
   el: HTMLElement
+  /**
+   * Stores child component instances.
+   */
+  componentChildren: ComponentChildren = []
+  /**
+   * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
+   * You can do this by using `ctx.children` in your component's `.nest()` call.
+   *
+   * ```ts
+   * // Inside Wrapper component
+   * ctx.nest(div(ctx.children).class("wrapper"))
+   * // Using the Wrapper component
+   * Wrapper(h1("Hello world"))
+   * // Will render
+   * <div><div><h1>"Hello world"</h1></div></div>
+   * ```
+   */
   children: ComponentChildren = []
-  componentProps: object
+  /**
+   * Stores the reference to the parent Component instance, if it has one.
+   */
   parent: Component | null = null
+  /**
+   * If true, the component can not have any child components
+   */
+  isVoid: boolean = false
 
-  // Lifecycle
-  onMountCbs: GenericCallback[] = []
-  onDestroyCbs: GenericCallback[] = []
-  onInitCbs: GenericCallback[] = []
+  //
+  // Private stuff for implementation
+  __onMountCbs: GenericCallback[] = []
+  __onDestroyCbs: GenericCallback[] = []
+  __onInitCbs: GenericCallback[] = []
 
-  scopes = new Set<SetupArguments>()
-  runningScopes = new Set<EffectScope>()
-
-  __identifier: string
+  __scopes = new Set<SetupArguments>()
+  __runningScopes = new Set<EffectScope>()
+  __componentProps: object
 
   constructor(el: HTMLElement, props: object = {}) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
-    this.componentProps = props
-    this.__identifier = createId(true)
+    this.__componentProps = props
+    this.identifier = createId(true)
   }
 
   /////////////////////////////////////////////////////////////
   // Private API
-  __children(value: ComponentChildren) {
-    this.children = value
+  __setComponentChildren(value: ComponentChildren) {
+    if (this.isVoid)
+      return
+
+    this.componentChildren = value
   }
 
   __runOnMount() {
-    for (const cb of this.onMountCbs)
+    for (const cb of this.__onMountCbs)
       cb()
   }
 
   __runOnDestroy() {
-    for (const cb of this.onDestroyCbs)
+    for (const cb of this.__onDestroyCbs)
       cb()
   }
 
   __runOnInit() {
-    for (const cb of this.onInitCbs)
+    for (const cb of this.__onInitCbs)
       cb()
   }
 
   __rerunSetup() {
-    for (const runner of this.scopes) {
+    for (const runner of this.__scopes) {
       const scope = effectScope()
       scope.run(() => {
-        runner(this, this.componentProps)
+        runner(this, this.__componentProps)
       })
 
-      this.runningScopes.add(scope)
+      this.__runningScopes.add(scope)
     }
   }
 
   __closeScopes() {
-    for (const scope of this.runningScopes)
+    for (const scope of this.__runningScopes)
       scope.stop()
 
-    this.runningScopes = new Set()
+    this.__runningScopes = new Set()
   }
 
   /////////////////////////////////////////////////////////////
@@ -242,12 +272,12 @@ export class Component {
 
   /**
    * Executes provided callback function when the component is initialized.
-   * Before being rendered in the dom.
+   * Before being rendered in the DOM.
    *
    * @param callback {function}
    */
   onInit(callback: GenericCallback) {
-    this.onInitCbs.push(callback)
+    this.__onInitCbs.push(callback)
   }
 
   /**
@@ -257,7 +287,7 @@ export class Component {
    * @param callback {function}
    */
   onMount(callback: GenericCallback) {
-    this.onMountCbs.push(callback)
+    this.__onMountCbs.push(callback)
   }
 
   /**
@@ -267,13 +297,13 @@ export class Component {
    */
 
   onDestroy(callback: GenericCallback) {
-    this.onDestroyCbs.push(callback)
+    this.__onDestroyCbs.push(callback)
   }
 
   /**
    * Mounts the current element in the DOM. Usually, you would use this function
    * either in the root App component, or a single component, if you're simply
-   * adding small reactive scopes into an otherwise static site.
+   * adding small reactive __scopes into an otherwise static site.
    *
    * @param selector {string} Default: "body" element
    */
@@ -285,7 +315,7 @@ export class Component {
     domRoot.appendChild(this.el)
     this.__rerunSetup()
     this.__runOnInit()
-    render(this, this.children)
+    render(this, this.componentChildren)
     this.__runOnMount()
   }
 
@@ -324,8 +354,8 @@ export class VoidComponent extends Component {
     super(document.createElement(type))
   }
 
-  override __children(_value: ComponentChildren): void {
-    this.children = []
+  override __setComponentChildren(_value: ComponentChildren): void {
+    this.componentChildren = []
   }
 }
 
@@ -336,7 +366,7 @@ export class VoidComponent extends Component {
 export class Fragment extends Component {
   constructor(children: ComponentChildren = []) {
     super(document.createElement('template'))
-    this.children = children
+    this.componentChildren = children
   }
 
   override mount(selector: string) {
@@ -344,7 +374,7 @@ export class Fragment extends Component {
     if (!domRoot)
       throw new Error('Root element does not exist')
     this.__runOnInit()
-    render(domRoot, this.children)
+    render(domRoot, this.componentChildren)
     this.__runOnMount()
   }
 }

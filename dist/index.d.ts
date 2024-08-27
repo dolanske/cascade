@@ -67,14 +67,12 @@ export declare const colgroup: ComponentInstance;
 export declare class Component {
     /**
      * Set `textContent` of the current component.
-     *
-     * @param text {string | () => string}
      */
-    text: (value: RefOrValue<Primitive>) => Component;
+    text: (value: MaybeRefOrGetter<Primitive>) => Component;
     /**
      * Set `innerHTML` of the current component.
      */
-    html: (value: RefOrValue<string>) => Component;
+    html: (value: MaybeRefOrGetter<string>) => Component;
     /**
      * Add an event listener to the current component.
      *
@@ -195,11 +193,11 @@ export declare class Component {
     /**
      * Dynamically bind a `disabled` attribute to the component.
      */
-    disabled: (value?: RefOrValue<boolean> | undefined) => Component;
+    disabled: (value?: MaybeRefOrGetter<boolean> | undefined) => Component;
     /**
      * Dynamically bind an `id` attribute to the component.
      */
-    id: (value: RefOrValue<Primitive>) => Component;
+    id: (value: MaybeRefOrGetter<Primitive>) => Component;
     /**
      * Toggle between showing or hiding the current component. the component is still
      * rendered, but has `display: none` applied to it.
@@ -219,18 +217,45 @@ export declare class Component {
      * Clone the component
      */
     clone: () => Component;
+    identifier: string;
+    /**
+     * Stores reference to the mounted DOM Element of the current component.
+     */
     el: HTMLElement;
+    /**
+     * Stores child component instances.
+     */
+    componentChildren: Children;
+    /**
+     * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
+     * You can do this by using `ctx.children` in your component's `.nest()` call.
+     *
+     * ```ts
+     * // Inside Wrapper component
+     * ctx.nest(div(ctx.children).class("wrapper"))
+     * // Using the Wrapper component
+     * Wrapper(h1("Hello world"))
+     * // Will render
+     * <div><div><h1>"Hello world"</h1></div></div>
+     * ```
+     */
     children: Children;
-    componentProps: object;
+    /**
+     * Stores the reference to the parent Component instance, if it has one.
+     */
     parent: Component | null;
-    onMountCbs: GenericCallback[];
-    onDestroyCbs: GenericCallback[];
-    onInitCbs: GenericCallback[];
-    scopes: Set<SetupArguments>;
-    runningScopes: Set<EffectScope>;
-    __identifier: string;
+    /**
+     * If true, the component can not have any child components
+     */
+    isVoid: boolean;
+    __onMountCbs: GenericCallback[];
+    __onDestroyCbs: GenericCallback[];
+    __onInitCbs: GenericCallback[];
+    __scopes: Set<SetupArguments>;
+    __runningScopes: Set<EffectScope>;
+    __componentProps: object;
     constructor(el: HTMLElement, props?: object);
-    __children(value: Children): void;
+    __setComponentChildren(value: Children): void;
     __runOnMount(): void;
     __runOnDestroy(): void;
     __runOnInit(): void;
@@ -238,7 +263,7 @@ export declare class Component {
     __closeScopes(): void;
     /**
      * Executes provided callback function when the component is initialized.
-     * Before being rendered in the dom.
+     * Before being rendered in the DOM.
      *
      * @param callback {function}
      */
@@ -259,7 +284,7 @@ export declare class Component {
     /**
      * Mounts the current element in the DOM. Usually, you would use this function
      * either in the root App component, or a single component, if you're simply
-     * adding small reactive scopes into an otherwise static site.
+     * adding small reactive __scopes into an otherwise static site.
      *
      * @param selector {string} Default: "body" element
      */
@@ -283,7 +308,7 @@ export declare class Component {
     for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>): Component;
 }
 
-declare type ComponentChildrenItems = string | number | Component | Element | Fragment | Ref<string | number>;
+declare type ComponentChildrenItems = string | number | Component | Element | Fragment | MaybeRefOrGetter<string | number | Component>;
 
 declare type ComponentInstance = (children?: Children) => Component;
 
@@ -401,8 +426,8 @@ export declare function img(src: string): ImgElement;
 declare class ImgElement extends VoidComponent {
     el: HTMLImageElement;
     constructor(el: HTMLImageElement);
-    src(value: RefOrValue<string>): this;
-    alt(value: RefOrValue<string>): this;
+    src(value: MaybeRefOrGetter<string>): this;
+    alt(value: MaybeRefOrGetter<string>): this;
 }
 
 export declare function input(type?: InputType): InputElement<HTMLInputElement>;
@@ -411,10 +436,10 @@ declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> ext
     el: T;
     constructor(el: T, type?: InputType);
     type(type: InputType): void;
-    value(value: RefOrValue<Primitive | undefined>): this;
-    placeholder(value: RefOrValue<string | undefined>): this;
-    name(value: RefOrValue<Primitive | undefined>): this;
-    required(value: RefOrValue<boolean>): this;
+    value(value: MaybeRefOrGetter<Primitive>): this;
+    placeholder(value: MaybeRefOrGetter<string | undefined>): this;
+    name(value: MaybeRefOrGetter<string | undefined>): this;
+    required(value: MaybeRefOrGetter<boolean>): this;
 }
 
 declare type InputType = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
@@ -454,12 +479,34 @@ export declare const meta: () => VoidComponent;
 export declare const meter: ComponentInstance;
 
 declare interface ModelOptions {
+    /**
+     * Determine if event listeners use `change` or `input`
+     */
     lazy?: boolean;
+    /**
+     *
+     * Transform the value coming from an input element.
+     *
+     * ```ts
+     * ctx.model(value, {
+     *    transforms: [
+     *      // If you write a number inside `<input type="text">` it'll be
+     *      // returned as a string. Eg.: "1234". Using a Number transform
+     *      // your reactive variable will receive an actual number type
+     *      Transform.number,
+     *      // You can also define your own transforms. You can pipe multiple
+     *      // transforms in a row and each will receive the output of the
+     *      // previous one
+     *      (value: number) => value / 2
+     *    ]
+     * })
+     * ```
+     */
     transforms?: ModelTransform[];
     eventOptions?: EventListenerOptions;
 }
 
-declare type ModelTransform<T = string> = (value: string) => T;
+declare type ModelTransform<Returns = string> = (value: string) => Returns;
 
 export declare const nav: ComponentInstance;
 
@@ -471,12 +518,12 @@ export declare const ol: ComponentInstance;
 
 export declare const optgroup: ComponentInstance;
 
-export declare function option(value?: string, label?: string): Option_2;
+export declare function option(label?: string, value?: MaybeRefOrGetter<Primitive>): Option_2;
 
 declare class Option_2 extends VoidComponent {
     el: HTMLOptionElement;
-    constructor(value?: string, label?: string);
-    value(inputValue: RefOrValue<Primitive>): this;
+    constructor(label?: string, value?: MaybeRefOrGetter<Primitive>);
+    value(inputValue: MaybeRefOrGetter<Primitive>): this;
     selected(): this;
 }
 
@@ -491,8 +538,6 @@ export declare const pre: ComponentInstance;
 export declare const progress: ComponentInstance;
 
 export declare const q: ComponentInstance;
-
-declare type RefOrValue<T> = T | Ref<T>;
 
 export declare function reusable(el: keyof typeof El, setupFn: SetupArguments): ReusableComponent;
 
@@ -573,7 +618,7 @@ export declare const video: ComponentInstance;
  */
 declare class VoidComponent extends Component {
     constructor(type: HtmlVoidtags | 'option');
-    __children(_value: Children): void;
+    __setComponentChildren(_value: Children): void;
 }
 
 export declare const wbr: () => VoidComponent;

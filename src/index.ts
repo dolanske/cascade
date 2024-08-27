@@ -1,4 +1,3 @@
-import { ref } from '@vue/reactivity'
 import { getInstance } from './util'
 import { Component, fragment } from './component'
 import type { ComponentChildren as Children } from './types'
@@ -8,7 +7,6 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
-import { Transform } from './methods/model'
 
 const {
   a,
@@ -260,16 +258,3 @@ export {
   wbr,
   img,
 }
-
-// Test
-
-const Comp = div().setup((ctx) => {
-  const state = ref(true)
-
-  ctx.nest(
-    button("Switch").click(() => state.value = !state.value),
-    () => state.value ? span("true") : span("false")
-  )
-})
-
-Comp.mount('#app')

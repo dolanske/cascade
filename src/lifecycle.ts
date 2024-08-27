@@ -9,7 +9,7 @@ export function destroy(component: Component) {
     if (!(comp instanceof Component))
       return
 
-    for (const cb of comp.onDestroyCbs)
+    for (const cb of comp.__onDestroyCbs)
       cb()
 
     const { children } = comp

@@ -6,8 +6,8 @@ import { Component } from '../component'
  */
 export function clone(this: Component): Component {
   const cloned = new Component(this.el)
-  cloned.children = this.children
-  cloned.scopes = new Set(this.scopes)
+  cloned.componentChildren = this.componentChildren
+  cloned.__scopes = new Set(this.__scopes)
 
   return cloned
 }

@@ -91,8 +91,7 @@ function keyEventImpl(this: Component, eventType: 'keydown' | 'keyup' | 'keypres
         addKeyToHistory(key)
 
         const passed = keysInArray.every((expectedKey, index) => {
-          if (expectedKey === history[index])
-            return true
+          return expectedKey === history[index]
         })
 
         if (passed)

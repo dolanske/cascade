@@ -35,7 +35,7 @@ export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> exte
     return this
   }
 
-  name(value: MaybeRefOrGetter<Primitive>) {
+  name(value: MaybeRefOrGetter<string | undefined>) {
     registerWatchedProp.call(this, 'name', value)
     return this
   }
