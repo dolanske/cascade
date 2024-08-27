@@ -258,3 +258,22 @@ export {
   wbr,
   img,
 }
+
+interface Props {
+  label: string
+  count: 10
+}
+
+const app = div<Props>().setup((ctx, props) => {
+
+})
+
+// const btn = reusable<Props>('button', (ctx, props) => {
+//   ctx.text(props.label)
+// })
+
+// // Used later
+
+// const App = div(
+//   btn().prop(''),
+// )

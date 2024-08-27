@@ -22,7 +22,7 @@ import { if_impl } from './methods/if'
 import { clone } from './methods/clone'
 import { createId } from './id'
 
-export class Component {
+export class Component<PropsType extends object> {
   /**
    * Set `textContent` of the current component.
    */
@@ -114,21 +114,6 @@ export class Component {
    */
   setup = setup.bind(this)
   /**
-   * Pass a single prop value into the component. You can also pass in refs, but
-   * make sure to use the `.value` in the components, as these refs are directly
-   * passed through.
-   *
-   * @param propKey {string}
-   * @param propValue {any}
-   */
-  prop = prop.bind(this)
-  /**
-   * Pass an object of props into the component. You can also pass in refs, but
-   * make sure to use the `.value` in the components, as these refs are directly
-   * passed through.
-   */
-  props = props.bind(this)
-  /**
    * Simple helper which allows you to insert component's children anywhere in
    * the chain. This was made mainly because it feels less natural to add
    * children to a component and only then use methods like `if` or `for` on it.
@@ -202,7 +187,7 @@ export class Component {
   /**
    * Stores the reference to the parent Component instance, if it has one.
    */
-  parent: Component | null = null
+  parent: Component<any> | null = null
   /**
    * If true, the component can not have any child components
    */
@@ -214,14 +199,14 @@ export class Component {
   __onDestroyCbs: GenericCallback[] = []
   __onInitCbs: GenericCallback[] = []
 
-  __scopes = new Set<SetupArguments>()
+  __scopes = new Set<SetupArguments<PropsType>>()
   __runningScopes = new Set<EffectScope>()
-  __componentProps: object
+  __componentProps: PropsType
 
-  constructor(el: HTMLElement, props: object = {}) {
+  constructor(el: HTMLElement, props?: PropsType) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
-    this.__componentProps = props
+    this.__componentProps = props ?? {} as PropsType
     this.identifier = createId(true)
   }
 
@@ -342,6 +327,29 @@ export class Component {
   for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>) {
     return for_impl.call(this, source, callback)
   }
+
+  /**
+   * Pass a single prop value into the component. You can also pass in refs, but
+   * make sure to use the `.value` in the components, as these refs are directly
+   * passed through.
+   *
+   * @param propKey {string}
+   * @param propValue {any}
+   */
+  prop<Key extends keyof PropsType>(key: Key, value: PropsType[Key]) {
+    Object.assign(this.__componentProps, { [key]: value })
+    return this
+  }
+
+  /**
+   * Pass an object of props into the component. You can also pass in refs, but
+   * make sure to use the `.value` in the components, as these refs are directly
+   * passed through.
+   */
+  props(props: Partial<PropsType>) {
+    for (const key of Object.keys(props))
+      Object.assign(this.__componentProps, { [key]: props[key as keyof PropsType] })
+  }
 }
 
 /**
@@ -349,7 +357,7 @@ export class Component {
  * implementation is the same as normal elements, except it is not possible to
  * provide any child elements. The
  */
-export class VoidComponent extends Component {
+export class VoidComponent<PropsType extends object> extends Component<PropsType> {
   constructor(type: HtmlVoidtags | 'option') {
     super(document.createElement(type))
   }
@@ -363,7 +371,7 @@ export class VoidComponent extends Component {
  * Fragment does not have any DOM element associated within it. All of its children
  * are appended to fragment's parent element.
  */
-export class Fragment extends Component {
+export class Fragment<PropsType extends object> extends Component<PropsType> {
   constructor(children: ComponentChildren = []) {
     super(document.createElement('template'))
     this.componentChildren = children
