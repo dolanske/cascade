@@ -332,8 +332,8 @@ ctx.attrs({
 #### Attribute shorthands
 
 ```ts
-ctx.id(MaybeRefOrGetter<Primitive>) // id attribute
-ctx.disabled(MaybeRefOrGetter<boolean>) // disabled attribute
+ctx.id(value: MaybeRefOrGetter<Primitive>) // id attribute
+ctx.disabled(value: MaybeRefOrGetter<boolean>) // disabled attribute
 ```
 
 ---
@@ -347,15 +347,15 @@ Used when we want to display / hide certain components based on a condition.
 Conditionally add / remove elements from the DOM.
 
 ```ts
-ctx.if(expression: MaybeRefOrGetter)
+ctx.if(condition: MaybeRefOrGetter)
 ```
 Example
 ```ts
 // Inside .setup(() => {})
 const display = ref(true)
 ctx.nest(
-  button("Toggle").click(() => display.value = !display.value)
-  span("Now you see me").if(display)
+  button('Toggle').click(() => display.value = !display.value),
+  span('Now you see me').if(display)
 )
 ```
 
@@ -364,7 +364,7 @@ ctx.nest(
 Works just like `if` but leaves the component in the DOM, but appends `display: none` if false.
 
 ```ts
-ctx.show(expression: MaybeRefOrGetter)
+ctx.show(condition: MaybeRefOrGetter)
 ```
 
 ---
@@ -425,17 +425,48 @@ There are a few custom components which extend the base functionality
 
 ### Image
 
-TODOTODOTODOTODO
-
 ```ts
-const image = img(src: string)
+const image = img("https://i.imgur.com/naMnD3H.jpeg")
 // Has extra two custom attributes
-image.alt("Alt text").src("image.png")
+image.alt(alt: string)
+image.src(src: string)
 ```
 
-### Input
+### Input & Textarea
 
 ```ts
-// The first argument is i
-const textInput = input('text')
+// The first argument is the input type
+const text = input('text')
+// Extra attributes
+text.type(inputType: string)
+text.value(value: MaybeRefOrGetter<Primitive>)
+text.placeholder(value: MaybeRefOrGetter<string | undefined>)
+text.name(value: MaybeRefOrGetter<string | undefined>)
+text.required(value: MaybeRefOrGetter<boolean>)
+```
+
+```ts
+// No arguments provided during initialization. Otherwise shares all the extra props as `input`.
+const textarea = textarea()
+```
+
+### Option
+
+Used within the `select` component. You always
+Type definition
+
+```ts
+option(label?: string, value?: MaybeRefOrGetter<Primitive>)
+  .value(inputValue: MaybeRefOrGetter<Primitive>)
+  .selected()
+```
+Example
+```ts
+const selected = ref()
+const select = select(
+  option('John', 24).selected(),
+  option('Andrew', 81),
+  option('HOnza', 111)
+).model()
+// ref's value will be 24 as an option was preselected
 ```
