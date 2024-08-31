@@ -24,12 +24,14 @@ export function isWatchSource(value: any): value is Ref<any> | Function {
 }
 
 /**
- * Returns the associated component instnace, if the element has one
+ * Returns the associated component instnace, if the element has one. The
+ * returned instance does not have its props typed, so the pros of the expected
+ * instance can be provided.
  *
  * @param el HTMLElement
  * @returns Component | null
  */
-export function getInstance(el: HTMLElement | Element) {
+export function getInstance<PropsType extends object>(el: HTMLElement | Element): Component<PropsType> | null {
   if (!Object.hasOwn(el, '__instance'))
     return null
   return Reflect.get(el, '__instance')

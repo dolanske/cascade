@@ -1,10 +1,10 @@
-import { EffectScope } from '@vue/reactivity';
+import type { EffectScope } from '@vue/reactivity';
 import { MaybeRefOrGetter } from '@vue/reactivity';
 import { Primitive } from '@vue/reactivity';
 import type { Properties } from 'csstype';
 import type { PropertiesHyphen } from 'csstype';
-import { Ref } from '@vue/reactivity';
-import { UnwrapRef } from '@vue/reactivity';
+import type { Ref } from '@vue/reactivity';
+import type { UnwrapRef } from '@vue/reactivity';
 
 export declare const a: ComponentInstance;
 
@@ -14,17 +14,23 @@ export declare const address: ComponentInstance;
 
 export declare const applet: ComponentInstance;
 
-export declare const area: () => VoidComponent;
+export declare const area: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const article: ComponentInstance;
 
 export declare const aside: ComponentInstance;
 
+declare function attr<PropsType extends object>(this: Component<PropsType>, key: string, value?: MaybeRefOrGetter<Primitive>): Component<PropsType>;
+
+declare type Attributes = Record<string, Primitive>;
+
+declare function attrs<PropsType extends object>(this: Component<PropsType>, attrData: MaybeRefOrGetter<Attributes>): Component<PropsType>;
+
 export declare const audio: ComponentInstance;
 
 export declare const b: ComponentInstance;
 
-export declare const base: () => VoidComponent;
+export declare const base: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const basefont: ComponentInstance;
 
@@ -38,41 +44,49 @@ export declare const blink: ComponentInstance;
 
 export declare const blockquote: ComponentInstance;
 
+declare function blur_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
 export declare const body: ComponentInstance;
 
-export declare const br: () => VoidComponent;
+export declare const br: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const button: ComponentInstance;
 
-declare type CallbackType<T> = T extends any[] ? (value: T[number], index: number) => ComponentChildrenItems : T extends object ? (value: keyof T, key: string, index: number) => ComponentChildrenItems : (index: number) => ComponentChildrenItems;
+declare type CallbackType<T, PropsType extends object> = T extends any[] ? (value: T[number], index: number) => ComponentChildrenItems<PropsType> : T extends object ? (value: keyof T, key: string, index: number) => ComponentChildrenItems<PropsType> : (index: number) => ComponentChildrenItems<PropsType>;
 
 export declare const canvas: ComponentInstance;
 
 export declare const caption: ComponentInstance;
 
-export declare type Children = ComponentChildrenItems | ComponentChildrenItems[];
+declare function change<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
+export declare type Children<PropsType extends object> = ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[];
 
 export declare const cite: ComponentInstance;
+
+declare function class_impl<PropsType extends object>(this: Component<PropsType>, classNames?: ClassnameOrCLassObject, value?: MaybeRefOrGetter<boolean>): Component<PropsType>;
 
 declare type ClassnameOrCLassObject = string | ClassObject;
 
 declare type ClassObject = Record<string, MaybeRefOrGetter<boolean>>;
 
+declare function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
 export declare const code: ComponentInstance;
 
-export declare const col: () => VoidComponent;
+export declare const col: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const colgroup: ComponentInstance;
 
-export declare class Component {
+export declare class Component<PropsType extends object> {
     /**
      * Set `textContent` of the current component.
      */
-    text: (value: MaybeRefOrGetter<Primitive>) => Component;
+    text: typeof text;
     /**
      * Set `innerHTML` of the current component.
      */
-    html: (value: MaybeRefOrGetter<string>) => Component;
+    html: typeof html_2;
     /**
      * Add an event listener to the current component.
      *
@@ -81,35 +95,35 @@ export declare class Component {
      * @param options {EventListenerOptions | undefined} Optional event configuration
      *
      */
-    on: (type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    on: typeof on;
     /**
      * Shorthand for binding `on("click")` event listener to the current component.
      */
-    click: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    click: typeof click;
     /**
      * Shorthand for binding `on("submit")` event listener to the current component.
      */
-    submit: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    submit: typeof submit;
     /**
      * Shorthand for binding `on("focus")` event listener to the current component.
      */
-    focus: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    focus: typeof focus_2;
     /**
      * Shorthand for binding `on("blur")` event listener to the current component.
      */
-    blur: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    blur: typeof blur_2;
     /**
      * Shorthand for binding `on("change")` event listener to the current component.
      */
-    change: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    change: typeof change;
     /**
      * Shorthand for binding `on("input")` event listener to the current component.
      */
-    input: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    input: typeof input_2;
     /**
      * Shorthand for binding `on("keydown")` event listener to the current component.
      */
-    keydown: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    keydown: typeof keydown;
     /**
      * Shorthand for binding `on("keydown")` event listener to the current
      * component and listening for specific keys to be pressed down.
@@ -118,11 +132,11 @@ export declare class Component {
      * Component.keydownExact(["Shift", "T"], () => ...)
      * ```
      */
-    keydownExact: (requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: (EventListenerOptions & KeyInputOptions) | undefined) => Component;
+    keydownExact: typeof keydownExact;
     /**
      * Shorthand for binding `on("keyup")` event listener to the current component.
      */
-    keyup: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    keyup: typeof keyup;
     /**
      * Shorthand for binding `on("keyup")` event listener to the current
      * component and listening for specific keys to be released.
@@ -131,11 +145,11 @@ export declare class Component {
      * Component.keyupExact(["Shift", "T"], () => ...)
      * ```
      */
-    keyupExact: (requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: (EventListenerOptions & KeyInputOptions) | undefined) => Component;
+    keyupExact: typeof keyupExact;
     /**
      * Shorthand for binding `on("keypress")` event listener to the current component.
      */
-    keypress: (listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | undefined) => Component;
+    keypress: typeof keypress;
     /**
      * Shorthand for binding `on("keypress")` event listener to the current
      * component and listening for specific keys to be pressed.
@@ -144,79 +158,52 @@ export declare class Component {
      * Component.keypressExact(["Shift", "T"], () => ...)
      * ```
      */
-    keypressExact: (requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: (EventListenerOptions & KeyInputOptions) | undefined) => Component;
+    keypressExact: typeof keypressExact;
     /**
      * Bind reactive class object to the current component.
      */
-    class: (classNames?: ClassnameOrCLassObject | undefined, value?: MaybeRefOrGetter<boolean> | undefined) => Component;
-    /**
-     * Create a component scope, in which you can declare reactive variables. When
-     * the component is removed from the DOM, all of the scope properties get
-     * removed. This is the best way to declare reusable components.
-     */
-    setup: (setupFn: SetupArguments) => Component;
-    /**
-     * Pass a single prop value into the component. You can also pass in refs, but
-     * make sure to use the `.value` in the components, as these refs are directly
-     * passed through.
-     *
-     * @param propKey {string}
-     * @param propValue {any}
-     */
-    prop: (key: string, value: any) => Component;
-    /**
-     * Pass an object of props into the component. You can also pass in refs, but
-     * make sure to use the `.value` in the components, as these refs are directly
-     * passed through.
-     */
-    props: (props: Record<string, any>) => Component;
+    class: typeof class_impl;
     /**
      * Simple helper which allows you to insert component's children anywhere in
      * the chain. This was made mainly because it feels less natural to add
      * children to a component and only then use methods like `if` or `for` on it.
      */
-    nest: (children: Children, ...rest: ComponentChildrenItems[]) => Component;
+    nest: typeof nest;
     /**
      * Two way binding of a reactive variable to the inputs / selects value.
      */
-    model: (defaultRef: Ref<Primitive | Primitive[]>, options?: ModelOptions | undefined) => Component;
+    model: typeof model;
     /**
      * Bind attribute object to the component.
      */
-    attrs: (attrData: MaybeRefOrGetter<{
-        [x: string]: Primitive;
-    }>) => Component;
+    attrs: typeof attrs;
     /**
      * Bind a single attribute to the component.
      */
-    attr: (key: string, value?: MaybeRefOrGetter<Primitive>) => Component;
+    attr: typeof attr;
     /**
      * Dynamically bind a `disabled` attribute to the component.
      */
-    disabled: (value?: MaybeRefOrGetter<boolean> | undefined) => Component;
+    disabled: typeof disabled;
     /**
      * Dynamically bind an `id` attribute to the component.
      */
-    id: (value: MaybeRefOrGetter<Primitive>) => Component;
+    id: typeof id;
     /**
      * Toggle between showing or hiding the current component. the component is still
      * rendered, but has `display: none` applied to it.
      *
      * This function also preserves the previously added inline styles.
      */
-    show: (defaultValue: any) => Component;
+    show: typeof show;
     /**
      * Add reactive styling object to the current component.
      */
-    style: (key: keyof CSSStyle | MaybeRefOrGetter<CSSStyle>, value?: MaybeRefOrGetter<string | number> | undefined) => Component;
+    style: typeof style_2;
     /**
      * Conditionally render a component.
      */
-    if: (expr: any) => Component;
-    /**
-     * Clone the component
-     */
-    clone: () => Component;
+    if: typeof if_impl;
     identifier: string;
     /**
      * Stores reference to the mounted DOM Element of the current component.
@@ -225,7 +212,7 @@ export declare class Component {
     /**
      * Stores child component instances.
      */
-    componentChildren: Children;
+    componentChildren: Children<PropsType>;
     /**
      * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
      * You can do this by using `ctx.children` in your component's `.nest()` call.
@@ -239,11 +226,11 @@ export declare class Component {
      * <div><div><h1>"Hello world"</h1></div></div>
      * ```
      */
-    children: Children;
+    children: Children<PropsType>;
     /**
      * Stores the reference to the parent Component instance, if it has one.
      */
-    parent: Component | null;
+    parent: Component<any> | null;
     /**
      * If true, the component can not have any child components
      */
@@ -251,11 +238,11 @@ export declare class Component {
     __onMountCbs: GenericCallback[];
     __onDestroyCbs: GenericCallback[];
     __onInitCbs: GenericCallback[];
-    __scopes: Set<SetupArguments>;
+    __scopes: Set<SetupArguments<PropsType>>;
     __runningScopes: Set<EffectScope>;
-    __componentProps: object;
-    constructor(el: HTMLElement, props?: object);
-    __setComponentChildren(value: Children): void;
+    __componentProps: PropsType;
+    constructor(el: HTMLElement, props?: PropsType);
+    __setComponentChildren(value: Children<PropsType>): void;
     __runOnMount(): void;
     __runOnDestroy(): void;
     __runOnInit(): void;
@@ -289,7 +276,18 @@ export declare class Component {
      * @param selector {string} Default: "body" element
      */
     mount(selector?: string): void;
+    /**
+     * Removes component from the DOM, deactivates its instance and removes all reactive scopes.
+     */
     destroy(): void;
+    /**
+     * Clones the component. All reactive variables, DOM child nodes and chained
+     * functions should work. Cloning does not reassign the component back to the
+     * DOM, so it must be re-inserted.
+     *
+     * @returns Cloned component
+     */
+    clone(): Component<PropsType>;
     /**
      * Iterate over the provided object / array / number and execute the provided
      * callback for each item. Components returned from the callback are then
@@ -305,12 +303,33 @@ export declare class Component {
      *
      *
      */
-    for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>): Component;
+    for: typeof for_impl;
+    /**
+     * Pass a single prop value into the component. You can also pass in refs, but
+     * make sure to use the `.value` in the components, as these refs are directly
+     * passed through.
+     *
+     * @param key {string}
+     * @param value {any}
+     */
+    prop<Key extends keyof PropsType>(key: Key, value: PropsType[Key]): this;
+    /**
+     * Pass an object of props into the component. You can also pass in refs, but
+     * make sure to use the `.value` in the components, as these refs are directly
+     * passed through.
+     */
+    props(props: Partial<PropsType>): this;
+    /**
+     * Create a component scope, in which you can declare reactive variables. When
+     * the component is removed from the DOM, all of the scope properties get
+     * removed. This is the best way to declare reusable components.
+     */
+    setup(setupFn: SetupArguments<PropsType>): this;
 }
 
-declare type ComponentChildrenItems = string | number | Component | Element | Fragment | MaybeRefOrGetter<string | number | Component>;
+declare type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | MaybeRefOrGetter<string | number | Component<PropsType>>;
 
-declare type ComponentInstance = (children?: Children) => Component;
+declare type ComponentInstance = <PropsType extends object>(children?: Children<PropsType>) => Component<PropsType>;
 
 export declare const content: ComponentInstance;
 
@@ -333,13 +352,15 @@ export declare const details: ComponentInstance;
 
 export declare const dfn: ComponentInstance;
 
+declare function disabled<PropsType extends object>(this: Component<PropsType>, value?: MaybeRefOrGetter<boolean>): Component<PropsType>;
+
 export declare const div: ComponentInstance;
 
 export declare const dl: ComponentInstance;
 
 export declare const dt: ComponentInstance;
 
-declare const El: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidtags, () => VoidComponent> & {
+declare const El: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidtags, <PropsType extends object>() => VoidComponent<PropsType>> & {
     fragment: typeof fragment;
     input: typeof input;
     textarea: typeof textarea;
@@ -351,7 +372,7 @@ export declare const element: ComponentInstance;
 
 export declare const em: ComponentInstance;
 
-export declare const embed: () => VoidComponent;
+export declare const embed: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const fieldset: ComponentInstance;
 
@@ -359,7 +380,11 @@ export declare const figcaption: ComponentInstance;
 
 export declare const figure: ComponentInstance;
 
+declare function focus_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
 export declare const footer: ComponentInstance;
+
+declare function for_impl<PropsType extends object>(this: Component<PropsType>, source: MaybeRefOrGetter<Source>, callback: CallbackType<UnwrapRef<Source>, PropsType>): Component<PropsType>;
 
 export declare const form: ComponentInstance;
 
@@ -367,8 +392,8 @@ export declare const form: ComponentInstance;
  * Fragment does not have any DOM element associated within it. All of its children
  * are appended to fragment's parent element.
  */
-declare class Fragment extends Component {
-    constructor(children?: Children);
+declare class Fragment<PropsType extends object> extends Component<PropsType> {
+    constructor(children?: Children<PropsType>);
     mount(selector: string): void;
 }
 
@@ -379,17 +404,19 @@ declare class Fragment extends Component {
  *
  * @param children {ComponentChildren}
  */
-export declare function fragment(children?: Children): Fragment;
+export declare function fragment<PropsType extends object>(children?: Children<PropsType>): Fragment<PropsType>;
 
 declare type GenericCallback = () => void;
 
 /**
- * Returns the associated component instnace, if the element has one
+ * Returns the associated component instnace, if the element has one. The
+ * returned instance does not have its props typed, so the pros of the expected
+ * instance can be provided.
  *
  * @param el HTMLElement
  * @returns Component | null
  */
-export declare function getInstance(el: HTMLElement | Element): Component | null;
+export declare function getInstance<PropsType extends object>(el: HTMLElement | Element): Component<PropsType> | null;
 
 export declare const h1: ComponentInstance;
 
@@ -409,9 +436,11 @@ export declare const header: ComponentInstance;
 
 export declare const hgroup: ComponentInstance;
 
-export declare const hr: () => VoidComponent;
+export declare const hr: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const html: ComponentInstance;
+
+declare function html_2<PropsType extends object>(this: Component<PropsType>, value: MaybeRefOrGetter<string>): Component<PropsType>;
 
 declare type HtmlTags = 'a' | 'abbr' | 'address' | 'applet' | 'article' | 'aside' | 'audio' | 'b' | 'basefont' | 'bdi' | 'bdo' | 'bgsound' | 'blink' | 'blockquote' | 'body' | 'button' | 'canvas' | 'caption' | 'cite' | 'code' | 'colgroup' | 'content' | 'data' | 'datalist' | 'dd' | 'decorator' | 'del' | 'details' | 'dfn' | 'div' | 'dl' | 'dt' | 'element' | 'em' | 'fieldset' | 'figcaption' | 'figure' | 'footer' | 'form' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'head' | 'header' | 'hgroup' | 'html' | 'i' | 'iframe' | 'ins' | 'isindex' | 'kbd' | 'keygen' | 'label' | 'legend' | 'li' | 'listing' | 'main' | 'map' | 'mark' | 'menu' | 'meter' | 'nav' | 'noscript' | 'object' | 'ol' | 'optgroup' | 'output' | 'p' | 'picture' | 'pre' | 'progress' | 'q' | 'rp' | 'rt' | 'ruby' | 's' | 'samp' | 'script' | 'section' | 'select' | 'shadow' | 'small' | 'spacer' | 'span' | 'strong' | 'style' | 'sub' | 'summary' | 'sup' | 'table' | 'tbody' | 'td' | 'template' | 'tfoot' | 'th' | 'thead' | 'time' | 'title' | 'tr' | 'u' | 'ul' | 'var' | 'video';
 
@@ -419,20 +448,26 @@ declare type HtmlVoidtags = 'area' | 'base' | 'br' | 'col' | 'embed' | 'hr' | 'i
 
 export declare const i: ComponentInstance;
 
+declare function id<PropsType extends object>(this: Component<PropsType>, value: MaybeRefOrGetter<Primitive>): Component<PropsType>;
+
+declare function if_impl<PropsType extends object>(this: Component<PropsType>, expr: MaybeRefOrGetter): Component<PropsType>;
+
 export declare const iframe: ComponentInstance;
 
-export declare function img(src: string): ImgElement;
+export declare function img<PropsType extends object>(src: string): ImgElement<PropsType>;
 
-declare class ImgElement extends VoidComponent {
+declare class ImgElement<PropsType extends object> extends VoidComponent<PropsType> {
     el: HTMLImageElement;
     constructor(el: HTMLImageElement);
     src(value: MaybeRefOrGetter<string>): this;
     alt(value: MaybeRefOrGetter<string>): this;
 }
 
-export declare function input(type?: InputType): InputElement<HTMLInputElement>;
+export declare function input<PropsType extends object>(type?: InputType): InputElement<HTMLInputElement, PropsType>;
 
-declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> extends VoidComponent {
+declare function input_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
+declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement, PropsType extends object> extends VoidComponent<PropsType> {
     el: T;
     constructor(el: T, type?: InputType);
     type(type: InputType): void;
@@ -450,11 +485,23 @@ export declare const isindex: ComponentInstance;
 
 export declare const kbd: ComponentInstance;
 
+declare function keydown<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
+declare function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions): Component<PropsType>;
+
 export declare const keygen: ComponentInstance;
 
 declare interface KeyInputOptions {
     detect?: 'some' | 'every';
 }
+
+declare function keypress<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
+declare function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions): Component<PropsType>;
+
+declare function keyup<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
+declare function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions): Component<PropsType>;
 
 export declare const label: ComponentInstance;
 
@@ -462,7 +509,9 @@ export declare const legend: ComponentInstance;
 
 export declare const li: ComponentInstance;
 
-export declare const link: () => VoidComponent;
+declare type LimitedPrimitive = string | number;
+
+export declare const link: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const listing: ComponentInstance;
 
@@ -474,9 +523,11 @@ export declare const mark: ComponentInstance;
 
 export declare const menu: ComponentInstance;
 
-export declare const meta: () => VoidComponent;
+export declare const meta: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const meter: ComponentInstance;
+
+declare function model<PropsType extends object>(this: Component<PropsType>, defaultRef: Ref<Primitive | Primitive[]>, options?: ModelOptions): Component<PropsType>;
 
 declare interface ModelOptions {
     /**
@@ -510,17 +561,21 @@ declare type ModelTransform<Returns = string> = (value: string) => Returns;
 
 export declare const nav: ComponentInstance;
 
+declare function nest<PropsType extends object>(this: Component<PropsType>, children: Children<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]): Component<PropsType>;
+
 export declare const noscript: ComponentInstance;
 
 export declare const object: ComponentInstance;
 
 export declare const ol: ComponentInstance;
 
+declare function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+
 export declare const optgroup: ComponentInstance;
 
-export declare function option(label?: string, value?: MaybeRefOrGetter<Primitive>): Option_2;
+export declare function option<PropsType extends object>(label?: string, value?: MaybeRefOrGetter<Primitive>): Option_2<PropsType>;
 
-declare class Option_2 extends VoidComponent {
+declare class Option_2<PropsType extends object> extends VoidComponent<PropsType> {
     el: HTMLOptionElement;
     constructor(label?: string, value?: MaybeRefOrGetter<Primitive>);
     value(inputValue: MaybeRefOrGetter<Primitive>): this;
@@ -539,9 +594,9 @@ export declare const progress: ComponentInstance;
 
 export declare const q: ComponentInstance;
 
-export declare function reusable(el: keyof typeof El, setupFn: SetupArguments): ReusableComponent;
+export declare function reusable<PropsType extends object>(el: keyof typeof El, setupFn: SetupArguments<PropsType>): ReusableComponent<PropsType>;
 
-declare type ReusableComponent = (children?: ComponentChildrenItems) => Component;
+declare type ReusableComponent<PropsType extends object> = (children: Children<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>;
 
 export declare const rp: ComponentInstance;
 
@@ -559,13 +614,17 @@ export declare const section: ComponentInstance;
 
 export declare const select: ComponentInstance;
 
-declare type SetupArguments = (componentInstance: Component, props: any) => void;
+declare type SetupArguments<PropsType extends object> = (componentInstance: Component<PropsType>, props: PropsType) => void;
 
 export declare const shadow: ComponentInstance;
 
+declare function show(this: Component<any>, defaultValue: MaybeRefOrGetter): Component<any>;
+
 export declare const small: ComponentInstance;
 
-export declare const source: () => VoidComponent;
+declare type Source = any[] | number | object;
+
+export declare const source: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const spacer: ComponentInstance;
 
@@ -575,7 +634,11 @@ export declare const strong: ComponentInstance;
 
 export declare const style: ComponentInstance;
 
+declare function style_2(this: Component<any>, key: keyof CSSStyle | CSSStyle | MaybeRefOrGetter<CSSStyle>, value?: MaybeRefOrGetter<LimitedPrimitive>): Component<any>;
+
 export declare const sub: ComponentInstance;
+
+declare function submit<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
 
 export declare const summary: ComponentInstance;
 
@@ -589,7 +652,9 @@ export declare const td: ComponentInstance;
 
 export declare const template: ComponentInstance;
 
-export declare function textarea(): InputElement<HTMLTextAreaElement>;
+declare function text<PropsType extends object>(this: Component<PropsType>, value: MaybeRefOrGetter<Primitive>): Component<PropsType>;
+
+export declare function textarea<PropsType extends object>(): InputElement<HTMLTextAreaElement, PropsType>;
 
 export declare const tfoot: ComponentInstance;
 
@@ -603,7 +668,7 @@ export declare const title: ComponentInstance;
 
 export declare const tr: ComponentInstance;
 
-export declare const track: () => VoidComponent;
+export declare const track: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export declare const u: ComponentInstance;
 
@@ -616,11 +681,11 @@ export declare const video: ComponentInstance;
  * implementation is the same as normal elements, except it is not possible to
  * provide any child elements. The
  */
-declare class VoidComponent extends Component {
+declare class VoidComponent<PropsType extends object> extends Component<PropsType> {
     constructor(type: HtmlVoidtags | 'option');
-    __setComponentChildren(_value: Children): void;
+    __setComponentChildren(_value: Children<PropsType>): void;
 }
 
-export declare const wbr: () => VoidComponent;
+export declare const wbr: <PropsType extends object>() => VoidComponent<PropsType>;
 
 export { }
