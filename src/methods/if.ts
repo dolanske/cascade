@@ -4,7 +4,7 @@ import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
 import { WATCH_CONF, isWatchSource } from '../util'
 
-export function if_impl(this: Component, expr: MaybeRefOrGetter) {
+export function if_impl<PropsType extends object>(this: Component<PropsType>, expr: MaybeRefOrGetter) {
   // Anchors are used to correctly re-insert nodes back to the dom
   const anchor = new Comment('if')
 

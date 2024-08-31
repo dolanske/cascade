@@ -15,7 +15,7 @@ function replaceChildAt(parent: Element, newChild: Element | Text, index: number
   return true
 }
 
-export function render(parent: Component | Element, children?: ComponentChildren, index?: number) {
+export function render(parent: Component<any> | Element, children?: ComponentChildren<any>, index?: number) {
   const root = parent instanceof Element ? parent : parent.el
 
   if (!children)

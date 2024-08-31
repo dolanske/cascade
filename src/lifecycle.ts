@@ -4,8 +4,8 @@ import { Component } from './component'
 import { isArray } from './util'
 
 // reactive watchers. Then remove the root element. Deactivate component
-export function destroy(component: Component) {
-  function stop(comp: Component) {
+export function destroy(component: Component<any>) {
+  function stop(comp: Component<any>) {
     if (!(comp instanceof Component))
       return
 

@@ -7,7 +7,7 @@ import { WATCH_CONF, isArray, isNil, isObject, isWatchSource } from '../util'
 export type ClassObject = Record<string, MaybeRefOrGetter<boolean>>
 export type ClassnameOrCLassObject = string | ClassObject
 
-export function class_impl(this: Component, classNames?: ClassnameOrCLassObject, value?: MaybeRefOrGetter<boolean>) {
+export function class_impl<PropsType extends object>(this: Component<PropsType>, classNames?: ClassnameOrCLassObject, value?: MaybeRefOrGetter<boolean>) {
   if (isObject(classNames) && !isNil(value))
     throw new TypeError('Cannot use object notation with second argument.')
 

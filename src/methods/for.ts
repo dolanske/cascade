@@ -8,17 +8,17 @@ import { render } from '../render'
 
 export type Source = any[] | number | object
 
-export type CallbackType<T> =
+export type CallbackType<T, PropsType extends object> =
   T extends any[]
-    ? (value: T[number], index: number) => ComponentChildrenItems
+    ? (value: T[number], index: number) => ComponentChildrenItems<PropsType>
     : T extends object
-      ? (value: keyof T, key: string, index: number) => ComponentChildrenItems
-      : (index: number) => ComponentChildrenItems
+      ? (value: keyof T, key: string, index: number) => ComponentChildrenItems<PropsType>
+      : (index: number) => ComponentChildrenItems<PropsType>
 
-export function for_impl(
-  this: Component,
+export function for_impl<PropsType extends object>(
+  this: Component<PropsType>,
   source: MaybeRefOrGetter<Source>,
-  callback: CallbackType<UnwrapRef<Source>>,
+  callback: CallbackType<UnwrapRef<Source>, PropsType>,
 ) {
   this.onInit(() => {
     const processFor = (src: Source) => {

@@ -320,7 +320,7 @@ Example
 ```ts
 // Single attribute
 const dynamicName = ref('element-name')
-ctx.attr(name, dynamicName)
+ctx.attr('name', dynamicName)
 
 // Attribute object
 ctx.attrs({

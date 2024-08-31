@@ -1,12 +1,10 @@
 import { effectScope } from '@vue/reactivity'
-import type { EffectScope, UnwrapRef } from '@vue/reactivity'
-import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
+import type { EffectScope } from '@vue/reactivity'
+import type { ComponentChildren, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
 import { text } from './methods/text'
 import { blur, change, click, focus, input, keydown, keydownExact, keypress, keypressExact, keyup, keyupExact, on, submit } from './methods/on'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
-import type { SetupArguments } from './methods/setup'
-import { prop, props, setup } from './methods/setup'
 import { nest } from './methods/nest'
 import { model } from './methods/model'
 import { render } from './render'
@@ -15,22 +13,20 @@ import { disabled } from './methods/disabled'
 import { id } from './methods/id'
 import { destroy } from './lifecycle'
 import { show } from './methods/show'
-import type { CallbackType } from './methods/for'
 import { for_impl } from './methods/for'
 import { style } from './methods/style'
 import { if_impl } from './methods/if'
-import { clone } from './methods/clone'
 import { createId } from './id'
 
-export class Component {
+export class Component<PropsType extends object> {
   /**
    * Set `textContent` of the current component.
    */
-  text = text.bind(this)
+  text = text
   /**
    * Set `innerHTML` of the current component.
    */
-  html = html.bind(this)
+  html = html
   /**
    * Add an event listener to the current component.
    *
@@ -39,35 +35,35 @@ export class Component {
    * @param options {EventListenerOptions | undefined} Optional event configuration
    *
    */
-  on = on.bind(this)
+  on = on
   /**
    * Shorthand for binding `on("click")` event listener to the current component.
    */
-  click = click.bind(this)
+  click = click
   /**
    * Shorthand for binding `on("submit")` event listener to the current component.
    */
-  submit = submit.bind(this)
+  submit = submit
   /**
    * Shorthand for binding `on("focus")` event listener to the current component.
    */
-  focus = focus.bind(this)
+  focus = focus
   /**
    * Shorthand for binding `on("blur")` event listener to the current component.
    */
-  blur = blur.bind(this)
+  blur = blur
   /**
    * Shorthand for binding `on("change")` event listener to the current component.
    */
-  change = change.bind(this)
+  change = change
   /**
    * Shorthand for binding `on("input")` event listener to the current component.
    */
-  input = input.bind(this)
+  input = input
   /**
    * Shorthand for binding `on("keydown")` event listener to the current component.
    */
-  keydown = keydown.bind(this)
+  keydown = keydown
   /**
    * Shorthand for binding `on("keydown")` event listener to the current
    * component and listening for specific keys to be pressed down.
@@ -76,11 +72,11 @@ export class Component {
    * Component.keydownExact(["Shift", "T"], () => ...)
    * ```
    */
-  keydownExact = keydownExact.bind(this)
+  keydownExact = keydownExact
   /**
    * Shorthand for binding `on("keyup")` event listener to the current component.
    */
-  keyup = keyup.bind(this)
+  keyup = keyup
   /**
    * Shorthand for binding `on("keyup")` event listener to the current
    * component and listening for specific keys to be released.
@@ -89,11 +85,11 @@ export class Component {
    * Component.keyupExact(["Shift", "T"], () => ...)
    * ```
    */
-  keyupExact = keyupExact.bind(this)
+  keyupExact = keyupExact
   /**
    * Shorthand for binding `on("keypress")` event listener to the current component.
    */
-  keypress = keypress.bind(this)
+  keypress = keypress
   /**
    * Shorthand for binding `on("keypress")` event listener to the current
    * component and listening for specific keys to be pressed.
@@ -102,77 +98,52 @@ export class Component {
    * Component.keypressExact(["Shift", "T"], () => ...)
    * ```
    */
-  keypressExact = keypressExact.bind(this)
+  keypressExact = keypressExact
   /**
    * Bind reactive class object to the current component.
    */
-  class = class_impl.bind(this)
-  /**
-   * Create a component scope, in which you can declare reactive variables. When
-   * the component is removed from the DOM, all of the scope properties get
-   * removed. This is the best way to declare reusable components.
-   */
-  setup = setup.bind(this)
-  /**
-   * Pass a single prop value into the component. You can also pass in refs, but
-   * make sure to use the `.value` in the components, as these refs are directly
-   * passed through.
-   *
-   * @param propKey {string}
-   * @param propValue {any}
-   */
-  prop = prop.bind(this)
-  /**
-   * Pass an object of props into the component. You can also pass in refs, but
-   * make sure to use the `.value` in the components, as these refs are directly
-   * passed through.
-   */
-  props = props.bind(this)
+  class = class_impl
   /**
    * Simple helper which allows you to insert component's children anywhere in
    * the chain. This was made mainly because it feels less natural to add
    * children to a component and only then use methods like `if` or `for` on it.
    */
-  nest = nest.bind(this)
+  nest = nest
   /**
    * Two way binding of a reactive variable to the inputs / selects value.
    */
-  model = model.bind(this)
+  model = model
   /**
    * Bind attribute object to the component.
    */
-  attrs = attrs.bind(this)
+  attrs = attrs
   /**
    * Bind a single attribute to the component.
    */
-  attr = attr.bind(this)
+  attr = attr
   /**
    * Dynamically bind a `disabled` attribute to the component.
    */
-  disabled = disabled.bind(this)
+  disabled = disabled
   /**
    * Dynamically bind an `id` attribute to the component.
    */
-  id = id.bind(this)
+  id = id
   /**
    * Toggle between showing or hiding the current component. the component is still
    * rendered, but has `display: none` applied to it.
    *
    * This function also preserves the previously added inline styles.
    */
-  show = show.bind(this)
+  show = show
   /**
    * Add reactive styling object to the current component.
    */
-  style = style.bind(this)
+  style = style
   /**
    * Conditionally render a component.
    */
-  if = if_impl.bind(this)
-  /**
-   * Clone the component
-   */
-  clone = clone.bind(this)
+  if = if_impl
 
   //
   // Public stuff which could be useful to users
@@ -184,7 +155,7 @@ export class Component {
   /**
    * Stores child component instances.
    */
-  componentChildren: ComponentChildren = []
+  componentChildren: ComponentChildren<PropsType> = []
   /**
    * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
    * You can do this by using `ctx.children` in your component's `.nest()` call.
@@ -198,11 +169,11 @@ export class Component {
    * <div><div><h1>"Hello world"</h1></div></div>
    * ```
    */
-  children: ComponentChildren = []
+  children: ComponentChildren<PropsType> = []
   /**
    * Stores the reference to the parent Component instance, if it has one.
    */
-  parent: Component | null = null
+  parent: Component<any> | null = null
   /**
    * If true, the component can not have any child components
    */
@@ -214,20 +185,20 @@ export class Component {
   __onDestroyCbs: GenericCallback[] = []
   __onInitCbs: GenericCallback[] = []
 
-  __scopes = new Set<SetupArguments>()
+  __scopes = new Set<SetupArguments<PropsType>>()
   __runningScopes = new Set<EffectScope>()
-  __componentProps: object
+  __componentProps: PropsType
 
-  constructor(el: HTMLElement, props: object = {}) {
+  constructor(el: HTMLElement, props?: PropsType) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
-    this.__componentProps = props
+    this.__componentProps = props ?? {} as PropsType
     this.identifier = createId(true)
   }
 
   /////////////////////////////////////////////////////////////
   // Private API
-  __setComponentChildren(value: ComponentChildren) {
+  __setComponentChildren(value: ComponentChildren<PropsType>) {
     if (this.isVoid)
       return
 
@@ -319,9 +290,25 @@ export class Component {
     this.__runOnMount()
   }
 
-  // Removes the root component and its desendants. It also
+  /**
+   * Removes component from the DOM, deactivates its instance and removes all reactive scopes.
+   */
   destroy() {
     destroy(this)
+  }
+
+  /**
+   * Clones the component. All reactive variables, DOM child nodes and chained
+   * functions should work. Cloning does not reassign the component back to the
+   * DOM, so it must be re-inserted.
+   *
+   * @returns Cloned component
+   */
+  clone() {
+    const cloned = new Component<PropsType>(this.el)
+    cloned.componentChildren = this.componentChildren
+    cloned.__scopes = new Set(this.__scopes)
+    return cloned
   }
 
   /**
@@ -339,8 +326,50 @@ export class Component {
    *
    *
    */
-  for<S extends readonly any[] | number | object>(source: S, callback: CallbackType<UnwrapRef<S>>) {
-    return for_impl.call(this, source, callback)
+  for = for_impl
+  /**
+   * Pass a single prop value into the component. You can also pass in refs, but
+   * make sure to use the `.value` in the components, as these refs are directly
+   * passed through.
+   *
+   * @param key {string}
+   * @param value {any}
+   */
+  prop<Key extends keyof PropsType>(key: Key, value: PropsType[Key]) {
+    Object.assign(this.__componentProps, { [key]: value })
+    return this
+  }
+
+  /**
+   * Pass an object of props into the component. You can also pass in refs, but
+   * make sure to use the `.value` in the components, as these refs are directly
+   * passed through.
+   */
+  props(props: Partial<PropsType>) {
+    for (const key of Object.keys(props))
+      Object.assign(this.__componentProps, { [key]: props[key as keyof PropsType] })
+    return this
+  }
+
+  /**
+   * Create a component scope, in which you can declare reactive variables. When
+   * the component is removed from the DOM, all of the scope properties get
+   * removed. This is the best way to declare reusable components.
+   */
+  setup(setupFn: SetupArguments<PropsType>) {
+    this.__scopes.add(setupFn)
+
+    this.onInit(() => {
+      const scope = effectScope()
+      scope.run(() => {
+        setupFn(this, this.__componentProps)
+      })
+
+      this.onDestroy(() => {
+        scope.stop()
+      })
+    })
+    return this
   }
 }
 
@@ -349,12 +378,12 @@ export class Component {
  * implementation is the same as normal elements, except it is not possible to
  * provide any child elements. The
  */
-export class VoidComponent extends Component {
+export class VoidComponent<PropsType extends object> extends Component<PropsType> {
   constructor(type: HtmlVoidtags | 'option') {
     super(document.createElement(type))
   }
 
-  override __setComponentChildren(_value: ComponentChildren): void {
+  override __setComponentChildren(_value: ComponentChildren<PropsType>): void {
     this.componentChildren = []
   }
 }
@@ -363,8 +392,8 @@ export class VoidComponent extends Component {
  * Fragment does not have any DOM element associated within it. All of its children
  * are appended to fragment's parent element.
  */
-export class Fragment extends Component {
-  constructor(children: ComponentChildren = []) {
+export class Fragment<PropsType extends object> extends Component<PropsType> {
+  constructor(children: ComponentChildren<PropsType> = []) {
     super(document.createElement('template'))
     this.componentChildren = children
   }
@@ -386,6 +415,6 @@ export class Fragment extends Component {
  *
  * @param children {ComponentChildren}
  */
-export function fragment(children?: ComponentChildren) {
-  return new Fragment(children)
+export function fragment<PropsType extends object>(children?: ComponentChildren<PropsType>) {
+  return new Fragment<PropsType>(children)
 }

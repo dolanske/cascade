@@ -8,7 +8,7 @@ import { WATCH_CONF, isNil, isObject, isWatchSource } from '../util'
 type LimitedPrimitive = string | number
 
 export function style(
-  this: Component,
+  this: Component<any>,
   key: keyof CSSStyle | CSSStyle | MaybeRefOrGetter<CSSStyle>,
   value?: MaybeRefOrGetter<LimitedPrimitive>,
 ) {

@@ -3,7 +3,7 @@ import { VoidComponent } from '../component'
 import { registerWatchedProp } from '../property-method'
 import { isWatchSource } from '../util'
 
-export class Option extends VoidComponent {
+export class Option<PropsType extends object> extends VoidComponent<PropsType> {
   declare el: HTMLOptionElement
 
   constructor(label?: string, value?: MaybeRefOrGetter<Primitive>) {
@@ -34,6 +34,6 @@ export class Option extends VoidComponent {
   }
 }
 
-export function option(label?: string, value?: MaybeRefOrGetter<Primitive>) {
-  return new Option(label, value)
+export function option<PropsType extends object>(label?: string, value?: MaybeRefOrGetter<Primitive>) {
+  return new Option<PropsType>(label, value)
 }

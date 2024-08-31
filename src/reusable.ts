@@ -4,10 +4,9 @@
 
 import type { Component } from './component'
 import { El, htmlVoidTags } from './factory'
-import type { SetupArguments } from './methods/setup'
-import type { ComponentChildrenItems } from './types'
+import type { ComponentChildrenItems, SetupArguments } from './types'
 
-type ReusableComponent = (children?: ComponentChildrenItems) => Component
+type ReusableComponent<PropsType extends object> = (children?: ComponentChildrenItems<PropsType>) => Component<PropsType>
 
 const elementsWihoutChildren = [
   ...htmlVoidTags,
@@ -16,15 +15,14 @@ const elementsWihoutChildren = [
   'option',
 ]
 
-export function reusable(el: keyof typeof El, setupFn: SetupArguments): ReusableComponent {
-  return (children?: ComponentChildrenItems) => {
+export function reusable<PropsType extends object>(el: keyof typeof El, setupFn: SetupArguments<PropsType>): ReusableComponent<PropsType> {
+  return (children?: ComponentChildrenItems<PropsType>) => {
     const inst
       = elementsWihoutChildren.includes(el)
-        ? El[el]()
-        // @ts-expect-error We've already taken all void tag options out
-        : El[el](children)
+        ? El[el]<PropsType>()
+        : El[el]<PropsType>(children)
 
-    inst.setup(setupFn)
+    inst.setup<PropsType>(setupFn)
     return inst
   }
 }

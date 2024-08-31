@@ -132,7 +132,7 @@ function setDefaultCheckboxVaule(defaultRef: Ref<Primitive | Primitive[]>, node:
 
 // Pass a ref in and have it updated based on the value
 // This also work as a two way binding.
-export function model(this: Component, defaultRef: Ref<Primitive | Primitive[]>, options: ModelOptions = {}) {
+export function model<PropsType extends object>(this: Component<PropsType>, defaultRef: Ref<Primitive | Primitive[]>, options: ModelOptions = {}) {
   this.onMount(() => {
     switch (this.el.tagName) {
       case 'INPUT':
