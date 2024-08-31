@@ -8,7 +8,7 @@ import { WATCH_CONF, isWatchSource } from './util'
  * Many methods set a single property on the root element. This function should
  * simplify adding more of these properties in the future
  */
-export function registerWatchedProp(this: Component, key: string, value: MaybeRefOrGetter<any>, stringifyValue?: boolean) {
+export function registerWatchedProp(this: Component<any>, key: string, value: MaybeRefOrGetter<any>, stringifyValue?: boolean) {
   const setValue = (value: any) => {
     Reflect.set(this.el, key, value)
   }
@@ -23,6 +23,4 @@ export function registerWatchedProp(this: Component, key: string, value: MaybeRe
   else {
     setValue(stringifyValue ? String(value) : value)
   }
-
-  return this
 }

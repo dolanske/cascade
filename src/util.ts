@@ -32,8 +32,7 @@ export function isWatchSource(value: any): value is Ref<any> | Function {
 export function getInstance(el: HTMLElement | Element) {
   if (!Object.hasOwn(el, '__instance'))
     return null
-
-  return Reflect.get(el, '__instance') as Component
+  return Reflect.get(el, '__instance')
 }
 
 export const WATCH_CONF = {

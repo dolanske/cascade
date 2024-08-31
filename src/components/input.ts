@@ -4,7 +4,7 @@ import { registerWatchedProp } from '../property-method'
 
 type InputType = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week'
 
-export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> extends VoidComponent {
+export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement, PropsType extends object> extends VoidComponent<PropsType> {
   el: T
 
   constructor(el: T, type?: InputType) {
@@ -46,12 +46,12 @@ export class InputElement<T extends HTMLInputElement | HTMLTextAreaElement> exte
   }
 }
 
-export function input(type: InputType = 'text') {
+export function input<PropsType extends object>(type: InputType = 'text') {
   const el = document.createElement('input')
-  return new InputElement(el, type)
+  return new InputElement<HTMLInputElement, PropsType>(el, type)
 }
 
-export function textarea() {
+export function textarea<PropsType extends object>() {
   const el = document.createElement('textarea')
-  return new InputElement(el)
+  return new InputElement<HTMLTextAreaElement, PropsType>(el)
 }
