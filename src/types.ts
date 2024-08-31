@@ -13,7 +13,7 @@ export type ComponentChildren<PropsType extends object> = ComponentChildrenItems
 export type ComponentInstance = <PropsType extends object>(children?: ComponentChildren<PropsType>) => Component<PropsType>
 export type ValueOf<T> = T[keyof T]
 export interface CSSStyle extends Properties, PropertiesHyphen { }
-export type GenericCallbackWithThis = (this: Component<object>) => void
+export type GenericCallbackWithThis<PropsType extends object> = (this: Component<PropsType>) => void
 export type GenericCallback = () => void
 
 export type SetupArguments<PropsType extends object> = (componentInstance: Component<PropsType>, props: PropsType) => void

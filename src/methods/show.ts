@@ -4,7 +4,7 @@ import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
 import { WATCH_CONF, isNil, isWatchSource } from '../util'
 
-export function show(this: Component, defaultValue: MaybeRefOrGetter) {
+export function show(this: Component<any>, defaultValue: MaybeRefOrGetter) {
   this.onMount(() => {
     // Store the current inline style property, in case the element is using it
     const originalDisplay = this.el.style.getPropertyValue('display')

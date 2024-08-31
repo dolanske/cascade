@@ -29,7 +29,7 @@ export function setAttribute(el: HTMLElement, key: string | Attributes, value?: 
   }
 }
 
-export function attrs(this: Component, attrData: MaybeRefOrGetter<Attributes>) {
+export function attrs<PropsType extends object>(this: Component<PropsType>, attrData: MaybeRefOrGetter<Attributes>) {
   this.onInit(() => {
     if (isWatchSource(attrData)) {
       const release = watch(() => toValue(attrData), value => setAttribute(this.el, value), {
@@ -47,7 +47,7 @@ export function attrs(this: Component, attrData: MaybeRefOrGetter<Attributes>) {
   return this
 }
 
-export function attr(this: Component, key: string, value?: MaybeRefOrGetter<Primitive>) {
+export function attr<PropsType extends object>(this: Component<PropsType>, key: string, value?: MaybeRefOrGetter<Primitive>) {
   this.onInit(() => {
     if (isWatchSource(value)) {
       const release = watch(() => toValue(value), value => setAttribute(this.el, key, value), {

@@ -264,15 +264,24 @@ export {
 //   count: 10
 // }
 
-// const app = div<Props>().setup((ctx, props) => {
-//   ctx.text(props.label)
+// const app = div<Props>().keydownExact(['C', 'A'], () => {}).setup((ctx, props) => {
+//   // props
+//   ctx.text(props.count)
 // })
+
+// const app = div<Props>().id("huh").setup((ctx, props) => {
+//   ctx.text(props.)
+// })
+
+// app.prop("label")
 
 // app.prop('')
 
 // const btn = reusable<Props>('button', (ctx, props) => {
 //   ctx.text(props.label)
 // })
+
+// btn().prop("")
 
 // Used later
 
