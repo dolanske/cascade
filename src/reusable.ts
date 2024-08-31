@@ -4,10 +4,9 @@
 
 import type { Component } from './component'
 import { El, htmlVoidTags } from './factory'
-import type { SetupArguments } from './methods/setup'
-import type { ComponentChildrenItems } from './types'
+import type { ComponentChildrenItems, SetupArguments } from './types'
 
-type ReusableComponent<PropsType extends object> = (children?: ComponentChildrenItems) => Component<PropsType>
+type ReusableComponent<PropsType extends object> = (children?: ComponentChildrenItems<PropsType>) => Component<PropsType>
 
 const elementsWihoutChildren = [
   ...htmlVoidTags,
@@ -17,7 +16,7 @@ const elementsWihoutChildren = [
 ]
 
 export function reusable<PropsType extends object>(el: keyof typeof El, setupFn: SetupArguments<PropsType>): ReusableComponent<PropsType> {
-  return (children?: ComponentChildrenItems) => {
+  return (children?: ComponentChildrenItems<PropsType>) => {
     const inst
       = elementsWihoutChildren.includes(el)
         ? El[el]<PropsType>()

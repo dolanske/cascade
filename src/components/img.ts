@@ -2,7 +2,7 @@ import type { MaybeRefOrGetter } from '@vue/reactivity'
 import { VoidComponent } from '../component'
 import { registerWatchedProp } from '../property-method'
 
-export class ImgElement extends VoidComponent {
+export class ImgElement<PropsType extends object> extends VoidComponent<PropsType> {
   el: HTMLImageElement
 
   constructor(el: HTMLImageElement) {
@@ -21,9 +21,9 @@ export class ImgElement extends VoidComponent {
   }
 }
 
-export function img(src: string) {
+export function img<PropsType extends object>(src: string) {
   const el = document.createElement('img')
-  const component = new ImgElement(el)
+  const component = new ImgElement<PropsType>(el)
   if (src)
     component.src(src)
 

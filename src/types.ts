@@ -8,10 +8,12 @@ export type HtmlVoidtags = 'area' | 'base' | 'br' | 'col' | 'embed' | 'hr' | 'im
 export type CustomTags = 'fragment'
 export type AvailableTags = HtmlTags | HtmlVoidtags | CustomTags
 
-export type ComponentChildrenItems = string | number | Component<object> | Element | Fragment<object> | MaybeRefOrGetter<string | number | Component<object>>
-export type ComponentChildren = ComponentChildrenItems | ComponentChildrenItems[]
-export type ComponentInstance = <PropsType extends object>(children?: ComponentChildren) => Component<PropsType>
+export type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | MaybeRefOrGetter<string | number | Component<PropsType>>
+export type ComponentChildren<PropsType extends object> = ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[]
+export type ComponentInstance = <PropsType extends object>(children?: ComponentChildren<PropsType>) => Component<PropsType>
 export type ValueOf<T> = T[keyof T]
 export interface CSSStyle extends Properties, PropertiesHyphen { }
 export type GenericCallbackWithThis = (this: Component<object>) => void
 export type GenericCallback = () => void
+
+export type SetupArguments<PropsType extends object> = (componentInstance: Component<PropsType>, props: PropsType) => void

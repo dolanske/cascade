@@ -11,7 +11,7 @@ export const htmlVoidTags: HtmlVoidtags[] = ['area', 'base', 'br', 'col', 'embed
 
 // Create all elements with possible child elements
 export const htmlNormalElFactory = htmlNormalTags.reduce((group, type) => {
-  group[type] = <PropsType extends object>(children: ComponentChildren = [], ...rest: ComponentChildrenItems[]): Component<PropsType> => {
+  group[type] = <PropsType extends object>(children: ComponentChildren<PropsType> = [], ...rest: ComponentChildrenItems<PropsType>[]): Component<PropsType> => {
     const root = document.createElement(type)
     const inst = new Component<PropsType>(root)
     const nested = isArray(children) ? children.concat(rest) : [children].concat(rest)
@@ -30,7 +30,7 @@ export const htmlVoidElFactory = htmlVoidTags.reduce((group, type) => {
     return inst
   }
   return group
-}, {} as Record<HtmlVoidtags, () => VoidComponent>)
+}, {} as Record<HtmlVoidtags, <PropsType extends object>() => VoidComponent<PropsType>>)
 
 // Merge all native elements and also custom elements into a single `El` object
 export const El = Object.assign(htmlNormalElFactory, htmlVoidElFactory, {

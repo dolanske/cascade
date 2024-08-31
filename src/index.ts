@@ -259,21 +259,25 @@ export {
   img,
 }
 
-interface Props {
-  label: string
-  count: 10
-}
+// interface Props {
+//   label: string
+//   count: 10
+// }
 
-const app = div<Props>().setup((ctx, props) => {
+// const app = div<Props>().setup((ctx, props) => {
+//   ctx.text(props.label)
+// })
 
-})
+// app.prop('')
 
 // const btn = reusable<Props>('button', (ctx, props) => {
 //   ctx.text(props.label)
 // })
 
-// // Used later
+// Used later
 
 // const App = div(
-//   btn().prop(''),
+//   btn().prop('label', 'Sup'),
 // )
+
+// App.mount('#app')

@@ -1,12 +1,10 @@
 import { effectScope } from '@vue/reactivity'
 import type { EffectScope, UnwrapRef } from '@vue/reactivity'
-import type { ComponentChildren, GenericCallback, HtmlVoidtags } from './types'
+import type { ComponentChildren, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
 import { text } from './methods/text'
 import { blur, change, click, focus, input, keydown, keydownExact, keypress, keypressExact, keyup, keyupExact, on, submit } from './methods/on'
 import { class_impl } from './methods/class'
 import { html } from './methods/html'
-import type { SetupArguments } from './methods/setup'
-import { prop, props, setup } from './methods/setup'
 import { nest } from './methods/nest'
 import { model } from './methods/model'
 import { render } from './render'
@@ -107,12 +105,6 @@ export class Component<PropsType extends object> {
    * Bind reactive class object to the current component.
    */
   class = class_impl.bind(this)
-  /**
-   * Create a component scope, in which you can declare reactive variables. When
-   * the component is removed from the DOM, all of the scope properties get
-   * removed. This is the best way to declare reusable components.
-   */
-  setup = setup.bind(this)
   /**
    * Simple helper which allows you to insert component's children anywhere in
    * the chain. This was made mainly because it feels less natural to add
@@ -349,6 +341,28 @@ export class Component<PropsType extends object> {
   props(props: Partial<PropsType>) {
     for (const key of Object.keys(props))
       Object.assign(this.__componentProps, { [key]: props[key as keyof PropsType] })
+    return this
+  }
+
+  /**
+   * Create a component scope, in which you can declare reactive variables. When
+   * the component is removed from the DOM, all of the scope properties get
+   * removed. This is the best way to declare reusable components.
+   */
+  setup(setupFn: SetupArguments<PropsType>) {
+    this.__scopes.add(setupFn)
+
+    this.onInit(() => {
+      const scope = effectScope()
+      scope.run(() => {
+        setupFn(this, this.__componentProps)
+      })
+
+      this.onDestroy(() => {
+        scope.stop()
+      })
+    })
+    return this
   }
 }
 
@@ -394,6 +408,6 @@ export class Fragment<PropsType extends object> extends Component<PropsType> {
  *
  * @param children {ComponentChildren}
  */
-export function fragment(children?: ComponentChildren) {
-  return new Fragment(children)
+export function fragment<PropsType extends object>(children?: ComponentChildren) {
+  return new Fragment<PropsType>(children)
 }
