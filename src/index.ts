@@ -271,8 +271,8 @@ export {
 // test
 //
 
-button().text('Click').on('click', () => {
-  console.log('Clicked')
-}, {
-  modifiers: [Modifiers.delay(500)],
-}).mount('#app')
+// button().text('Click').on('click', () => {
+//   console.log('Clicked')
+// }, {
+//   modifiers: [Modifiers.delay(500)],
+// }).mount('#app')
