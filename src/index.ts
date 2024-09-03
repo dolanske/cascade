@@ -7,6 +7,10 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
+import { Modifier } from './methods/on'
+import type { EventModifier } from './methods/on'
+import { Transform } from './methods/model'
+import type { ModelTransform } from './methods/model'
 
 const {
   a,
@@ -131,11 +135,6 @@ const {
 } = htmlVoidElFactory
 
 export {
-  reusable,
-  getInstance,
-  createId,
-  Component,
-  Children,
   fragment,
   input,
   textarea,
@@ -257,4 +256,23 @@ export {
   track,
   wbr,
   img,
+  //
+  reusable,
+  getInstance,
+  createId,
+  Component,
+  Children,
+  EventModifier,
+  ModelTransform,
+  Transform,
+  Modifier,
 }
+
+// test
+//
+
+// button().text('Click').on('click', () => {
+//   console.log('Clicked')
+// }, {
+//   modifiers: [Modifier.delay(500)],
+// }).mount('#app')

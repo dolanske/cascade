@@ -1,10 +1,10 @@
-import type { EffectScope } from '@vue/reactivity';
+import { EffectScope } from '@vue/reactivity';
 import { MaybeRefOrGetter } from '@vue/reactivity';
 import { Primitive } from '@vue/reactivity';
-import type { Properties } from 'csstype';
-import type { PropertiesHyphen } from 'csstype';
-import type { Ref } from '@vue/reactivity';
-import type { UnwrapRef } from '@vue/reactivity';
+import { Properties } from 'csstype';
+import { PropertiesHyphen } from 'csstype';
+import { Ref } from '@vue/reactivity';
+import { UnwrapRef } from '@vue/reactivity';
 
 export declare const a: ComponentInstance;
 
@@ -44,7 +44,7 @@ export declare const blink: ComponentInstance;
 
 export declare const blockquote: ComponentInstance;
 
-declare function blur_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function blur_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
 export declare const body: ComponentInstance;
 
@@ -56,9 +56,14 @@ declare type CallbackType<T, PropsType extends object> = T extends any[] ? (valu
 
 export declare const canvas: ComponentInstance;
 
+/**
+ * Capitalize each word
+ */
+declare function capitalizeAll(val: string): string;
+
 export declare const caption: ComponentInstance;
 
-declare function change<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function change<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
 export declare type Children<PropsType extends object> = ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[];
 
@@ -70,7 +75,7 @@ declare type ClassnameOrCLassObject = string | ClassObject;
 
 declare type ClassObject = Record<string, MaybeRefOrGetter<boolean>>;
 
-declare function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
 export declare const code: ComponentInstance;
 
@@ -348,6 +353,8 @@ export declare const decorator: ComponentInstance;
 
 export declare const del: ComponentInstance;
 
+declare function delay(amount: number): EventModifier;
+
 export declare const details: ComponentInstance;
 
 export declare const dfn: ComponentInstance;
@@ -374,13 +381,25 @@ export declare const em: ComponentInstance;
 
 export declare const embed: <PropsType extends object>() => VoidComponent<PropsType>;
 
+declare interface EventConfig {
+    options?: EventListenerOptions;
+    modifiers?: EventModifier[];
+}
+
+export declare type EventModifier = (evt: Event, state: EventModifierState) => boolean | Promise<boolean>;
+
+declare interface EventModifierState {
+    executedTimes: number;
+    lastCall: number;
+}
+
 export declare const fieldset: ComponentInstance;
 
 export declare const figcaption: ComponentInstance;
 
 export declare const figure: ComponentInstance;
 
-declare function focus_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function focus_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
 export declare const footer: ComponentInstance;
 
@@ -465,7 +484,7 @@ declare class ImgElement<PropsType extends object> extends VoidComponent<PropsTy
 
 export declare function input<PropsType extends object>(type?: InputType): InputElement<HTMLInputElement, PropsType>;
 
-declare function input_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function input_2<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
 declare class InputElement<T extends HTMLInputElement | HTMLTextAreaElement, PropsType extends object> extends VoidComponent<PropsType> {
     el: T;
@@ -485,9 +504,9 @@ export declare const isindex: ComponentInstance;
 
 export declare const kbd: ComponentInstance;
 
-declare function keydown<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function keydown<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
-declare function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions): Component<PropsType>;
+declare function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions): Component<PropsType>;
 
 export declare const keygen: ComponentInstance;
 
@@ -495,13 +514,13 @@ declare interface KeyInputOptions {
     detect?: 'some' | 'every';
 }
 
-declare function keypress<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function keypress<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
-declare function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions): Component<PropsType>;
+declare function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions): Component<PropsType>;
 
-declare function keyup<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function keyup<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
-declare function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions): Component<PropsType>;
+declare function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions): Component<PropsType>;
 
 export declare const label: ComponentInstance;
 
@@ -557,7 +576,24 @@ declare interface ModelOptions {
     eventOptions?: EventListenerOptions;
 }
 
-declare type ModelTransform<Returns = string> = (value: string) => Returns;
+export declare type ModelTransform<Returns = string> = (value: string) => Returns;
+
+export declare const Modifiers: {
+    /**
+     * Executes event callback if the provided expression passes.
+     *
+     * @param expression Ref<boolean> | boolean
+     * @returns EventModifier
+     */
+    readonly if: (expression: boolean | Ref<boolean>) => EventModifier;
+    readonly throttle: typeof throttle;
+    readonly once: EventModifier;
+    readonly stop: EventModifier;
+    readonly stopImmediate: EventModifier;
+    readonly prevent: EventModifier;
+    readonly cancel: EventModifier;
+    readonly delay: typeof delay;
+};
 
 export declare const nav: ComponentInstance;
 
@@ -569,7 +605,7 @@ export declare const object: ComponentInstance;
 
 export declare const ol: ComponentInstance;
 
-declare function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, config?: EventConfig): Component<PropsType>;
 
 export declare const optgroup: ComponentInstance;
 
@@ -638,7 +674,7 @@ declare function style_2(this: Component<any>, key: keyof CSSStyle | CSSStyle | 
 
 export declare const sub: ComponentInstance;
 
-declare function submit<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions): Component<PropsType>;
+declare function submit<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig): Component<PropsType>;
 
 export declare const summary: ComponentInstance;
 
@@ -662,6 +698,14 @@ export declare const th: ComponentInstance;
 
 export declare const thead: ComponentInstance;
 
+/**
+ * Throttle the execution of the event callback based on the provided delay amount
+ *
+ * @param amount Delay in milliseconds
+ * @returns EventModifier
+ */
+declare function throttle(amount: number): EventModifier;
+
 export declare const time: ComponentInstance;
 
 export declare const title: ComponentInstance;
@@ -669,6 +713,21 @@ export declare const title: ComponentInstance;
 export declare const tr: ComponentInstance;
 
 export declare const track: <PropsType extends object>() => VoidComponent<PropsType>;
+
+export declare const Transform: {
+    readonly trim: ModelTransform<string>;
+    readonly number: ModelTransform<number>;
+    readonly uppercase: ModelTransform<string>;
+    readonly lowercase: ModelTransform<string>;
+    readonly truncate: typeof truncate;
+    readonly capitalize: (val: string) => string;
+    readonly capitalizeAll: typeof capitalizeAll;
+};
+
+/**
+ * Truncates the output at the given length
+ */
+declare function truncate(length: number): (val: string) => string;
 
 export declare const u: ComponentInstance;
 
