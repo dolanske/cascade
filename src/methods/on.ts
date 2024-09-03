@@ -8,42 +8,96 @@ interface EventModifierState {
   lastCall: number
 }
 
-type EventModifier = (evt: Event, state: EventModifierState) => boolean | Promise<boolean>
+export type EventModifier = (evt: Event, state: EventModifierState) => boolean | Promise<boolean>
 
 interface EventConfig {
   options?: EventListenerOptions
   modifiers?: EventModifier[]
 }
 
+//////////////////////////////
 // Modifiers
-// Need to return true, otherwise provided callback will not be executed.
-export const Modifiers = {
-  throttle: (delay: number): EventModifier => (_, state) => {
-    if (typeof delay !== 'number')
+
+// Each modifier needs to return true, otherwise the provided callback will not
+// be be executed
+
+/**
+ * Throttle the execution of the event callback based on the provided delay amount
+ *
+ * @param amount Delay in milliseconds
+ * @returns EventModifier
+ */
+function throttle(amount: number): EventModifier {
+  return (_, state) => {
+    if (typeof amount !== 'number')
       return true
-    return Date.now() - state.lastCall >= delay
-  },
+    return Date.now() - state.lastCall >= amount
+  }
+}
+
+function delay(amount: number): EventModifier {
+  return () => new Promise<boolean>((r) => {
+    setTimeout(() => r(true), amount)
+  })
+}
+
+/**
+ * Executes the event callback only once.
+ */
+const once: EventModifier = (_, state) => {
+  return state.executedTimes === 0
+}
+
+/**
+ * Stop event propagation
+ */
+const stop: EventModifier = (evt) => {
+  evt.stopPropagation()
+  return true
+}
+
+/**
+ * Stop immediate event propagation
+ */
+const stopImmediate: EventModifier = (evt) => {
+  evt.stopImmediatePropagation()
+  return true
+}
+
+/**
+ * Prevent default
+ */
+const prevent: EventModifier = (evt) => {
+  evt.preventDefault()
+  return true
+}
+
+/**
+ * Cancel execution of the callback on event fire
+ */
+const cancel: EventModifier = () => false
+
+export const Modifiers = {
+  /**
+   * Executes event callback if the provided expression passes.
+   *
+   * @param expression Ref<boolean> | boolean
+   * @returns EventModifier
+   */
   if: (expression: boolean | Ref<boolean>): EventModifier => () => {
     return !!toValue(expression)
   },
-  once: (_: Event, state: EventModifierState) => state.executedTimes === 0,
-  stop: (evt: Event) => {
-    evt.stopPropagation()
-    return true
-  },
-  stopImmediate: (evt: Event) => {
-    evt.stopImmediatePropagation()
-    return true
-  },
-  prevent: (evt: Event) => {
-    evt.preventDefault()
-    return true
-  },
-  cancel: () => false,
-  // TODO
-  // delay: () => true,
-  // debounce
+  throttle,
+  once,
+  stop,
+  stopImmediate,
+  prevent,
+  cancel,
+  delay,
 } as const
+
+//////////////////////////////
+// Implementation
 
 export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, config: EventConfig = {}) {
   const state: EventModifierState = {
@@ -54,20 +108,19 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
   async function callbackHandler(evt: Event) {
     if (config.modifiers) {
       for (const modifier of config.modifiers) {
-        if(!(await modifier(evt, state))) {
+        if (!(await modifier(evt, state))) {
           return
         }
       }
     }
-    
-      if ('handleEvent' in listener)
-        listener.handleEvent(evt)
-      else
-        listener(evt)
-  
-      state.executedTimes++
-      state.lastCall = Date.now()
-      
+
+    if ('handleEvent' in listener)
+      listener.handleEvent(evt)
+    else
+      listener(evt)
+
+    state.executedTimes++
+    state.lastCall = Date.now()
   }
 
   this.onMount(() => {
@@ -79,7 +132,8 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
   return this
 }
 
-// Custom shorthands -----------------
+//////////////////////////////
+// Custom shorthands
 
 export function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('click', listener, options)

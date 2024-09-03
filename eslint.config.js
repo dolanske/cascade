@@ -5,6 +5,6 @@ export default antfu({
     '**/*.md',
   ],
   rules: {
-    'no-console': 'off'
-  }
+    'no-console': 'off',
+  },
 })

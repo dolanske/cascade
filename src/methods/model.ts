@@ -3,7 +3,7 @@ import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import { capitalizeString, isArray } from '../util'
 
-type ModelTransform<Returns = string> = (value: string) => Returns
+export type ModelTransform<Returns = string> = (value: string) => Returns
 
 //////////////////////////////
 // Transforms
