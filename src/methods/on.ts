@@ -8,7 +8,7 @@ interface EventModifierState {
   lastCall: number
 }
 
-type EventModifier = (evt: Event, state: EventModifierState) => boolean
+type EventModifier = (evt: Event, state: EventModifierState) => boolean | Promise<boolean>
 
 interface EventConfig {
   options?: EventListenerOptions
@@ -20,10 +20,8 @@ interface EventConfig {
 export const Modifiers = {
   throttle: (delay: number): EventModifier => (_, state) => {
     if (typeof delay !== 'number')
-      return false
-    if (Date.now() - state.lastCall >= delay)
       return true
-    return false
+    return Date.now() - state.lastCall >= delay
   },
   if: (expression: boolean | Ref<boolean>): EventModifier => () => {
     return !!toValue(expression)
@@ -53,26 +51,23 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
     lastCall: 0,
   }
 
-  function executeCallback(evt: Event) {
-    if ('handleEvent' in listener)
-      listener.handleEvent(evt)
-    else
-      listener(evt)
-
-    state.executedTimes++
-    state.lastCall = Date.now()
-  }
-
-  function callbackHandler(evt: Event) {
-    if (
-      !config.modifiers
-      || config.modifiers.length === 0
-      || config.modifiers.every((modifier) => {
-        // TODO: Must check if return type is a new function,
-        return modifier(evt, state)
-      })
-    )
-      executeCallback(evt)
+  async function callbackHandler(evt: Event) {
+    if (config.modifiers) {
+      for (const modifier of config.modifiers) {
+        if(!(await modifier(evt, state))) {
+          return
+        }
+      }
+    }
+    
+      if ('handleEvent' in listener)
+        listener.handleEvent(evt)
+      else
+        listener(evt)
+  
+      state.executedTimes++
+      state.lastCall = Date.now()
+      
   }
 
   this.onMount(() => {
@@ -86,27 +81,27 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
 
 // Custom shorthands -----------------
 
-export function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('click', listener, options)
 }
 
-export function submit<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function submit<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('submit', listener, options)
 }
 
-export function focus<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function focus<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('focus', listener, options)
 }
 
-export function blur<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function blur<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('blur', listener, options)
 }
 
-export function change<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function change<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('change', listener, options)
 }
 
-export function input<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function input<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('input', listener, options)
 }
 
@@ -116,7 +111,7 @@ export interface KeyInputOptions {
   detect?: 'some' | 'every'
 }
 
-function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) {
+function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
   // Store pressed keys in case there are multiple keys to check for
   const history: string[] = []
 
@@ -162,32 +157,32 @@ function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'ke
         break
       }
     }
-  }, options as EventListenerOptions)
+  }, options)
 }
 
-export function keydown<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function keydown<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('keydown', listener, options)
 }
 
-export function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) {
+export function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
   keyEventImpl.call(this, 'keydown', requiredKeyOrKeys, listener, options)
   return this
 }
 
-export function keyup<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function keyup<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('keyup', listener, options)
 }
 
-export function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) {
+export function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
   keyEventImpl.call(this, 'keyup', requiredKeyOrKeys, listener, options)
   return this
 }
 
-export function keypress<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+export function keypress<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
   return this.on('keyup', listener, options)
 }
 
-export function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventListenerOptions & KeyInputOptions) {
+export function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
   keyEventImpl.call(this, 'keypress', requiredKeyOrKeys, listener, options)
   return this
 }
