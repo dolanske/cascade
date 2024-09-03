@@ -77,7 +77,7 @@ const prevent: EventModifier = (evt) => {
  */
 const cancel: EventModifier = () => false
 
-export const Modifiers = {
+export const Modifier = {
   /**
    * Executes event callback if the provided expression passes.
    *

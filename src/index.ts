@@ -7,7 +7,7 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
-import { Modifiers } from './methods/on'
+import { Modifier } from './methods/on'
 import type { EventModifier } from './methods/on'
 import { Transform } from './methods/model'
 import type { ModelTransform } from './methods/model'
@@ -265,7 +265,7 @@ export {
   EventModifier,
   ModelTransform,
   Transform,
-  Modifiers,
+  Modifier,
 }
 
 // test
@@ -274,5 +274,5 @@ export {
 // button().text('Click').on('click', () => {
 //   console.log('Clicked')
 // }, {
-//   modifiers: [Modifiers.delay(500)],
+//   modifiers: [Modifier.delay(500)],
 // }).mount('#app')
