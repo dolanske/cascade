@@ -1,23 +1,85 @@
+import type { Ref } from '@vue/reactivity'
+import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
 import { isFn } from '../util'
 
-// TODO: modifiers
-// TODO: modifiers with parameters
+interface EventModifierState {
+  executedTimes: number
+  lastCall: number
+}
 
-// Event modifier works differently
-// type EventTransform = () => boolean
+type EventModifier = (evt: Event, state: EventModifierState) => boolean
 
-// interface OnOptions {
-//   options: EventListenerOptions,
-//   transforms: EventTransform[]
-// }
+interface EventConfig {
+  options?: EventListenerOptions
+  modifiers?: EventModifier[]
+}
 
-export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions) {
+// Modifiers
+// Need to return true, otherwise provided callback will not be executed.
+export const Modifiers = {
+  throttle: (delay: number): EventModifier => (_, state) => {
+    if (typeof delay !== 'number')
+      return false
+    if (Date.now() - state.lastCall >= delay)
+      return true
+    return false
+  },
+  if: (expression: boolean | Ref<boolean>): EventModifier => () => {
+    return !!toValue(expression)
+  },
+  once: (_: Event, state: EventModifierState) => state.executedTimes === 0,
+  stop: (evt: Event) => {
+    evt.stopPropagation()
+    return true
+  },
+  stopImmediate: (evt: Event) => {
+    evt.stopImmediatePropagation()
+    return true
+  },
+  prevent: (evt: Event) => {
+    evt.preventDefault()
+    return true
+  },
+  cancel: () => false,
+  // TODO
+  // delay: () => true,
+  // debounce
+} as const
+
+export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, config: EventConfig = {}) {
+  const state: EventModifierState = {
+    executedTimes: 0,
+    lastCall: 0,
+  }
+
+  function executeCallback(evt: Event) {
+    if ('handleEvent' in listener)
+      listener.handleEvent(evt)
+    else
+      listener(evt)
+
+    state.executedTimes++
+    state.lastCall = Date.now()
+  }
+
+  function callbackHandler(evt: Event) {
+    if (
+      !config.modifiers
+      || config.modifiers.length === 0
+      || config.modifiers.every((modifier) => {
+        // TODO: Must check if return type is a new function,
+        return modifier(evt, state)
+      })
+    )
+      executeCallback(evt)
+  }
+
   this.onMount(() => {
-    this.el.addEventListener(type, listener, options)
+    this.el.addEventListener(type, callbackHandler, config.options)
   })
   this.onDestroy(() => {
-    this.el.removeEventListener(type, listener)
+    this.el.removeEventListener(type, callbackHandler)
   })
   return this
 }

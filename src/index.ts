@@ -7,6 +7,7 @@ import { input, textarea } from './components/input'
 import { option } from './components/select'
 import { img } from './components/img'
 import { createId } from './id'
+import { Modifiers } from './methods/on'
 
 const {
   a,
@@ -258,3 +259,12 @@ export {
   wbr,
   img,
 }
+
+// test
+//
+
+button().text('Click').on('click', () => {
+  console.log('Clicked')
+}, {
+  modifiers: [Modifiers.throttle(500)],
+}).mount('#app')
