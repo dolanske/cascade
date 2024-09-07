@@ -1,8 +1,8 @@
-import { watch } from '@vue-reactivity/watch'
-import { toValue } from '@vue/reactivity'
+import { toValue, type MaybeRefOrGetter } from '@vue/reactivity'
 import { Component, Fragment } from './component'
 import type { ComponentChildren } from './types'
-import { isNil, isWatchSource } from './util'
+import { isNil, isWatchSource, WATCH_CONF } from './util'
+import { watch } from '@vue-reactivity/watch'
 
 // Returns wether node was replaced or not
 function replaceChildAt(parent: Element, newChild: Element | Text, index: number): boolean {
@@ -13,6 +13,25 @@ function replaceChildAt(parent: Element, newChild: Element | Text, index: number
 
   parent.replaceChild(newChild, currentChild)
   return true
+}
+
+function renderAndMountComponent(root: Element, parent: Component<any> | Element, children: Component<any>) {
+  if (parent instanceof Component)
+    children.parent = parent
+  root.appendChild(children.el)
+  children.__runOnInit()
+  render(children, children.componentChildren)
+  children.__runOnMount()
+}
+
+function renderDynamicChildren(root: Element, parent: Component<any> | Element, watchedChildren: MaybeRefOrGetter<>) {
+  const stopper = watch(() => toValue(watchedChildren), (children) => {
+    // Whenever new set of children appear, they should patch the current DOM
+  }, WATCH_CONF)
+
+  if (parent instanceof Component) {
+    parent.onDestroy(stopper)
+  }
 }
 
 export function render(parent: Component<any> | Element, children?: ComponentChildren<any>, index?: number) {
@@ -44,12 +63,13 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
   }
 
   else if (children instanceof Component) {
-    if (parent instanceof Component)
-      children.parent = parent
-    root.appendChild(children.el)
-    children.__runOnInit()
-    render(children, children.componentChildren)
-    children.__runOnMount()
+    renderAndMountComponent(root, parent, children)
+    // if (parent instanceof Component)
+    //   children.parent = parent
+    // root.appendChild(children.el)
+    // children.__runOnInit()
+    // render(children, children.componentChildren)
+    // children.__runOnMount()
   }
 
   else if (Array.isArray(children)) {
@@ -57,47 +77,49 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
     for (let i = 0; i < len; i++) {
       const child = children[i]
 
-      if (child instanceof Element || typeof child === 'string' || typeof child === 'number') {
+      if (child instanceof Element || typeof child === 'string' || typeof child === 'number')
         render(root, child, i)
-      }
-      else if (child instanceof Fragment) {
-        render(root, child.componentChildren)
-      }
-      else if (isWatchSource(child)) {
-        watch(() => toValue(child), (value) => {
-          // TODO: cleanup previous component before rendering new
-          // if (value instanceof Component)
-          //   value.destroy()
-          // else root.innerHTML = ''
 
-          render(root, value, i)
-        }, {
-          immediate: true,
-          deep: true,
-        })
-      }
-      else {
-        if (parent instanceof Component)
-          child.parent = parent
-        root.appendChild(child.el)
-        child.__runOnInit()
-        render(child, child.componentChildren)
-        child.__runOnMount()
-      }
+      else if (child instanceof Fragment)
+        render(root, child.componentChildren)
+
+      else if (isWatchSource(child))
+        renderDynamicChildren(root, parent, child)
+        // watch(() => toValue(child), (value) => {
+        //   // TODO: cleanup previous component before rendering new
+        //   // if (value instanceof Component)
+        //   //   value.destroy()
+        //   // else root.innerHTML = ''
+
+      //   render(root, value, i)
+      // }, {
+      //   immediate: true,
+      //   deep: true,
+      // })
+
+      else
+        renderAndMountComponent(root, parent, child)
+        // if (parent instanceof Component)
+        //   child.parent = parent
+        // root.appendChild(child.el)
+        // child.__runOnInit()
+        // render(child, child.componentChildren)
+        // child.__runOnMount()
     }
   }
 
   else if (isWatchSource(children)) {
-    watch(() => toValue(children), (value) => {
-      // TODO: cleanup previous component before rendering new \
-      if (value instanceof Component)
-        value.destroy()
-      else root.innerHTML = ''
+    renderDynamicChildren(root, parent, children)
+    // watch(() => toValue(children), (value) => {
+    //   // TODO: cleanup previous component before rendering new \
+    //   if (value instanceof Component)
+    //     value.destroy()
+    //   else root.innerHTML = ''
 
-      render(root, value)
-    }, {
-      immediate: true,
-      deep: true,
-    })
+    //   render(root, value)
+    // }, {
+    //   immediate: true,
+    //   deep: true,
+    // })
   }
 }

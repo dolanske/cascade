@@ -237,7 +237,7 @@ ctx.keypressExact(['A', 'B', 'C'], () => {
 
 #### `.model()`
 
-Two way binding to control and element's value with ref. You can use `mode()l` on `input`, `select`, `textarea` and `details`.
+Two way binding to control and element's value with ref. You can use `model` on `input`, `select`, `textarea` and `details`.
 
 ```ts
 // A function which transforms the value of the element before it's assigned to the provided ref

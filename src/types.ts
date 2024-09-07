@@ -8,7 +8,7 @@ export type HtmlVoidtags = 'area' | 'base' | 'br' | 'col' | 'embed' | 'hr' | 'im
 export type CustomTags = 'fragment'
 export type AvailableTags = HtmlTags | HtmlVoidtags | CustomTags
 
-export type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | MaybeRefOrGetter<string | number | Component<PropsType>>
+export type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | MaybeRefOrGetter<string | number | Component<PropsType> | Element>
 export type ComponentChildren<PropsType extends object> = ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[]
 export type ComponentInstance = <PropsType extends object>(children?: ComponentChildren<PropsType>) => Component<PropsType>
 export type ValueOf<T> = T[keyof T]

@@ -108,9 +108,8 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
   async function callbackHandler(evt: Event) {
     if (config.modifiers) {
       for (const modifier of config.modifiers) {
-        if (!(await modifier(evt, state))) {
+        if (!(await modifier(evt, state)))
           return
-        }
       }
     }
 
