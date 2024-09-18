@@ -1,8 +1,6 @@
-import { toValue } from '@vue/reactivity'
 import type { MaybeRefOrGetter, Primitive } from '@vue/reactivity'
-
-import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
+import { toValue, watch } from '@vue/reactivity'
 import { isNil, isObject, isWatchSource } from '../util'
 
 type Attributes = Record<string, Primitive>

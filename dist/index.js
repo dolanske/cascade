@@ -1,8 +1,21 @@
 var z = Object.defineProperty;
-var F = (t, e, n) => e in t ? z(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
-var c = (t, e, n) => F(t, typeof e != "symbol" ? e + "" : e, n);
-import { isRef as B, toValue as p, effectScope as D } from "@vue/reactivity";
-import { watch as h } from "@vue-reactivity/watch";
+var B = (t, e, n) => e in t ? z(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
+var c = (t, e, n) => B(t, typeof e != "symbol" ? e + "" : e, n);
+import { isRef as F, watch as h, toValue as p, effectScope as D, ref as N } from "@vue/reactivity";
+const U = /* @__PURE__ */ new Set(), W = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split(""), $ = "abcdefghiklmnopqrstuvwxyz".split("");
+function X(t) {
+  const e = t ? $ : W;
+  let n = "";
+  for (let s = 0; s < 5; s++)
+    n += e[Math.floor(Math.random() * e.length)];
+  return n;
+}
+function G(t = !1) {
+  let e = "";
+  for (; e.length === 0 || U.has(e); )
+    e = X(t);
+  return e;
+}
 function g(t) {
   const e = typeof t;
   return t != null && e === "object";
@@ -17,137 +30,67 @@ function j(t) {
   return typeof t == "function";
 }
 function f(t) {
-  return B(t) || j(t);
+  return F(t) || j(t);
 }
-function Gt(t) {
+function Zt(t) {
   return Object.hasOwn(t, "__instance") ? Reflect.get(t, "__instance") : null;
 }
-const v = {
+const w = {
   immediate: !0,
   deep: !0
 };
 function T(t) {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function _(t, e, n) {
-  const s = (o) => {
-    Reflect.set(this.el, t, o);
-  };
-  if (f(e)) {
-    const o = h(() => p(e), (i) => {
-      s(n ? String(i) : i);
-    }, v);
-    this.onDestroy(o);
-  } else
-    s(n ? String(e) : e);
-}
-function N(t) {
-  return _.call(this, "textContent", t == null ? void 0 : t.toString()), this;
-}
-function U(t) {
-  return (e, n) => typeof t != "number" ? !0 : Date.now() - n.lastCall >= t;
-}
-function W(t) {
-  return () => new Promise((e) => {
-    setTimeout(() => e(!0), t);
-  });
-}
-const $ = (t, e) => e.executedTimes === 0, X = (t) => (t.stopPropagation(), !0), G = (t) => (t.stopImmediatePropagation(), !0), J = (t) => (t.preventDefault(), !0), Q = () => !1, Jt = {
-  /**
-   * Executes event callback if the provided expression passes.
-   *
-   * @param expression Ref<boolean> | boolean
-   * @returns EventModifier
-   */
-  if: (t) => () => !!p(t),
-  throttle: U,
-  once: $,
-  stop: X,
-  stopImmediate: G,
-  prevent: J,
-  cancel: Q,
-  delay: W
-};
-function Z(t, e, n = {}) {
-  const s = {
-    executedTimes: 0,
-    lastCall: 0
-  };
-  async function o(i) {
-    if (n.modifiers) {
-      for (const r of n.modifiers)
-        if (!await r(i, s))
-          return;
-    }
-    "handleEvent" in e ? e.handleEvent(i) : e(i), s.executedTimes++, s.lastCall = Date.now();
+function J(t) {
+  function e(n) {
+    if (!(n instanceof d))
+      return;
+    for (const o of n.__onDestroyCbs)
+      o();
+    const { children: s } = n;
+    if (s instanceof d)
+      e(s);
+    else if (y(s))
+      for (const o of s)
+        o instanceof d && e(o);
   }
-  return this.onMount(() => {
-    this.el.addEventListener(t, o, n.options);
-  }), this.onDestroy(() => {
-    this.el.removeEventListener(t, o);
+  e(t), t.__runOnDestroy(), t.el.remove();
+}
+function v(t, e, n) {
+  if (g(e)) {
+    Object.entries(e).forEach(([s, o]) => {
+      v(t, s, o);
+    });
+    return;
+  }
+  k(n) ? t.setAttribute(e, "") : typeof n == "boolean" ? n ? t.setAttribute(e, "") : t.removeAttribute(e) : t.setAttribute(e, String(n));
+}
+function Q(t) {
+  return this.onInit(() => {
+    if (f(t)) {
+      const e = h(() => p(t), (n) => v(this.el, n), {
+        immediate: !0,
+        deep: !0
+      });
+      this.onDestroy(e);
+    } else
+      v(this.el, t);
+  }), this;
+}
+function Z(t, e) {
+  return this.onInit(() => {
+    if (f(e)) {
+      const n = h(() => p(e), (s) => v(this.el, t, s), {
+        immediate: !0,
+        deep: !0
+      });
+      this.onDestroy(n);
+    } else
+      v(this.el, t, e);
   }), this;
 }
 function Y(t, e) {
-  return this.on("click", t, e);
-}
-function K(t, e) {
-  return this.on("submit", t, e);
-}
-function R(t, e) {
-  return this.on("focus", t, e);
-}
-function tt(t, e) {
-  return this.on("blur", t, e);
-}
-function et(t, e) {
-  return this.on("change", t, e);
-}
-function nt(t, e) {
-  return this.on("input", t, e);
-}
-function x(t, e, n, s) {
-  const o = [];
-  function i(u) {
-    o.push(u), o.length > e.length && o.shift();
-  }
-  const r = Array.isArray(e) ? e : [e];
-  this.on(t, (u) => {
-    const l = u.key;
-    function a() {
-      j(n) ? n(u) : n.handleEvent(u);
-    }
-    switch ((s == null ? void 0 : s.detect) || "every") {
-      case "some": {
-        r.includes(l) && a();
-        break;
-      }
-      case "every":
-      default: {
-        i(l), r.every((C, E) => C === o[E]) && a();
-        break;
-      }
-    }
-  }, s);
-}
-function st(t, e) {
-  return this.on("keydown", t, e);
-}
-function ot(t, e, n) {
-  return x.call(this, "keydown", t, e, n), this;
-}
-function it(t, e) {
-  return this.on("keyup", t, e);
-}
-function rt(t, e, n) {
-  return x.call(this, "keyup", t, e, n), this;
-}
-function ct(t, e) {
-  return this.on("keyup", t, e);
-}
-function lt(t, e, n) {
-  return x.call(this, "keypress", t, e, n), this;
-}
-function ut(t, e) {
   if (g(t) && !k(e))
     throw new TypeError("Cannot use object notation with second argument.");
   let n = "";
@@ -173,36 +116,137 @@ function ut(t, e) {
   }, r = (l, a) => {
     f(a) ? this.onDestroy(h(() => p(a), (m) => {
       i({ [l]: m });
-    }, v)) : l && a !== !1 && i(l);
+    }, w)) : l && a !== !1 && i(l);
   }, u = (l) => {
     for (const [a, m] of Object.entries(l))
       r(a, m);
   };
   return g(t) ? u(t) : typeof t == "string" && r(t, e), this;
 }
-function at(t) {
+function K(t) {
+  return this.attr("disabled", t), this;
+}
+function R(t, e, n) {
+  const s = Array.from(t.childNodes).at(n);
+  return s ? (t.replaceChild(e, s), !0) : !1;
+}
+function b(t, e, n) {
+  const s = t instanceof Element ? t : t.el;
+  if (e)
+    if (typeof e == "string" || typeof e == "number")
+      if (k(n))
+        s.innerHTML = String(e);
+      else {
+        const o = document.createTextNode(String(e));
+        R(s, o, n) || s.appendChild(o);
+      }
+    else if (e instanceof O)
+      b(s, e.componentChildren);
+    else if (e instanceof Element)
+      s.appendChild(e);
+    else if (e instanceof d)
+      t instanceof d && (e.parent = t), s.appendChild(e.el), e.__runOnInit(), b(e, e.componentChildren), e.__runOnMount();
+    else if (Array.isArray(e)) {
+      const o = e.length;
+      for (let i = 0; i < o; i++) {
+        const r = e[i];
+        r instanceof Element || typeof r == "string" || typeof r == "number" ? b(s, r, i) : r instanceof O ? b(s, r.componentChildren) : f(r) ? h(() => p(r), (u) => {
+          b(s, u, i);
+        }, {
+          immediate: !0,
+          deep: !0
+        }) : (t instanceof d && (r.parent = t), s.appendChild(r.el), r.__runOnInit(), b(r, r.componentChildren), r.__runOnMount());
+      }
+    } else f(e) && h(() => p(e), (o) => {
+      o instanceof d ? o.destroy() : s.innerHTML = "", b(s, o);
+    }, {
+      immediate: !0,
+      deep: !0
+    });
+}
+function tt(t, e) {
+  const n = (s) => {
+    const o = [];
+    if (y(s)) {
+      const i = s.length;
+      for (let r = 0; r < i; r++) {
+        const u = e(s[r], r);
+        u && o.push(u);
+      }
+    } else if (g(s)) {
+      const i = Object.keys(s), r = i.length;
+      for (let u = 0; u < r; u++) {
+        const l = i[u], a = e(Reflect.get(s, l), l, u);
+        a && o.push(a);
+      }
+    } else if (typeof s == "number")
+      for (let i = 0; i < s; i++) {
+        const r = e(i);
+        r && o.push(r);
+      }
+    this.el.replaceChildren(), b(this.el, o);
+  };
+  return this.onInit(() => {
+    if (f(t)) {
+      const s = h(() => p(t), (o) => {
+        n(o);
+      }, { immediate: !0, deep: !0 });
+      this.onDestroy(s);
+    } else
+      n(t);
+  }), this;
+}
+function _(t, e) {
+  const n = (s) => {
+    console.log(this.el, t, s), Reflect.set(this.el, t, s);
+  };
+  if (f(e)) {
+    n(p(e));
+    const s = h(() => p(e), (o) => {
+      n(o);
+    }, w);
+    this.onDestroy(s);
+  } else
+    n(e);
+}
+function et(t) {
   return _.call(this, "innerHTML", t), this;
 }
-function ht(t, ...e) {
-  const n = y(t) ? t.concat(e) : [t].concat(e);
-  return this.__setComponentChildren(n), this;
+function nt(t) {
+  return _.call(this, "id", t), this;
 }
-const pt = (t) => Number(t), ft = (t) => t.trim(), dt = (t) => t.toString().toUpperCase(), mt = (t) => t.toString().toUpperCase();
-function yt(t) {
+function st(t) {
+  const e = new Comment("if");
+  return this.onInit(() => {
+    const n = this.parent;
+    if (!n)
+      return console.warn("Parent element not found. `if()` will not work.");
+    const s = (o) => {
+      o ? n.el.insertBefore(this.el, e) : this.el.remove();
+    };
+    if (n.el.insertBefore(e, this.el), f(t)) {
+      const o = h(() => p(t), s, w);
+      this.onDestroy(o);
+    } else
+      s(t);
+  }), this;
+}
+const ot = (t) => Number(t), it = (t) => t.trim(), rt = (t) => t.toString().toUpperCase(), ct = (t) => t.toString().toUpperCase();
+function lt(t) {
   return t.split("\\s+").map((e) => T(e)).join("\\s+");
 }
-const bt = (t) => T(t);
-function _t(t) {
+const ut = (t) => T(t);
+function at(t) {
   return (e) => e.substring(0, t);
 }
-const Qt = {
-  trim: ft,
-  number: pt,
-  uppercase: dt,
-  lowercase: mt,
-  truncate: _t,
-  capitalize: bt,
-  capitalizeAll: yt
+const Yt = {
+  trim: it,
+  number: ot,
+  uppercase: rt,
+  lowercase: ct,
+  truncate: at,
+  capitalize: ut,
+  capitalizeAll: lt
 };
 function I(t, e) {
   return !e || e.length === 0 ? t : e.reduce((n, s) => s(n), t);
@@ -213,7 +257,7 @@ function L(t, e, n) {
 function A(t, e) {
   (!t.value || y(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (L(t, e.value, !0), e.removeAttribute("checked"));
 }
-function gt(t, e = {}) {
+function ht(t, e = {}) {
   return this.onMount(() => {
     switch (this.el.tagName) {
       case "INPUT":
@@ -287,143 +331,126 @@ function gt(t, e = {}) {
     }
   }), this;
 }
-function Ct(t, e, n) {
-  const s = Array.from(t.childNodes).at(n);
-  return s ? (t.replaceChild(e, s), !0) : !1;
+function pt(t, ...e) {
+  const n = y(t) ? t.concat(e) : [t].concat(e);
+  return this.__setComponentChildren(n), this;
 }
-function b(t, e, n) {
-  const s = t instanceof Element ? t : t.el;
-  if (e)
-    if (typeof e == "string" || typeof e == "number")
-      if (k(n))
-        s.innerHTML = String(e);
-      else {
-        const o = document.createTextNode(String(e));
-        Ct(s, o, n) || s.appendChild(o);
-      }
-    else if (e instanceof O)
-      b(s, e.componentChildren);
-    else if (e instanceof Element)
-      s.appendChild(e);
-    else if (e instanceof d)
-      t instanceof d && (e.parent = t), s.appendChild(e.el), e.__runOnInit(), b(e, e.componentChildren), e.__runOnMount();
-    else if (Array.isArray(e)) {
-      const o = e.length;
-      for (let i = 0; i < o; i++) {
-        const r = e[i];
-        r instanceof Element || typeof r == "string" || typeof r == "number" ? b(s, r, i) : r instanceof O ? b(s, r.componentChildren) : f(r) ? h(() => p(r), (u) => {
-          b(s, u, i);
-        }, {
-          immediate: !0,
-          deep: !0
-        }) : (t instanceof d && (r.parent = t), s.appendChild(r.el), r.__runOnInit(), b(r, r.componentChildren), r.__runOnMount());
-      }
-    } else f(e) && h(() => p(e), (o) => {
-      o instanceof d ? o.destroy() : s.innerHTML = "", b(s, o);
-    }, {
-      immediate: !0,
-      deep: !0
-    });
+function ft(t) {
+  return (e, n) => typeof t != "number" ? !0 : Date.now() - n.lastCall >= t;
 }
-function w(t, e, n) {
-  if (g(e)) {
-    Object.entries(e).forEach(([s, o]) => {
-      w(t, s, o);
-    });
-    return;
+function dt(t) {
+  return () => new Promise((e) => {
+    setTimeout(() => e(!0), t);
+  });
+}
+const mt = (t, e) => e.executedTimes === 0, yt = (t) => (t.stopPropagation(), !0), bt = (t) => (t.stopImmediatePropagation(), !0), _t = (t) => (t.preventDefault(), !0), gt = () => !1, Kt = {
+  /**
+   * Executes event callback if the provided expression passes.
+   *
+   * @param expression Ref<boolean> | boolean
+   * @returns EventModifier
+   */
+  if: (t) => () => !!p(t),
+  throttle: ft,
+  once: mt,
+  stop: yt,
+  stopImmediate: bt,
+  prevent: _t,
+  cancel: gt,
+  delay: dt
+};
+function Ct(t, e, n = {}) {
+  const s = {
+    executedTimes: 0,
+    lastCall: 0
+  };
+  async function o(i) {
+    if (n.modifiers) {
+      for (const r of n.modifiers)
+        if (!await r(i, s))
+          return;
+    }
+    "handleEvent" in e ? e.handleEvent(i) : e(i), s.executedTimes++, s.lastCall = Date.now();
   }
-  k(n) ? t.setAttribute(e, "") : typeof n == "boolean" ? n ? t.setAttribute(e, "") : t.removeAttribute(e) : t.setAttribute(e, String(n));
-}
-function kt(t) {
-  return this.onInit(() => {
-    if (f(t)) {
-      const e = h(() => p(t), (n) => w(this.el, n), {
-        immediate: !0,
-        deep: !0
-      });
-      this.onDestroy(e);
-    } else
-      w(this.el, t);
+  return this.onMount(() => {
+    this.el.addEventListener(t, o, n.options);
+  }), this.onDestroy(() => {
+    this.el.removeEventListener(t, o);
   }), this;
+}
+function kt(t, e) {
+  return this.on("click", t, e);
+}
+function vt(t, e) {
+  return this.on("submit", t, e);
 }
 function wt(t, e) {
-  return this.onInit(() => {
-    if (f(e)) {
-      const n = h(() => p(e), (s) => w(this.el, t, s), {
-        immediate: !0,
-        deep: !0
-      });
-      this.onDestroy(n);
-    } else
-      w(this.el, t, e);
-  }), this;
+  return this.on("focus", t, e);
 }
-function vt(t) {
-  return this.attr("disabled", t), this;
+function Et(t, e) {
+  return this.on("blur", t, e);
 }
-function Et(t) {
-  return _.call(this, "id", t), this;
+function St(t, e) {
+  return this.on("change", t, e);
 }
-function St(t) {
-  function e(n) {
-    if (!(n instanceof d))
-      return;
-    for (const o of n.__onDestroyCbs)
-      o();
-    const { children: s } = n;
-    if (s instanceof d)
-      e(s);
-    else if (y(s))
-      for (const o of s)
-        o instanceof d && e(o);
+function Ot(t, e) {
+  return this.on("input", t, e);
+}
+function x(t, e, n, s) {
+  const o = [];
+  function i(u) {
+    o.push(u), o.length > e.length && o.shift();
   }
-  e(t), t.__runOnDestroy(), t.el.remove();
+  const r = Array.isArray(e) ? e : [e];
+  this.on(t, (u) => {
+    const l = u.key;
+    function a() {
+      j(n) ? n(u) : n.handleEvent(u);
+    }
+    switch ((s == null ? void 0 : s.detect) || "every") {
+      case "some": {
+        r.includes(l) && a();
+        break;
+      }
+      case "every":
+      default: {
+        i(l), r.every((C, E) => C === o[E]) && a();
+        break;
+      }
+    }
+  }, s);
 }
-function Ot(t) {
+function xt(t, e) {
+  return this.on("keydown", t, e);
+}
+function Dt(t, e, n) {
+  return x.call(this, "keydown", t, e, n), this;
+}
+function It(t, e) {
+  return this.on("keyup", t, e);
+}
+function At(t, e, n) {
+  return x.call(this, "keyup", t, e, n), this;
+}
+function Pt(t, e) {
+  return this.on("keyup", t, e);
+}
+function jt(t, e, n) {
+  return x.call(this, "keypress", t, e, n), this;
+}
+function Tt(t) {
   return this.onMount(() => {
     const e = this.el.style.getPropertyValue("display"), n = (s) => {
       s ? k(e) ? this.el.style.removeProperty("display") : this.el.style.setProperty("display", e) : this.el.style.setProperty("display", "none");
     };
     if (f(t)) {
-      const s = h(() => p(t), n, v);
+      const s = h(() => p(t), n, w);
       this.onDestroy(s);
     } else
       n(t);
   }), this;
 }
-function xt(t, e) {
-  return this.onInit(() => {
-    const n = (s) => {
-      const o = [];
-      if (y(s)) {
-        const i = s.length;
-        for (let r = 0; r < i; r++) {
-          const u = e(s[r], r);
-          u && o.push(u);
-        }
-      } else if (g(s)) {
-        const i = Object.keys(s), r = i.length;
-        for (let u = 0; u < r; u++) {
-          const l = i[u], a = e(Reflect.get(s, l), l, u);
-          a && o.push(a);
-        }
-      } else if (typeof s == "number")
-        for (let i = 0; i < s; i++) {
-          const r = e(i);
-          r && o.push(r);
-        }
-      this.el.replaceChildren(), b(this.el, o);
-    };
-    if (f(t)) {
-      const s = h(() => p(t), (o) => {
-        n(o);
-      }, { immediate: !0, deep: !0 });
-      this.onDestroy(s);
-    } else
-      n(t);
-  }), this;
-}
-function Dt(t, e) {
+function Lt(t, e) {
   const n = (s) => {
     if (!g(s)) {
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
@@ -444,7 +471,7 @@ function Dt(t, e) {
     if (e)
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
     else {
-      const s = h(() => p(t), n, v);
+      const s = h(() => p(t), n, w);
       this.onDestroy(s);
     }
   else if (g(t)) {
@@ -461,46 +488,19 @@ function Dt(t, e) {
   }
   return this;
 }
-function It(t) {
-  const e = new Comment("if");
-  return this.onInit(() => {
-    const n = this.parent;
-    if (!n)
-      return console.warn("Parent element not found. `if()` will not work.");
-    const s = (o) => {
-      o ? n.el.insertBefore(this.el, e) : this.el.remove();
-    };
-    if (n.el.insertBefore(e, this.el), f(t)) {
-      const o = h(() => p(t), s, v);
-      this.onDestroy(o);
-    } else
-      s(t);
-  }), this;
-}
-const At = /* @__PURE__ */ new Set(), Pt = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split(""), jt = "abcdefghiklmnopqrstuvwxyz".split("");
-function Tt(t) {
-  const e = t ? jt : Pt;
-  let n = "";
-  for (let s = 0; s < 5; s++)
-    n += e[Math.floor(Math.random() * e.length)];
-  return n;
-}
-function Lt(t = !1) {
-  let e = "";
-  for (; e.length === 0 || At.has(e); )
-    e = Tt(t);
-  return e;
+function Mt(t) {
+  return _.call(this, "textContent", t), this;
 }
 class d {
   constructor(e, n) {
     /**
      * Set `textContent` of the current component.
      */
-    c(this, "text", N);
+    c(this, "text", Mt);
     /**
      * Set `innerHTML` of the current component.
      */
-    c(this, "html", at);
+    c(this, "html", et);
     /**
      * Add an event listener to the current component.
      *
@@ -509,35 +509,35 @@ class d {
      * @param options {EventListenerOptions | undefined} Optional event configuration
      *
      */
-    c(this, "on", Z);
+    c(this, "on", Ct);
     /**
      * Shorthand for binding `on("click")` event listener to the current component.
      */
-    c(this, "click", Y);
+    c(this, "click", kt);
     /**
      * Shorthand for binding `on("submit")` event listener to the current component.
      */
-    c(this, "submit", K);
+    c(this, "submit", vt);
     /**
      * Shorthand for binding `on("focus")` event listener to the current component.
      */
-    c(this, "focus", R);
+    c(this, "focus", wt);
     /**
      * Shorthand for binding `on("blur")` event listener to the current component.
      */
-    c(this, "blur", tt);
+    c(this, "blur", Et);
     /**
      * Shorthand for binding `on("change")` event listener to the current component.
      */
-    c(this, "change", et);
+    c(this, "change", St);
     /**
      * Shorthand for binding `on("input")` event listener to the current component.
      */
-    c(this, "input", nt);
+    c(this, "input", Ot);
     /**
      * Shorthand for binding `on("keydown")` event listener to the current component.
      */
-    c(this, "keydown", st);
+    c(this, "keydown", xt);
     /**
      * Shorthand for binding `on("keydown")` event listener to the current
      * component and listening for specific keys to be pressed down.
@@ -546,11 +546,11 @@ class d {
      * Component.keydownExact(["Shift", "T"], () => ...)
      * ```
      */
-    c(this, "keydownExact", ot);
+    c(this, "keydownExact", Dt);
     /**
      * Shorthand for binding `on("keyup")` event listener to the current component.
      */
-    c(this, "keyup", it);
+    c(this, "keyup", It);
     /**
      * Shorthand for binding `on("keyup")` event listener to the current
      * component and listening for specific keys to be released.
@@ -559,11 +559,11 @@ class d {
      * Component.keyupExact(["Shift", "T"], () => ...)
      * ```
      */
-    c(this, "keyupExact", rt);
+    c(this, "keyupExact", At);
     /**
      * Shorthand for binding `on("keypress")` event listener to the current component.
      */
-    c(this, "keypress", ct);
+    c(this, "keypress", Pt);
     /**
      * Shorthand for binding `on("keypress")` event listener to the current
      * component and listening for specific keys to be pressed.
@@ -572,52 +572,52 @@ class d {
      * Component.keypressExact(["Shift", "T"], () => ...)
      * ```
      */
-    c(this, "keypressExact", lt);
+    c(this, "keypressExact", jt);
     /**
      * Bind reactive class object to the current component.
      */
-    c(this, "class", ut);
+    c(this, "class", Y);
     /**
      * Simple helper which allows you to insert component's children anywhere in
      * the chain. This was made mainly because it feels less natural to add
      * children to a component and only then use methods like `if` or `for` on it.
      */
-    c(this, "nest", ht);
+    c(this, "nest", pt);
     /**
      * Two way binding of a reactive variable to the inputs / selects value.
      */
-    c(this, "model", gt);
+    c(this, "model", ht);
     /**
      * Bind attribute object to the component.
      */
-    c(this, "attrs", kt);
+    c(this, "attrs", Q);
     /**
      * Bind a single attribute to the component.
      */
-    c(this, "attr", wt);
+    c(this, "attr", Z);
     /**
      * Dynamically bind a `disabled` attribute to the component.
      */
-    c(this, "disabled", vt);
+    c(this, "disabled", K);
     /**
      * Dynamically bind an `id` attribute to the component.
      */
-    c(this, "id", Et);
+    c(this, "id", nt);
     /**
      * Toggle between showing or hiding the current component. the component is still
      * rendered, but has `display: none` applied to it.
      *
      * This function also preserves the previously added inline styles.
      */
-    c(this, "show", Ot);
+    c(this, "show", Tt);
     /**
      * Add reactive styling object to the current component.
      */
-    c(this, "style", Dt);
+    c(this, "style", Lt);
     /**
      * Conditionally render a component.
      */
-    c(this, "if", It);
+    c(this, "if", st);
     //
     // Public stuff which could be useful to users
     c(this, "identifier");
@@ -674,8 +674,8 @@ class d {
      *
      *
      */
-    c(this, "for", xt);
-    this.el = e, Object.defineProperty(this.el, "__instance", this), this.__componentProps = n ?? {}, this.identifier = Lt(!0);
+    c(this, "for", tt);
+    this.el = e, Object.defineProperty(this.el, "__instance", this), this.__componentProps = n ?? {}, this.identifier = G(!0);
   }
   /////////////////////////////////////////////////////////////
   // Private API
@@ -752,7 +752,7 @@ class d {
    * Removes component from the DOM, deactivates its instance and removes all reactive scopes.
    */
   destroy() {
-    St(this);
+    J(this);
   }
   /**
    * Clones the component. All reactive variables, DOM child nodes and chained
@@ -821,8 +821,25 @@ class O extends d {
     this.__runOnInit(), b(n, this.componentChildren), this.__runOnMount();
   }
 }
-function Mt(t) {
+function Vt(t) {
   return new O(t);
+}
+class qt extends S {
+  constructor(n) {
+    super("img");
+    c(this, "el");
+    this.el = n;
+  }
+  src(n) {
+    return _.call(this, "src", n), this;
+  }
+  alt(n) {
+    return _.call(this, "alt", n), this;
+  }
+}
+function Ht(t) {
+  const e = document.createElement("img"), n = new qt(e);
+  return t && n.src(t), n;
 }
 class M extends S {
   constructor(n, s) {
@@ -846,15 +863,15 @@ class M extends S {
     return _.call(this, "required", n), this;
   }
 }
-function Vt(t = "text") {
+function zt(t = "text") {
   const e = document.createElement("input");
   return new M(e, t);
 }
-function qt() {
+function Bt() {
   const t = document.createElement("textarea");
   return new M(t);
 }
-class Ht extends S {
+class Ft extends S {
   constructor(e, n) {
     if (super("option"), n) {
       const s = p(n);
@@ -869,295 +886,284 @@ class Ht extends S {
     return this.attr("selected"), this;
   }
 }
-function zt(t, e) {
-  return new Ht(t, e);
+function Nt(t, e) {
+  return new Ft(t, e);
 }
-class Ft extends S {
-  constructor(n) {
-    super("img");
-    c(this, "el");
-    this.el = n;
-  }
-  src(n) {
-    return _.call(this, "src", n), this;
-  }
-  alt(n) {
-    return _.call(this, "alt", n), this;
-  }
-}
-function Bt(t) {
-  const e = document.createElement("img"), n = new Ft(e);
-  return t && n.src(t), n;
-}
-const Nt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], V = ["area", "base", "br", "col", "embed", "hr", "link", "meta", "source", "track", "wbr"], q = Nt.reduce((t, e) => (t[e] = (n = [], ...s) => {
+const Ut = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], V = ["area", "base", "br", "col", "embed", "hr", "link", "meta", "source", "track", "wbr"], q = Ut.reduce((t, e) => (t[e] = (n = [], ...s) => {
   const o = document.createElement(e), i = new d(o), r = y(n) ? n.concat(s) : [n].concat(s);
   return i.__setComponentChildren(r), i.children = r, i;
 }, t), {}), H = V.reduce((t, e) => (t[e] = () => {
   const n = new S(e);
   return n.isVoid = !0, n;
 }, t), {}), P = Object.assign(q, H, {
-  fragment: Mt,
-  input: Vt,
-  textarea: qt,
-  option: zt,
-  img: Bt
-}), Ut = [
+  fragment: Vt,
+  input: zt,
+  textarea: Bt,
+  option: Nt,
+  img: Ht
+}), Wt = [
   ...V,
   "input",
   "textarea",
   "option"
 ];
-function Zt(t, e) {
+function $t(t, e) {
   return (n = [], ...s) => {
-    const o = y(n) ? n.concat(s) : [n].concat(s), i = Ut.includes(t) ? P[t]() : P[t](o);
+    const o = y(n) ? n.concat(s) : [n].concat(s), i = Wt.includes(t) ? P[t]() : P[t](o);
     return i.setup(e), i;
   };
 }
 const {
-  a: Yt,
-  abbr: Kt,
-  address: Rt,
-  applet: te,
-  article: ee,
-  aside: ne,
-  audio: se,
-  b: oe,
-  basefont: ie,
-  bdi: re,
-  bdo: ce,
-  bgsound: le,
-  blink: ue,
-  blockquote: ae,
-  body: he,
-  button: pe,
-  canvas: fe,
-  caption: de,
-  cite: me,
-  code: ye,
-  colgroup: be,
-  content: _e,
-  data: ge,
-  datalist: Ce,
-  dd: ke,
-  decorator: we,
-  del: ve,
-  details: Ee,
-  dfn: Se,
-  div: Oe,
-  dl: xe,
-  dt: De,
-  element: Ie,
-  em: Ae,
-  fieldset: Pe,
-  figcaption: je,
-  figure: Te,
-  footer: Le,
-  form: Me,
-  h1: Ve,
-  h2: qe,
-  h3: He,
-  h4: ze,
+  a: Rt,
+  abbr: te,
+  address: ee,
+  applet: ne,
+  article: se,
+  aside: oe,
+  audio: ie,
+  b: re,
+  basefont: ce,
+  bdi: le,
+  bdo: ue,
+  bgsound: ae,
+  blink: he,
+  blockquote: pe,
+  body: fe,
+  button: de,
+  canvas: me,
+  caption: ye,
+  cite: be,
+  code: _e,
+  colgroup: ge,
+  content: Ce,
+  data: ke,
+  datalist: ve,
+  dd: we,
+  decorator: Ee,
+  del: Se,
+  details: Oe,
+  dfn: xe,
+  div: Xt,
+  dl: De,
+  dt: Ie,
+  element: Ae,
+  em: Pe,
+  fieldset: je,
+  figcaption: Te,
+  figure: Le,
+  footer: Me,
+  form: Ve,
+  h1: qe,
+  h2: He,
+  h3: ze,
+  h4: Be,
   h5: Fe,
-  h6: Be,
-  head: Ne,
-  header: Ue,
-  hgroup: We,
-  html: $e,
-  i: Xe,
-  iframe: Ge,
-  ins: Je,
-  isindex: Qe,
-  kbd: Ze,
-  keygen: Ye,
-  label: Ke,
-  legend: Re,
-  li: tn,
-  listing: en,
-  main: nn,
-  map: sn,
-  mark: on,
-  menu: rn,
-  meter: cn,
-  nav: ln,
-  noscript: un,
-  object: an,
-  ol: hn,
-  optgroup: pn,
-  output: fn,
-  p: dn,
-  picture: mn,
-  pre: yn,
-  progress: bn,
-  q: _n,
-  rp: gn,
-  rt: Cn,
-  ruby: kn,
+  h6: Ne,
+  head: Ue,
+  header: We,
+  hgroup: $e,
+  html: Xe,
+  i: Ge,
+  iframe: Je,
+  ins: Qe,
+  isindex: Ze,
+  kbd: Ye,
+  keygen: Ke,
+  label: Re,
+  legend: tn,
+  li: en,
+  listing: nn,
+  main: sn,
+  map: on,
+  mark: rn,
+  menu: cn,
+  meter: ln,
+  nav: un,
+  noscript: an,
+  object: hn,
+  ol: pn,
+  optgroup: fn,
+  output: dn,
+  p: mn,
+  picture: yn,
+  pre: bn,
+  progress: _n,
+  q: gn,
+  rp: Cn,
+  rt: kn,
+  ruby: vn,
   s: wn,
-  samp: vn,
-  script: En,
-  section: Sn,
-  select: On,
-  shadow: xn,
-  small: Dn,
-  spacer: In,
-  span: An,
-  strong: Pn,
-  style: jn,
-  sub: Tn,
-  summary: Ln,
-  sup: Mn,
-  table: Vn,
-  tbody: qn,
-  td: Hn,
-  template: zn,
+  samp: En,
+  script: Sn,
+  section: On,
+  select: xn,
+  shadow: Dn,
+  small: In,
+  spacer: An,
+  span: Pn,
+  strong: jn,
+  style: Tn,
+  sub: Ln,
+  summary: Mn,
+  sup: Vn,
+  table: qn,
+  tbody: Hn,
+  td: zn,
+  template: Bn,
   tfoot: Fn,
-  th: Bn,
-  thead: Nn,
-  time: Un,
-  title: Wn,
-  tr: $n,
-  u: Xn,
-  ul: Gn,
-  video: Jn
+  th: Nn,
+  thead: Un,
+  time: Wn,
+  title: $n,
+  tr: Xn,
+  u: Gn,
+  ul: Jn,
+  video: Qn
 } = q, {
-  area: Qn,
-  base: Zn,
-  br: Yn,
-  col: Kn,
-  embed: Rn,
-  hr: ts,
-  link: es,
-  meta: ns,
-  source: ss,
-  track: os,
-  wbr: is
-} = H;
+  area: Zn,
+  base: Yn,
+  br: Kn,
+  col: Rn,
+  embed: ts,
+  hr: es,
+  link: ns,
+  meta: ss,
+  source: os,
+  track: is,
+  wbr: rs
+} = H, Gt = $t("button", (t) => {
+  const e = N(0);
+  t.click(() => e.value++), t.text(() => `Clicked: ${e.value} times`);
+});
+Xt(
+  Gt()
+).mount("#app");
 export {
   d as Component,
-  Jt as Modifiers,
-  Qt as Transform,
-  Yt as a,
-  Kt as abbr,
-  Rt as address,
-  te as applet,
-  Qn as area,
-  ee as article,
-  ne as aside,
-  se as audio,
-  oe as b,
-  Zn as base,
-  ie as basefont,
-  re as bdi,
-  ce as bdo,
-  le as bgsound,
-  ue as blink,
-  ae as blockquote,
-  he as body,
-  Yn as br,
-  pe as button,
-  fe as canvas,
-  de as caption,
-  me as cite,
-  ye as code,
-  Kn as col,
-  be as colgroup,
-  _e as content,
-  Lt as createId,
-  ge as data,
-  Ce as datalist,
-  ke as dd,
-  we as decorator,
-  ve as del,
-  Ee as details,
-  Se as dfn,
-  Oe as div,
-  xe as dl,
-  De as dt,
-  Ie as element,
-  Ae as em,
-  Rn as embed,
-  Pe as fieldset,
-  je as figcaption,
-  Te as figure,
-  Le as footer,
-  Me as form,
-  Mt as fragment,
-  Gt as getInstance,
-  Ve as h1,
-  qe as h2,
-  He as h3,
-  ze as h4,
+  Kt as Modifier,
+  Yt as Transform,
+  Rt as a,
+  te as abbr,
+  ee as address,
+  ne as applet,
+  Zn as area,
+  se as article,
+  oe as aside,
+  ie as audio,
+  re as b,
+  Yn as base,
+  ce as basefont,
+  le as bdi,
+  ue as bdo,
+  ae as bgsound,
+  he as blink,
+  pe as blockquote,
+  fe as body,
+  Kn as br,
+  de as button,
+  me as canvas,
+  ye as caption,
+  be as cite,
+  _e as code,
+  Rn as col,
+  ge as colgroup,
+  Ce as content,
+  G as createId,
+  ke as data,
+  ve as datalist,
+  we as dd,
+  Ee as decorator,
+  Se as del,
+  Oe as details,
+  xe as dfn,
+  Xt as div,
+  De as dl,
+  Ie as dt,
+  Ae as element,
+  Pe as em,
+  ts as embed,
+  je as fieldset,
+  Te as figcaption,
+  Le as figure,
+  Me as footer,
+  Ve as form,
+  Vt as fragment,
+  Zt as getInstance,
+  qe as h1,
+  He as h2,
+  ze as h3,
+  Be as h4,
   Fe as h5,
-  Be as h6,
-  Ne as head,
-  Ue as header,
-  We as hgroup,
-  ts as hr,
-  $e as html,
-  Xe as i,
-  Ge as iframe,
-  Bt as img,
-  Vt as input,
-  Je as ins,
-  Qe as isindex,
-  Ze as kbd,
-  Ye as keygen,
-  Ke as label,
-  Re as legend,
-  tn as li,
-  es as link,
-  en as listing,
-  nn as main,
-  sn as map,
-  on as mark,
-  rn as menu,
-  ns as meta,
-  cn as meter,
-  ln as nav,
-  un as noscript,
-  an as object,
-  hn as ol,
-  pn as optgroup,
-  zt as option,
-  fn as output,
-  dn as p,
-  mn as picture,
-  yn as pre,
-  bn as progress,
-  _n as q,
-  Zt as reusable,
-  gn as rp,
-  Cn as rt,
-  kn as ruby,
+  Ne as h6,
+  Ue as head,
+  We as header,
+  $e as hgroup,
+  es as hr,
+  Xe as html,
+  Ge as i,
+  Je as iframe,
+  Ht as img,
+  zt as input,
+  Qe as ins,
+  Ze as isindex,
+  Ye as kbd,
+  Ke as keygen,
+  Re as label,
+  tn as legend,
+  en as li,
+  ns as link,
+  nn as listing,
+  sn as main,
+  on as map,
+  rn as mark,
+  cn as menu,
+  ss as meta,
+  ln as meter,
+  un as nav,
+  an as noscript,
+  hn as object,
+  pn as ol,
+  fn as optgroup,
+  Nt as option,
+  dn as output,
+  mn as p,
+  yn as picture,
+  bn as pre,
+  _n as progress,
+  gn as q,
+  $t as reusable,
+  Cn as rp,
+  kn as rt,
+  vn as ruby,
   wn as s,
-  vn as samp,
-  En as script,
-  Sn as section,
-  On as select,
-  xn as shadow,
-  Dn as small,
-  ss as source,
-  In as spacer,
-  An as span,
-  Pn as strong,
-  jn as style,
-  Tn as sub,
-  Ln as summary,
-  Mn as sup,
-  Vn as table,
-  qn as tbody,
-  Hn as td,
-  zn as template,
-  qt as textarea,
+  En as samp,
+  Sn as script,
+  On as section,
+  xn as select,
+  Dn as shadow,
+  In as small,
+  os as source,
+  An as spacer,
+  Pn as span,
+  jn as strong,
+  Tn as style,
+  Ln as sub,
+  Mn as summary,
+  Vn as sup,
+  qn as table,
+  Hn as tbody,
+  zn as td,
+  Bn as template,
+  Bt as textarea,
   Fn as tfoot,
-  Bn as th,
-  Nn as thead,
-  Un as time,
-  Wn as title,
-  $n as tr,
-  os as track,
-  Xn as u,
-  Gn as ul,
-  Jn as video,
-  is as wbr
+  Nn as th,
+  Un as thead,
+  Wn as time,
+  $n as title,
+  Xn as tr,
+  is as track,
+  Gn as u,
+  Jn as ul,
+  Qn as video,
+  rs as wbr
 };

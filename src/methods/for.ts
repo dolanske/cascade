@@ -1,10 +1,9 @@
 import type { MaybeRefOrGetter, UnwrapRef } from '@vue/reactivity'
-import { toValue } from '@vue/reactivity'
-import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
 import type { ComponentChildrenItems } from '../types'
-import { isArray, isObject, isWatchSource } from '../util'
+import { toValue, watch } from '@vue/reactivity'
 import { render } from '../render'
+import { isArray, isObject, isWatchSource } from '../util'
 
 export type Source = any[] | number | object
 
@@ -20,41 +19,41 @@ export function for_impl<PropsType extends object>(
   source: MaybeRefOrGetter<Source>,
   callback: CallbackType<UnwrapRef<Source>, PropsType>,
 ) {
-  this.onInit(() => {
-    const processFor = (src: Source) => {
-      const childrenToRender = []
-      if (isArray(src)) {
-        const len = src.length
-        for (let i = 0; i < len; i++) {
-          // @ts-expect-error idk how to type this?
-          const child = callback(src[i], i)
-          if (child)
-            childrenToRender.push(child)
-        }
+  const processFor = (src: Source) => {
+    const childrenToRender = []
+    if (isArray(src)) {
+      const len = src.length
+      for (let i = 0; i < len; i++) {
+        // @ts-expect-error idk how to type this?
+        const child = callback(src[i], i)
+        if (child)
+          childrenToRender.push(child)
       }
-      else if (isObject(src)) {
-        const keys = Object.keys(src)
-        const len = keys.length
-        for (let i = 0; i < len; i++) {
-          const key = keys[i]
-          // @ts-expect-error idk how to type this?
-          const child = callback(Reflect.get(src, key), key, i)
-          if (child)
-            childrenToRender.push(child)
-        }
-      }
-      else if (typeof src === 'number') {
-        for (let i = 0; i < src; i++) {
-          // @ts-expect-error idk how to type this?
-          const child = callback(i)
-          if (child)
-            childrenToRender.push(child)
-        }
-      }
-
-      this.el.replaceChildren()
-      render(this.el, childrenToRender)
     }
+    else if (isObject(src)) {
+      const keys = Object.keys(src)
+      const len = keys.length
+      for (let i = 0; i < len; i++) {
+        const key = keys[i]
+        // @ts-expect-error idk how to type this?
+        const child = callback(Reflect.get(src, key), key, i)
+        if (child)
+          childrenToRender.push(child)
+      }
+    }
+    else if (typeof src === 'number') {
+      for (let i = 0; i < src; i++) {
+        // @ts-expect-error idk how to type this?
+        const child = callback(i)
+        if (child)
+          childrenToRender.push(child)
+      }
+    }
+
+    this.el.replaceChildren()
+    render(this.el, childrenToRender)
+  }
+  this.onInit(() => {
     // Assign parent element when element is created
     if (isWatchSource(source)) {
       const release = watch(() => toValue(source), (updatedSrc: UnwrapRef<Source>) => {

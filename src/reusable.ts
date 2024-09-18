@@ -3,11 +3,11 @@
  */
 
 import type { Component } from './component'
-import { El, htmlVoidTags } from './factory'
 import type { ComponentChildren, ComponentChildrenItems, SetupArguments } from './types'
+import { El, htmlVoidTags } from './factory'
 import { isArray } from './util'
 
-type ReusableComponent<PropsType extends object> = (children: ComponentChildren<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>
+type ReusableComponent<PropsType extends object> = (children?: ComponentChildren<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>
 
 const elementsWihoutChildren = [
   ...htmlVoidTags,

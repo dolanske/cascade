@@ -578,7 +578,7 @@ declare interface ModelOptions {
 
 export declare type ModelTransform<Returns = string> = (value: string) => Returns;
 
-export declare const Modifiers: {
+export declare const Modifier: {
     /**
      * Executes event callback if the provided expression passes.
      *
@@ -632,7 +632,7 @@ export declare const q: ComponentInstance;
 
 export declare function reusable<PropsType extends object>(el: keyof typeof El, setupFn: SetupArguments<PropsType>): ReusableComponent<PropsType>;
 
-declare type ReusableComponent<PropsType extends object> = (children: Children<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>;
+declare type ReusableComponent<PropsType extends object> = (children?: Children<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>;
 
 export declare const rp: ComponentInstance;
 

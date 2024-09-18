@@ -1,8 +1,7 @@
-import { watch } from '@vue-reactivity/watch'
 import type { MaybeRefOrGetter } from '@vue/reactivity'
-import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
-import { WATCH_CONF, isWatchSource } from '../util'
+import { toValue, watch } from '@vue/reactivity'
+import { isWatchSource, WATCH_CONF } from '../util'
 
 export function if_impl<PropsType extends object>(this: Component<PropsType>, expr: MaybeRefOrGetter) {
   // Anchors are used to correctly re-insert nodes back to the dom

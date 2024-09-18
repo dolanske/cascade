@@ -1,6 +1,6 @@
 import type { Ref } from '@vue/reactivity'
-import { toValue } from '@vue/reactivity'
 import type { Component } from '../component'
+import { toValue } from '@vue/reactivity'
 import { isFn } from '../util'
 
 interface EventModifierState {

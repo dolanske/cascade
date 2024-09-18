@@ -1,16 +1,17 @@
-import { getInstance } from './util'
-import { Component, fragment } from './component'
+import type { ModelTransform } from './methods/model'
+import type { EventModifier } from './methods/on'
 import type { ComponentChildren as Children } from './types'
-import { reusable } from './reusable'
-import { htmlNormalElFactory, htmlVoidElFactory } from './factory'
+import { ref } from '@vue/reactivity'
+import { Component, fragment } from './component'
+import { img } from './components/img'
 import { input, textarea } from './components/input'
 import { option } from './components/select'
-import { img } from './components/img'
+import { htmlNormalElFactory, htmlVoidElFactory } from './factory'
 import { createId } from './id'
-import { Modifier } from './methods/on'
-import type { EventModifier } from './methods/on'
 import { Transform } from './methods/model'
-import type { ModelTransform } from './methods/model'
+import { Modifier } from './methods/on'
+import { reusable } from './reusable'
+import { getInstance } from './util'
 
 const {
   a,
@@ -135,18 +136,16 @@ const {
 } = htmlVoidElFactory
 
 export {
-  fragment,
-  input,
-  textarea,
-  option,
   a,
   abbr,
   address,
   applet,
+  area,
   article,
   aside,
   audio,
   b,
+  base,
   basefont,
   bdi,
   bdo,
@@ -154,13 +153,18 @@ export {
   blink,
   blockquote,
   body,
+  br,
   button,
   canvas,
   caption,
+  Children,
   cite,
   code,
+  col,
   colgroup,
+  Component,
   content,
+  createId,
   data,
   datalist,
   dd,
@@ -173,11 +177,15 @@ export {
   dt,
   element,
   em,
+  embed,
+  EventModifier,
   fieldset,
   figcaption,
   figure,
   footer,
   form,
+  fragment,
+  getInstance,
   h1,
   h2,
   h3,
@@ -187,9 +195,12 @@ export {
   head,
   header,
   hgroup,
+  hr,
   html,
   i,
   iframe,
+  img,
+  input,
   ins,
   isindex,
   kbd,
@@ -197,23 +208,30 @@ export {
   label,
   legend,
   li,
+  link,
   listing,
   main,
   map,
   mark,
   menu,
+  meta,
   meter,
+  ModelTransform,
+  Modifier,
   nav,
   noscript,
   object,
   ol,
   optgroup,
+  option,
   output,
   p,
   picture,
   pre,
   progress,
   q,
+  //
+  reusable,
   rp,
   rt,
   ruby,
@@ -224,6 +242,7 @@ export {
   select,
   shadow,
   small,
+  source,
   spacer,
   span,
   strong,
@@ -235,44 +254,27 @@ export {
   tbody,
   td,
   template,
+  textarea,
   tfoot,
   th,
   thead,
   time,
   title,
   tr,
+  track,
+  Transform,
   u,
   ul,
   video,
-  area,
-  base,
-  br,
-  col,
-  embed,
-  hr,
-  link,
-  meta,
-  source,
-  track,
   wbr,
-  img,
-  //
-  reusable,
-  getInstance,
-  createId,
-  Component,
-  Children,
-  EventModifier,
-  ModelTransform,
-  Transform,
-  Modifier,
 }
 
-// test
-//
+const Button = reusable('button', (ctx) => {
+  const count = ref(0)
+  ctx.click(() => count.value++)
+  ctx.text(() => `Clicked: ${count.value} times`)
+})
 
-// button().text('Click').on('click', () => {
-//   console.log('Clicked')
-// }, {
-//   modifiers: [Modifier.delay(500)],
-// }).mount('#app')
+div(
+  Button(),
+).mount('#app')

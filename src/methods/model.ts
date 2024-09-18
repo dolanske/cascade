@@ -1,6 +1,6 @@
 import type { Primitive, Ref } from '@vue/reactivity'
-import { watch } from '@vue-reactivity/watch'
 import type { Component } from '../component'
+import { watch } from '@vue/reactivity'
 import { capitalizeString, isArray } from '../util'
 
 export type ModelTransform<Returns = string> = (value: string) => Returns
