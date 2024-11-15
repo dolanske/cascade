@@ -4,6 +4,10 @@ I swear this is the last DOM library I make (for now)
 
 Create simple, reusable and reactive UI components using render functions and add more complex functionality through method chaining. These methods can be mounted anywhere in the DOM, static applications, with added reactivity only where needed.
 
+```bash
+npm i @dolanske/cascade
+```
+
 ---
 
 ## Concept
