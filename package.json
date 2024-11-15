@@ -2,7 +2,7 @@
   "name": "@dolanske/cascade",
   "type": "module",
   "version": "2.4.2",
-  "private": true,
+  "private": false,
   "description": "Write reactive UI components using render functions.",
   "author": "dolanske",
   "license": "GPL-3.0",
