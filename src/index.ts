@@ -1,7 +1,6 @@
 import type { ModelTransform } from './methods/model'
 import type { EventModifier } from './methods/on'
 import type { ComponentChildren as Children } from './types'
-import { ref } from '@vue/reactivity'
 import { Component, fragment } from './component'
 import { img } from './components/img'
 import { input, textarea } from './components/input'
@@ -268,13 +267,3 @@ export {
   video,
   wbr,
 }
-
-const Button = reusable('button', (ctx) => {
-  const count = ref(0)
-  ctx.click(() => count.value++)
-  ctx.text(() => `Clicked: ${count.value} times`)
-})
-
-div(
-  Button(),
-).mount('#app')

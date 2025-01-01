@@ -1,6 +1,6 @@
 import type { Ref } from '@vue/reactivity'
-import type { Component } from './component'
 import { isRef } from '@vue/reactivity'
+import type { Component } from './component'
 
 export function isObject(value: any): value is object {
   const type = typeof value

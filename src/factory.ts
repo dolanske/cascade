@@ -1,5 +1,5 @@
 import type { ComponentChildren, ComponentChildrenItems, ComponentInstance, HtmlTags, HtmlVoidtags } from './types'
-import { Component, fragment, VoidComponent } from './component'
+import { Component, VoidComponent, fragment } from './component'
 import { img } from './components/img'
 import { input, textarea } from './components/input'
 import { option } from './components/select'

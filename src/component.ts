@@ -1,6 +1,6 @@
 import type { EffectScope } from '@vue/reactivity'
-import type { ComponentChildren, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
 import { effectScope } from '@vue/reactivity'
+import type { ComponentChildren, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
 import { createId } from './id'
 import { destroy } from './lifecycle'
 import { attr, attrs } from './methods/attributes'

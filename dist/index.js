@@ -1,19 +1,19 @@
 var z = Object.defineProperty;
-var B = (t, e, n) => e in t ? z(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
-var c = (t, e, n) => B(t, typeof e != "symbol" ? e + "" : e, n);
-import { isRef as F, watch as h, toValue as p, effectScope as D, ref as N } from "@vue/reactivity";
-const U = /* @__PURE__ */ new Set(), W = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split(""), $ = "abcdefghiklmnopqrstuvwxyz".split("");
-function X(t) {
-  const e = t ? $ : W;
+var F = (t, e, n) => e in t ? z(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
+var c = (t, e, n) => F(t, typeof e != "symbol" ? e + "" : e, n);
+import { isRef as B, watch as h, toValue as p, effectScope as D } from "@vue/reactivity";
+const N = /* @__PURE__ */ new Set(), U = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split(""), W = "abcdefghiklmnopqrstuvwxyz".split("");
+function $(t) {
+  const e = t ? W : U;
   let n = "";
   for (let s = 0; s < 5; s++)
     n += e[Math.floor(Math.random() * e.length)];
   return n;
 }
-function G(t = !1) {
+function X(t = !1) {
   let e = "";
-  for (; e.length === 0 || U.has(e); )
-    e = X(t);
+  for (; e.length === 0 || N.has(e); )
+    e = $(t);
   return e;
 }
 function g(t) {
@@ -30,19 +30,19 @@ function j(t) {
   return typeof t == "function";
 }
 function f(t) {
-  return F(t) || j(t);
+  return B(t) || j(t);
 }
-function Zt(t) {
+function Xt(t) {
   return Object.hasOwn(t, "__instance") ? Reflect.get(t, "__instance") : null;
 }
-const w = {
+const v = {
   immediate: !0,
   deep: !0
 };
 function T(t) {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
-function J(t) {
+function G(t) {
   function e(n) {
     if (!(n instanceof d))
       return;
@@ -57,40 +57,40 @@ function J(t) {
   }
   e(t), t.__runOnDestroy(), t.el.remove();
 }
-function v(t, e, n) {
+function w(t, e, n) {
   if (g(e)) {
     Object.entries(e).forEach(([s, o]) => {
-      v(t, s, o);
+      w(t, s, o);
     });
     return;
   }
   k(n) ? t.setAttribute(e, "") : typeof n == "boolean" ? n ? t.setAttribute(e, "") : t.removeAttribute(e) : t.setAttribute(e, String(n));
 }
-function Q(t) {
+function J(t) {
   return this.onInit(() => {
     if (f(t)) {
-      const e = h(() => p(t), (n) => v(this.el, n), {
+      const e = h(() => p(t), (n) => w(this.el, n), {
         immediate: !0,
         deep: !0
       });
       this.onDestroy(e);
     } else
-      v(this.el, t);
+      w(this.el, t);
   }), this;
 }
-function Z(t, e) {
+function Q(t, e) {
   return this.onInit(() => {
     if (f(e)) {
-      const n = h(() => p(e), (s) => v(this.el, t, s), {
+      const n = h(() => p(e), (s) => w(this.el, t, s), {
         immediate: !0,
         deep: !0
       });
       this.onDestroy(n);
     } else
-      v(this.el, t, e);
+      w(this.el, t, e);
   }), this;
 }
-function Y(t, e) {
+function Z(t, e) {
   if (g(t) && !k(e))
     throw new TypeError("Cannot use object notation with second argument.");
   let n = "";
@@ -116,17 +116,17 @@ function Y(t, e) {
   }, r = (l, a) => {
     f(a) ? this.onDestroy(h(() => p(a), (m) => {
       i({ [l]: m });
-    }, w)) : l && a !== !1 && i(l);
+    }, v)) : l && a !== !1 && i(l);
   }, u = (l) => {
     for (const [a, m] of Object.entries(l))
       r(a, m);
   };
   return g(t) ? u(t) : typeof t == "string" && r(t, e), this;
 }
-function K(t) {
+function Y(t) {
   return this.attr("disabled", t), this;
 }
-function R(t, e, n) {
+function K(t, e, n) {
   const s = Array.from(t.childNodes).at(n);
   return s ? (t.replaceChild(e, s), !0) : !1;
 }
@@ -138,7 +138,7 @@ function b(t, e, n) {
         s.innerHTML = String(e);
       else {
         const o = document.createTextNode(String(e));
-        R(s, o, n) || s.appendChild(o);
+        K(s, o, n) || s.appendChild(o);
       }
     else if (e instanceof O)
       b(s, e.componentChildren);
@@ -164,7 +164,7 @@ function b(t, e, n) {
       deep: !0
     });
 }
-function tt(t, e) {
+function R(t, e) {
   const n = (s) => {
     const o = [];
     if (y(s)) {
@@ -204,18 +204,18 @@ function _(t, e) {
     n(p(e));
     const s = h(() => p(e), (o) => {
       n(o);
-    }, w);
+    }, v);
     this.onDestroy(s);
   } else
     n(e);
 }
-function et(t) {
+function tt(t) {
   return _.call(this, "innerHTML", t), this;
 }
-function nt(t) {
+function et(t) {
   return _.call(this, "id", t), this;
 }
-function st(t) {
+function nt(t) {
   const e = new Comment("if");
   return this.onInit(() => {
     const n = this.parent;
@@ -225,28 +225,28 @@ function st(t) {
       o ? n.el.insertBefore(this.el, e) : this.el.remove();
     };
     if (n.el.insertBefore(e, this.el), f(t)) {
-      const o = h(() => p(t), s, w);
+      const o = h(() => p(t), s, v);
       this.onDestroy(o);
     } else
       s(t);
   }), this;
 }
-const ot = (t) => Number(t), it = (t) => t.trim(), rt = (t) => t.toString().toUpperCase(), ct = (t) => t.toString().toUpperCase();
-function lt(t) {
+const st = (t) => Number(t), ot = (t) => t.trim(), it = (t) => t.toString().toUpperCase(), rt = (t) => t.toString().toUpperCase();
+function ct(t) {
   return t.split("\\s+").map((e) => T(e)).join("\\s+");
 }
-const ut = (t) => T(t);
-function at(t) {
+const lt = (t) => T(t);
+function ut(t) {
   return (e) => e.substring(0, t);
 }
-const Yt = {
-  trim: it,
-  number: ot,
-  uppercase: rt,
-  lowercase: ct,
-  truncate: at,
-  capitalize: ut,
-  capitalizeAll: lt
+const Gt = {
+  trim: ot,
+  number: st,
+  uppercase: it,
+  lowercase: rt,
+  truncate: ut,
+  capitalize: lt,
+  capitalizeAll: ct
 };
 function I(t, e) {
   return !e || e.length === 0 ? t : e.reduce((n, s) => s(n), t);
@@ -257,7 +257,7 @@ function L(t, e, n) {
 function A(t, e) {
   (!t.value || y(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (L(t, e.value, !0), e.removeAttribute("checked"));
 }
-function ht(t, e = {}) {
+function at(t, e = {}) {
   return this.onMount(() => {
     switch (this.el.tagName) {
       case "INPUT":
@@ -331,19 +331,19 @@ function ht(t, e = {}) {
     }
   }), this;
 }
-function pt(t, ...e) {
+function ht(t, ...e) {
   const n = y(t) ? t.concat(e) : [t].concat(e);
   return this.__setComponentChildren(n), this;
 }
-function ft(t) {
+function pt(t) {
   return (e, n) => typeof t != "number" ? !0 : Date.now() - n.lastCall >= t;
 }
-function dt(t) {
+function ft(t) {
   return () => new Promise((e) => {
     setTimeout(() => e(!0), t);
   });
 }
-const mt = (t, e) => e.executedTimes === 0, yt = (t) => (t.stopPropagation(), !0), bt = (t) => (t.stopImmediatePropagation(), !0), _t = (t) => (t.preventDefault(), !0), gt = () => !1, Kt = {
+const dt = (t, e) => e.executedTimes === 0, mt = (t) => (t.stopPropagation(), !0), yt = (t) => (t.stopImmediatePropagation(), !0), bt = (t) => (t.preventDefault(), !0), _t = () => !1, Jt = {
   /**
    * Executes event callback if the provided expression passes.
    *
@@ -351,15 +351,15 @@ const mt = (t, e) => e.executedTimes === 0, yt = (t) => (t.stopPropagation(), !0
    * @returns EventModifier
    */
   if: (t) => () => !!p(t),
-  throttle: ft,
-  once: mt,
-  stop: yt,
-  stopImmediate: bt,
-  prevent: _t,
-  cancel: gt,
-  delay: dt
+  throttle: pt,
+  once: dt,
+  stop: mt,
+  stopImmediate: yt,
+  prevent: bt,
+  cancel: _t,
+  delay: ft
 };
-function Ct(t, e, n = {}) {
+function gt(t, e, n = {}) {
   const s = {
     executedTimes: 0,
     lastCall: 0
@@ -378,22 +378,22 @@ function Ct(t, e, n = {}) {
     this.el.removeEventListener(t, o);
   }), this;
 }
-function kt(t, e) {
+function Ct(t, e) {
   return this.on("click", t, e);
 }
-function vt(t, e) {
+function kt(t, e) {
   return this.on("submit", t, e);
 }
 function wt(t, e) {
   return this.on("focus", t, e);
 }
-function Et(t, e) {
+function vt(t, e) {
   return this.on("blur", t, e);
 }
-function St(t, e) {
+function Et(t, e) {
   return this.on("change", t, e);
 }
-function Ot(t, e) {
+function St(t, e) {
   return this.on("input", t, e);
 }
 function x(t, e, n, s) {
@@ -420,37 +420,37 @@ function x(t, e, n, s) {
     }
   }, s);
 }
-function xt(t, e) {
+function Ot(t, e) {
   return this.on("keydown", t, e);
 }
-function Dt(t, e, n) {
+function xt(t, e, n) {
   return x.call(this, "keydown", t, e, n), this;
 }
-function It(t, e) {
+function Dt(t, e) {
   return this.on("keyup", t, e);
 }
-function At(t, e, n) {
+function It(t, e, n) {
   return x.call(this, "keyup", t, e, n), this;
 }
-function Pt(t, e) {
+function At(t, e) {
   return this.on("keyup", t, e);
 }
-function jt(t, e, n) {
+function Pt(t, e, n) {
   return x.call(this, "keypress", t, e, n), this;
 }
-function Tt(t) {
+function jt(t) {
   return this.onMount(() => {
     const e = this.el.style.getPropertyValue("display"), n = (s) => {
       s ? k(e) ? this.el.style.removeProperty("display") : this.el.style.setProperty("display", e) : this.el.style.setProperty("display", "none");
     };
     if (f(t)) {
-      const s = h(() => p(t), n, w);
+      const s = h(() => p(t), n, v);
       this.onDestroy(s);
     } else
       n(t);
   }), this;
 }
-function Lt(t, e) {
+function Tt(t, e) {
   const n = (s) => {
     if (!g(s)) {
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
@@ -471,7 +471,7 @@ function Lt(t, e) {
     if (e)
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
     else {
-      const s = h(() => p(t), n, w);
+      const s = h(() => p(t), n, v);
       this.onDestroy(s);
     }
   else if (g(t)) {
@@ -488,7 +488,7 @@ function Lt(t, e) {
   }
   return this;
 }
-function Mt(t) {
+function Lt(t) {
   return _.call(this, "textContent", t), this;
 }
 class d {
@@ -496,11 +496,11 @@ class d {
     /**
      * Set `textContent` of the current component.
      */
-    c(this, "text", Mt);
+    c(this, "text", Lt);
     /**
      * Set `innerHTML` of the current component.
      */
-    c(this, "html", et);
+    c(this, "html", tt);
     /**
      * Add an event listener to the current component.
      *
@@ -509,15 +509,15 @@ class d {
      * @param options {EventListenerOptions | undefined} Optional event configuration
      *
      */
-    c(this, "on", Ct);
+    c(this, "on", gt);
     /**
      * Shorthand for binding `on("click")` event listener to the current component.
      */
-    c(this, "click", kt);
+    c(this, "click", Ct);
     /**
      * Shorthand for binding `on("submit")` event listener to the current component.
      */
-    c(this, "submit", vt);
+    c(this, "submit", kt);
     /**
      * Shorthand for binding `on("focus")` event listener to the current component.
      */
@@ -525,19 +525,19 @@ class d {
     /**
      * Shorthand for binding `on("blur")` event listener to the current component.
      */
-    c(this, "blur", Et);
+    c(this, "blur", vt);
     /**
      * Shorthand for binding `on("change")` event listener to the current component.
      */
-    c(this, "change", St);
+    c(this, "change", Et);
     /**
      * Shorthand for binding `on("input")` event listener to the current component.
      */
-    c(this, "input", Ot);
+    c(this, "input", St);
     /**
      * Shorthand for binding `on("keydown")` event listener to the current component.
      */
-    c(this, "keydown", xt);
+    c(this, "keydown", Ot);
     /**
      * Shorthand for binding `on("keydown")` event listener to the current
      * component and listening for specific keys to be pressed down.
@@ -546,11 +546,11 @@ class d {
      * Component.keydownExact(["Shift", "T"], () => ...)
      * ```
      */
-    c(this, "keydownExact", Dt);
+    c(this, "keydownExact", xt);
     /**
      * Shorthand for binding `on("keyup")` event listener to the current component.
      */
-    c(this, "keyup", It);
+    c(this, "keyup", Dt);
     /**
      * Shorthand for binding `on("keyup")` event listener to the current
      * component and listening for specific keys to be released.
@@ -559,11 +559,11 @@ class d {
      * Component.keyupExact(["Shift", "T"], () => ...)
      * ```
      */
-    c(this, "keyupExact", At);
+    c(this, "keyupExact", It);
     /**
      * Shorthand for binding `on("keypress")` event listener to the current component.
      */
-    c(this, "keypress", Pt);
+    c(this, "keypress", At);
     /**
      * Shorthand for binding `on("keypress")` event listener to the current
      * component and listening for specific keys to be pressed.
@@ -572,52 +572,52 @@ class d {
      * Component.keypressExact(["Shift", "T"], () => ...)
      * ```
      */
-    c(this, "keypressExact", jt);
+    c(this, "keypressExact", Pt);
     /**
      * Bind reactive class object to the current component.
      */
-    c(this, "class", Y);
+    c(this, "class", Z);
     /**
      * Simple helper which allows you to insert component's children anywhere in
      * the chain. This was made mainly because it feels less natural to add
      * children to a component and only then use methods like `if` or `for` on it.
      */
-    c(this, "nest", pt);
+    c(this, "nest", ht);
     /**
      * Two way binding of a reactive variable to the inputs / selects value.
      */
-    c(this, "model", ht);
+    c(this, "model", at);
     /**
      * Bind attribute object to the component.
      */
-    c(this, "attrs", Q);
+    c(this, "attrs", J);
     /**
      * Bind a single attribute to the component.
      */
-    c(this, "attr", Z);
+    c(this, "attr", Q);
     /**
      * Dynamically bind a `disabled` attribute to the component.
      */
-    c(this, "disabled", K);
+    c(this, "disabled", Y);
     /**
      * Dynamically bind an `id` attribute to the component.
      */
-    c(this, "id", nt);
+    c(this, "id", et);
     /**
      * Toggle between showing or hiding the current component. the component is still
      * rendered, but has `display: none` applied to it.
      *
      * This function also preserves the previously added inline styles.
      */
-    c(this, "show", Tt);
+    c(this, "show", jt);
     /**
      * Add reactive styling object to the current component.
      */
-    c(this, "style", Lt);
+    c(this, "style", Tt);
     /**
      * Conditionally render a component.
      */
-    c(this, "if", st);
+    c(this, "if", nt);
     //
     // Public stuff which could be useful to users
     c(this, "identifier");
@@ -674,8 +674,8 @@ class d {
      *
      *
      */
-    c(this, "for", tt);
-    this.el = e, Object.defineProperty(this.el, "__instance", this), this.__componentProps = n ?? {}, this.identifier = G(!0);
+    c(this, "for", R);
+    this.el = e, Object.defineProperty(this.el, "__instance", this), this.__componentProps = n ?? {}, this.identifier = X(!0);
   }
   /////////////////////////////////////////////////////////////
   // Private API
@@ -752,7 +752,7 @@ class d {
    * Removes component from the DOM, deactivates its instance and removes all reactive scopes.
    */
   destroy() {
-    J(this);
+    G(this);
   }
   /**
    * Clones the component. All reactive variables, DOM child nodes and chained
@@ -821,10 +821,10 @@ class O extends d {
     this.__runOnInit(), b(n, this.componentChildren), this.__runOnMount();
   }
 }
-function Vt(t) {
+function Mt(t) {
   return new O(t);
 }
-class qt extends S {
+class Vt extends S {
   constructor(n) {
     super("img");
     c(this, "el");
@@ -837,8 +837,8 @@ class qt extends S {
     return _.call(this, "alt", n), this;
   }
 }
-function Ht(t) {
-  const e = document.createElement("img"), n = new qt(e);
+function qt(t) {
+  const e = document.createElement("img"), n = new Vt(e);
   return t && n.src(t), n;
 }
 class M extends S {
@@ -863,11 +863,11 @@ class M extends S {
     return _.call(this, "required", n), this;
   }
 }
-function zt(t = "text") {
+function Ht(t = "text") {
   const e = document.createElement("input");
   return new M(e, t);
 }
-function Bt() {
+function zt() {
   const t = document.createElement("textarea");
   return new M(t);
 }
@@ -886,284 +886,278 @@ class Ft extends S {
     return this.attr("selected"), this;
   }
 }
-function Nt(t, e) {
+function Bt(t, e) {
   return new Ft(t, e);
 }
-const Ut = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], V = ["area", "base", "br", "col", "embed", "hr", "link", "meta", "source", "track", "wbr"], q = Ut.reduce((t, e) => (t[e] = (n = [], ...s) => {
+const Nt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], V = ["area", "base", "br", "col", "embed", "hr", "link", "meta", "source", "track", "wbr"], q = Nt.reduce((t, e) => (t[e] = (n = [], ...s) => {
   const o = document.createElement(e), i = new d(o), r = y(n) ? n.concat(s) : [n].concat(s);
   return i.__setComponentChildren(r), i.children = r, i;
 }, t), {}), H = V.reduce((t, e) => (t[e] = () => {
   const n = new S(e);
   return n.isVoid = !0, n;
 }, t), {}), P = Object.assign(q, H, {
-  fragment: Vt,
-  input: zt,
-  textarea: Bt,
-  option: Nt,
-  img: Ht
-}), Wt = [
+  fragment: Mt,
+  input: Ht,
+  textarea: zt,
+  option: Bt,
+  img: qt
+}), Ut = [
   ...V,
   "input",
   "textarea",
   "option"
 ];
-function $t(t, e) {
+function Qt(t, e) {
   return (n = [], ...s) => {
-    const o = y(n) ? n.concat(s) : [n].concat(s), i = Wt.includes(t) ? P[t]() : P[t](o);
+    const o = y(n) ? n.concat(s) : [n].concat(s), i = Ut.includes(t) ? P[t]() : P[t](o);
     return i.setup(e), i;
   };
 }
 const {
-  a: Rt,
-  abbr: te,
-  address: ee,
-  applet: ne,
-  article: se,
-  aside: oe,
-  audio: ie,
-  b: re,
-  basefont: ce,
-  bdi: le,
-  bdo: ue,
-  bgsound: ae,
-  blink: he,
-  blockquote: pe,
-  body: fe,
-  button: de,
-  canvas: me,
-  caption: ye,
-  cite: be,
-  code: _e,
-  colgroup: ge,
-  content: Ce,
-  data: ke,
-  datalist: ve,
-  dd: we,
-  decorator: Ee,
-  del: Se,
-  details: Oe,
-  dfn: xe,
-  div: Xt,
-  dl: De,
-  dt: Ie,
-  element: Ae,
-  em: Pe,
-  fieldset: je,
-  figcaption: Te,
-  figure: Le,
-  footer: Me,
-  form: Ve,
-  h1: qe,
-  h2: He,
-  h3: ze,
-  h4: Be,
-  h5: Fe,
-  h6: Ne,
-  head: Ue,
-  header: We,
-  hgroup: $e,
-  html: Xe,
-  i: Ge,
-  iframe: Je,
-  ins: Qe,
-  isindex: Ze,
-  kbd: Ye,
-  keygen: Ke,
-  label: Re,
-  legend: tn,
-  li: en,
-  listing: nn,
-  main: sn,
-  map: on,
-  mark: rn,
-  menu: cn,
-  meter: ln,
-  nav: un,
-  noscript: an,
-  object: hn,
-  ol: pn,
-  optgroup: fn,
-  output: dn,
-  p: mn,
-  picture: yn,
-  pre: bn,
-  progress: _n,
-  q: gn,
-  rp: Cn,
-  rt: kn,
-  ruby: vn,
-  s: wn,
-  samp: En,
-  script: Sn,
-  section: On,
-  select: xn,
-  shadow: Dn,
-  small: In,
-  spacer: An,
-  span: Pn,
-  strong: jn,
-  style: Tn,
-  sub: Ln,
-  summary: Mn,
-  sup: Vn,
-  table: qn,
-  tbody: Hn,
-  td: zn,
-  template: Bn,
-  tfoot: Fn,
-  th: Nn,
-  thead: Un,
-  time: Wn,
-  title: $n,
-  tr: Xn,
-  u: Gn,
-  ul: Jn,
-  video: Qn
+  a: Zt,
+  abbr: Yt,
+  address: Kt,
+  applet: Rt,
+  article: te,
+  aside: ee,
+  audio: ne,
+  b: se,
+  basefont: oe,
+  bdi: ie,
+  bdo: re,
+  bgsound: ce,
+  blink: le,
+  blockquote: ue,
+  body: ae,
+  button: he,
+  canvas: pe,
+  caption: fe,
+  cite: de,
+  code: me,
+  colgroup: ye,
+  content: be,
+  data: _e,
+  datalist: ge,
+  dd: Ce,
+  decorator: ke,
+  del: we,
+  details: ve,
+  dfn: Ee,
+  div: Se,
+  dl: Oe,
+  dt: xe,
+  element: De,
+  em: Ie,
+  fieldset: Ae,
+  figcaption: Pe,
+  figure: je,
+  footer: Te,
+  form: Le,
+  h1: Me,
+  h2: Ve,
+  h3: qe,
+  h4: He,
+  h5: ze,
+  h6: Fe,
+  head: Be,
+  header: Ne,
+  hgroup: Ue,
+  html: We,
+  i: $e,
+  iframe: Xe,
+  ins: Ge,
+  isindex: Je,
+  kbd: Qe,
+  keygen: Ze,
+  label: Ye,
+  legend: Ke,
+  li: Re,
+  listing: tn,
+  main: en,
+  map: nn,
+  mark: sn,
+  menu: on,
+  meter: rn,
+  nav: cn,
+  noscript: ln,
+  object: un,
+  ol: an,
+  optgroup: hn,
+  output: pn,
+  p: fn,
+  picture: dn,
+  pre: mn,
+  progress: yn,
+  q: bn,
+  rp: _n,
+  rt: gn,
+  ruby: Cn,
+  s: kn,
+  samp: wn,
+  script: vn,
+  section: En,
+  select: Sn,
+  shadow: On,
+  small: xn,
+  spacer: Dn,
+  span: In,
+  strong: An,
+  style: Pn,
+  sub: jn,
+  summary: Tn,
+  sup: Ln,
+  table: Mn,
+  tbody: Vn,
+  td: qn,
+  template: Hn,
+  tfoot: zn,
+  th: Fn,
+  thead: Bn,
+  time: Nn,
+  title: Un,
+  tr: Wn,
+  u: $n,
+  ul: Xn,
+  video: Gn
 } = q, {
-  area: Zn,
-  base: Yn,
-  br: Kn,
-  col: Rn,
-  embed: ts,
-  hr: es,
-  link: ns,
-  meta: ss,
-  source: os,
-  track: is,
-  wbr: rs
-} = H, Gt = $t("button", (t) => {
-  const e = N(0);
-  t.click(() => e.value++), t.text(() => `Clicked: ${e.value} times`);
-});
-Xt(
-  Gt()
-).mount("#app");
+  area: Jn,
+  base: Qn,
+  br: Zn,
+  col: Yn,
+  embed: Kn,
+  hr: Rn,
+  link: ts,
+  meta: es,
+  source: ns,
+  track: ss,
+  wbr: os
+} = H;
 export {
   d as Component,
-  Kt as Modifier,
-  Yt as Transform,
-  Rt as a,
-  te as abbr,
-  ee as address,
-  ne as applet,
-  Zn as area,
-  se as article,
-  oe as aside,
-  ie as audio,
-  re as b,
-  Yn as base,
-  ce as basefont,
-  le as bdi,
-  ue as bdo,
-  ae as bgsound,
-  he as blink,
-  pe as blockquote,
-  fe as body,
-  Kn as br,
-  de as button,
-  me as canvas,
-  ye as caption,
-  be as cite,
-  _e as code,
-  Rn as col,
-  ge as colgroup,
-  Ce as content,
-  G as createId,
-  ke as data,
-  ve as datalist,
-  we as dd,
-  Ee as decorator,
-  Se as del,
-  Oe as details,
-  xe as dfn,
-  Xt as div,
-  De as dl,
-  Ie as dt,
-  Ae as element,
-  Pe as em,
-  ts as embed,
-  je as fieldset,
-  Te as figcaption,
-  Le as figure,
-  Me as footer,
-  Ve as form,
-  Vt as fragment,
-  Zt as getInstance,
-  qe as h1,
-  He as h2,
-  ze as h3,
-  Be as h4,
-  Fe as h5,
-  Ne as h6,
-  Ue as head,
-  We as header,
-  $e as hgroup,
-  es as hr,
-  Xe as html,
-  Ge as i,
-  Je as iframe,
-  Ht as img,
-  zt as input,
-  Qe as ins,
-  Ze as isindex,
-  Ye as kbd,
-  Ke as keygen,
-  Re as label,
-  tn as legend,
-  en as li,
-  ns as link,
-  nn as listing,
-  sn as main,
-  on as map,
-  rn as mark,
-  cn as menu,
-  ss as meta,
-  ln as meter,
-  un as nav,
-  an as noscript,
-  hn as object,
-  pn as ol,
-  fn as optgroup,
-  Nt as option,
-  dn as output,
-  mn as p,
-  yn as picture,
-  bn as pre,
-  _n as progress,
-  gn as q,
-  $t as reusable,
-  Cn as rp,
-  kn as rt,
-  vn as ruby,
-  wn as s,
-  En as samp,
-  Sn as script,
-  On as section,
-  xn as select,
-  Dn as shadow,
-  In as small,
-  os as source,
-  An as spacer,
-  Pn as span,
-  jn as strong,
-  Tn as style,
-  Ln as sub,
-  Mn as summary,
-  Vn as sup,
-  qn as table,
-  Hn as tbody,
-  zn as td,
-  Bn as template,
-  Bt as textarea,
-  Fn as tfoot,
-  Nn as th,
-  Un as thead,
-  Wn as time,
-  $n as title,
-  Xn as tr,
-  is as track,
-  Gn as u,
-  Jn as ul,
-  Qn as video,
-  rs as wbr
+  Jt as Modifier,
+  Gt as Transform,
+  Zt as a,
+  Yt as abbr,
+  Kt as address,
+  Rt as applet,
+  Jn as area,
+  te as article,
+  ee as aside,
+  ne as audio,
+  se as b,
+  Qn as base,
+  oe as basefont,
+  ie as bdi,
+  re as bdo,
+  ce as bgsound,
+  le as blink,
+  ue as blockquote,
+  ae as body,
+  Zn as br,
+  he as button,
+  pe as canvas,
+  fe as caption,
+  de as cite,
+  me as code,
+  Yn as col,
+  ye as colgroup,
+  be as content,
+  X as createId,
+  _e as data,
+  ge as datalist,
+  Ce as dd,
+  ke as decorator,
+  we as del,
+  ve as details,
+  Ee as dfn,
+  Se as div,
+  Oe as dl,
+  xe as dt,
+  De as element,
+  Ie as em,
+  Kn as embed,
+  Ae as fieldset,
+  Pe as figcaption,
+  je as figure,
+  Te as footer,
+  Le as form,
+  Mt as fragment,
+  Xt as getInstance,
+  Me as h1,
+  Ve as h2,
+  qe as h3,
+  He as h4,
+  ze as h5,
+  Fe as h6,
+  Be as head,
+  Ne as header,
+  Ue as hgroup,
+  Rn as hr,
+  We as html,
+  $e as i,
+  Xe as iframe,
+  qt as img,
+  Ht as input,
+  Ge as ins,
+  Je as isindex,
+  Qe as kbd,
+  Ze as keygen,
+  Ye as label,
+  Ke as legend,
+  Re as li,
+  ts as link,
+  tn as listing,
+  en as main,
+  nn as map,
+  sn as mark,
+  on as menu,
+  es as meta,
+  rn as meter,
+  cn as nav,
+  ln as noscript,
+  un as object,
+  an as ol,
+  hn as optgroup,
+  Bt as option,
+  pn as output,
+  fn as p,
+  dn as picture,
+  mn as pre,
+  yn as progress,
+  bn as q,
+  Qt as reusable,
+  _n as rp,
+  gn as rt,
+  Cn as ruby,
+  kn as s,
+  wn as samp,
+  vn as script,
+  En as section,
+  Sn as select,
+  On as shadow,
+  xn as small,
+  ns as source,
+  Dn as spacer,
+  In as span,
+  An as strong,
+  Pn as style,
+  jn as sub,
+  Tn as summary,
+  Ln as sup,
+  Mn as table,
+  Vn as tbody,
+  qn as td,
+  Hn as template,
+  zt as textarea,
+  zn as tfoot,
+  Fn as th,
+  Bn as thead,
+  Nn as time,
+  Un as title,
+  Wn as tr,
+  ss as track,
+  $n as u,
+  Xn as ul,
+  Gn as video,
+  os as wbr
 };

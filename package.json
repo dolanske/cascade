@@ -1,7 +1,7 @@
 {
   "name": "@dolanske/cascade",
   "type": "module",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "private": false,
   "description": "Write reactive UI components using render functions.",
   "author": "dolanske",
