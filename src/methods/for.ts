@@ -1,7 +1,7 @@
 import type { MaybeRefOrGetter, UnwrapRef } from '@vue/reactivity'
-import { toValue, watch } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { ComponentChildrenItems } from '../types'
+import { toValue, watch } from '@vue/reactivity'
 import { render } from '../render'
 import { isArray, isObject, isWatchSource } from '../util'
 

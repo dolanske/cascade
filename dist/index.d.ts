@@ -597,7 +597,7 @@ export declare const Modifier: {
 
 export declare const nav: ComponentInstance;
 
-declare function nest<PropsType extends object>(this: Component<PropsType>, children: Children<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]): Component<PropsType>;
+declare function nest<PropsType extends object>(this: Component<PropsType>, children: Children<any>, ...rest: ComponentChildrenItems<any>[]): Component<PropsType>;
 
 export declare const noscript: ComponentInstance;
 

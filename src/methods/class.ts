@@ -1,7 +1,7 @@
 import type { MaybeRefOrGetter } from '@vue/reactivity'
-import { toValue, watch } from '@vue/reactivity'
 import type { Component } from '../component'
-import { WATCH_CONF, isArray, isNil, isObject, isWatchSource } from '../util'
+import { toValue, watch } from '@vue/reactivity'
+import { isArray, isNil, isObject, isWatchSource, WATCH_CONF } from '../util'
 
 export type ClassObject = Record<string, MaybeRefOrGetter<boolean>>
 export type ClassnameOrCLassObject = string | ClassObject

@@ -1,5 +1,5 @@
-import { toValue, watch } from '@vue/reactivity'
 import type { ComponentChildren } from './types'
+import { toValue, watch } from '@vue/reactivity'
 import { Component, Fragment } from './component'
 import { isNil, isWatchSource } from './util'
 
