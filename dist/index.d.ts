@@ -52,7 +52,7 @@ export declare const br: <PropsType extends object>() => VoidComponent<PropsType
 
 export declare const button: ComponentInstance;
 
-declare type CallbackType<T, PropsType extends object> = T extends any[] ? (value: T[number], index: number) => ComponentChildrenItems<PropsType> : T extends object ? (value: keyof T, key: string, index: number) => ComponentChildrenItems<PropsType> : (index: number) => ComponentChildrenItems<PropsType>;
+declare type CallbackType<T, _> = T extends number ? (index: number) => ComponentChildrenItems<any> : T extends any[] ? (value: T[number], index: number) => ComponentChildrenItems<any> : T extends object ? (value: T[keyof T], key: string, index: number) => ComponentChildrenItems<any> : unknown;
 
 export declare const canvas: ComponentInstance;
 
@@ -403,7 +403,11 @@ declare function focus_2<PropsType extends object>(this: Component<PropsType>, l
 
 export declare const footer: ComponentInstance;
 
-declare function for_impl<PropsType extends object>(this: Component<PropsType>, source: MaybeRefOrGetter<Source>, callback: CallbackType<UnwrapRef<Source>, PropsType>): Component<PropsType>;
+declare function for_impl<T extends MaybeRefOrGetter<object>, PropsType extends object>(this: Component<PropsType>, source: T, callback: CallbackType<UnwrapRef<T>, any>): any;
+
+declare function for_impl<T extends MaybeRefOrGetter<any[]>, PropsType extends object>(this: Component<PropsType>, source: T, callback: CallbackType<UnwrapRef<T>, any>): any;
+
+declare function for_impl<PropsType extends object>(this: Component<PropsType>, source: MaybeRefOrGetter<number>, callback: CallbackType<number, any>): any;
 
 export declare const form: ComponentInstance;
 
@@ -657,8 +661,6 @@ export declare const shadow: ComponentInstance;
 declare function show(this: Component<any>, defaultValue: MaybeRefOrGetter): Component<any>;
 
 export declare const small: ComponentInstance;
-
-declare type Source = any[] | number | object;
 
 export declare const source: <PropsType extends object>() => VoidComponent<PropsType>;
 

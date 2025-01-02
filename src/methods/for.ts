@@ -5,19 +5,41 @@ import { toValue, watch } from '@vue/reactivity'
 import { render } from '../render'
 import { isArray, isObject, isWatchSource } from '../util'
 
-export type Source = any[] | number | object
+export type Source = number | any[] | object
 
-export type CallbackType<T, PropsType extends object> =
-  T extends any[]
-    ? (value: T[number], index: number) => ComponentChildrenItems<PropsType>
-    : T extends object
-      ? (value: keyof T, key: string, index: number) => ComponentChildrenItems<PropsType>
-      : (index: number) => ComponentChildrenItems<PropsType>
+export type CallbackType<T, _> =
+  T extends number
+    ? (index: number) => ComponentChildrenItems<any>
+    : T extends any[]
+      ? (value: T[number], index: number) => ComponentChildrenItems<any>
+      : T extends object
+        ? (value: T[keyof T], key: string, index: number) => ComponentChildrenItems<any>
+        : unknown
 
+export type Test = CallbackType<number, any>
+
+// Overload for object
+export function for_impl<T extends MaybeRefOrGetter<object>, PropsType extends object>(
+  this: Component<PropsType>,
+  source: T,
+  callback: CallbackType<UnwrapRef<T>, any>,
+): any
+// Overload for array
+export function for_impl<T extends MaybeRefOrGetter<any[]>, PropsType extends object>(
+  this: Component<PropsType>,
+  source: T,
+  callback: CallbackType<UnwrapRef<T>, any>,
+): any
 export function for_impl<PropsType extends object>(
   this: Component<PropsType>,
-  source: MaybeRefOrGetter<Source>,
-  callback: CallbackType<UnwrapRef<Source>, PropsType>,
+  source: MaybeRefOrGetter<number>,
+  callback: CallbackType<number, any>,
+): any
+
+export function for_impl<S extends MaybeRefOrGetter<Source>, PropsType extends object>(
+  this: Component<PropsType>,
+  source: MaybeRefOrGetter<S>,
+  callback: CallbackType<UnwrapRef<S>, any>,
 ) {
   const processFor = (src: Source) => {
     const childrenToRender = []
