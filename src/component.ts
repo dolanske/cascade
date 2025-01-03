@@ -6,6 +6,7 @@ import { destroy } from './lifecycle'
 import { attr, attrs } from './methods/attributes'
 import { class_impl } from './methods/class'
 import { disabled } from './methods/disabled'
+import { emit } from './methods/emit'
 import { for_impl } from './methods/for'
 import { html } from './methods/html'
 import { id } from './methods/id'
@@ -371,6 +372,9 @@ export class Component<PropsType extends object> {
     })
     return this
   }
+
+  // TODO document
+  emit = emit
 }
 
 /**

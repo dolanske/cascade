@@ -99,7 +99,7 @@ export const Modifier = {
 //////////////////////////////
 // Implementation
 
-export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap, listener: EventListenerOrEventListenerObject, config: EventConfig = {}) {
+export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap | (string & {}), listener: EventListenerOrEventListenerObject, config: EventConfig = {}) {
   const state: EventModifierState = {
     executedTimes: 0,
     lastCall: 0,
