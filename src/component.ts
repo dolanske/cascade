@@ -1,5 +1,5 @@
 import type { EffectScope } from '@vue/reactivity'
-import type { ComponentChildren, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
+import type { ComponentChildren, ComponentChildrenItems, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
 import { effectScope } from '@vue/reactivity'
 import { createId } from './id'
 import { destroy } from './lifecycle'
@@ -18,6 +18,7 @@ import { show } from './methods/show'
 import { style } from './methods/style'
 import { text } from './methods/text'
 import { render } from './render'
+import { isArray } from './util'
 
 export class Component<PropsType extends object> {
   /**
@@ -419,6 +420,7 @@ export class Fragment<PropsType extends object> extends Component<PropsType> {
  *
  * @param children {ComponentChildren}
  */
-export function fragment<PropsType extends object>(children?: ComponentChildren<PropsType>) {
-  return new Fragment<PropsType>(children)
+export function fragment<PropsType extends object>(children: ComponentChildren<PropsType> = [], ...rest: ComponentChildrenItems<PropsType>[]) {
+  const nested = isArray(children) ? children.concat(rest) : [children].concat(rest)
+  return new Fragment<PropsType>(nested)
 }

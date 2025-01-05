@@ -1,7 +1,6 @@
 import type { Ref } from '@vue/reactivity'
 import type { Component } from '../component'
 import { toValue } from '@vue/reactivity'
-import { isFn } from '../util'
 
 interface EventModifierState {
   executedTimes: number
@@ -99,7 +98,9 @@ export const Modifier = {
 //////////////////////////////
 // Implementation
 
-export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap | (string & {}), listener: EventListenerOrEventListenerObject, config: EventConfig = {}) {
+type CascadeEvent = (e: Event | CustomEvent, data?: unknown) => void
+
+export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap | (string & {}), listener: CascadeEvent, config: EventConfig = {}) {
   const state: EventModifierState = {
     executedTimes: 0,
     lastCall: 0,
@@ -113,10 +114,7 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
       }
     }
 
-    if ('handleEvent' in listener)
-      listener.handleEvent(evt)
-    else
-      listener(evt)
+    listener(evt, 'detail' in evt ? (evt as CustomEvent).detail : undefined)
 
     state.executedTimes++
     state.lastCall = Date.now()
@@ -134,27 +132,27 @@ export function on<PropsType extends object>(this: Component<PropsType>, type: k
 //////////////////////////////
 // Custom shorthands
 
-export function click<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function click<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('click', listener, options)
 }
 
-export function submit<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function submit<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('submit', listener, options)
 }
 
-export function focus<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function focus<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('focus', listener, options)
 }
 
-export function blur<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function blur<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('blur', listener, options)
 }
 
-export function change<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function change<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('change', listener, options)
 }
 
-export function input<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function input<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('input', listener, options)
 }
 
@@ -164,7 +162,7 @@ export interface KeyInputOptions {
   detect?: 'some' | 'every'
 }
 
-function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
+function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
   // Store pressed keys in case there are multiple keys to check for
   const history: string[] = []
 
@@ -182,10 +180,7 @@ function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'ke
     const key = (event as KeyboardEvent).key
 
     function callListener() {
-      if (isFn(listener))
-        listener(event)
-      else
-        listener.handleEvent(event)
+      listener(event, 'detail' in event ? (event as CustomEvent).detail : undefined)
     }
 
     switch (options?.detect || 'every') {
@@ -213,29 +208,29 @@ function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'ke
   }, options)
 }
 
-export function keydown<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function keydown<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('keydown', listener, options)
 }
 
-export function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
+export function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
   keyEventImpl.call(this, 'keydown', requiredKeyOrKeys, listener, options)
   return this
 }
 
-export function keyup<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function keyup<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('keyup', listener, options)
 }
 
-export function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
+export function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
   keyEventImpl.call(this, 'keyup', requiredKeyOrKeys, listener, options)
   return this
 }
 
-export function keypress<PropsType extends object>(this: Component<PropsType>, listener: EventListenerOrEventListenerObject, options?: EventConfig) {
+export function keypress<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
   return this.on('keyup', listener, options)
 }
 
-export function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: EventListenerOrEventListenerObject, options?: EventConfig & KeyInputOptions) {
+export function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
   keyEventImpl.call(this, 'keypress', requiredKeyOrKeys, listener, options)
   return this
 }

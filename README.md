@@ -197,6 +197,21 @@ ctx.on('click', (e) => {
 })
 ```
 
+By using `.on` you can also listen for sub-component emits. The `.emit` method is just a shorthand for creating and dispatching a custom event from the component HTML node.
+
+```ts
+// Child component
+ctx.emit("someData", {
+  name: 'test',
+})
+
+// Somewhere up in the component chain
+ctx.on("someData", (event, data) => {
+  // data = { name : 'test' }
+})
+
+```
+
 #### Event shorthands
 
 A few event definition shorthands are available to make development faster
@@ -241,7 +256,9 @@ ctx.keypressExact(['A', 'B', 'C'], () => {
 
 #### `.model()`
 
-Two way binding to control and element's value with ref. You can use `mode()l` on `input`, `select`, `textarea` and `details`.
+Two way binding to control and element's value with ref. You can use `model()` on `input`, `select`, `textarea` and `details`. 
+
+You can also add a model to a Component, but please note it will only pass it as an additional, untyped prop called `modelValue`. So this usage is heavily discouraged. You can simply pass the ref as a prop and it will already be two way bound, as they are passed `as is` meaning the ref you give to a component is the exact same one from the parent. There's no inbetween.
 
 ```ts
 // A function which transforms the value of the element before it's assigned to the provided ref
@@ -456,21 +473,22 @@ const textarea = textarea()
 
 ### Option
 
-Used within the `select` component. You always
-Type definition
+Used within the `select` component.
 
 ```ts
 option(label?: string, value?: MaybeRefOrGetter<Primitive>)
   .value(inputValue: MaybeRefOrGetter<Primitive>)
   .selected()
 ```
+
 Example
+
 ```ts
 const selected = ref()
 const select = select(
   option('John', 24).selected(),
   option('Andrew', 81),
-  option('HOnza', 111)
-).model()
+  option('Honza', 111)
+).model(selected)
 // ref's value will be 24 as an option was preselected
 ```

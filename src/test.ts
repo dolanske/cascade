@@ -1,24 +1,32 @@
-import type { Children } from '.'
-import { a, div, reusable } from '.'
+import { ref } from '@vue/reactivity'
+import { div, fragment, reusable } from '.'
 
-const Comp = reusable('button', (ctx) => {
+const Comp = reusable('button', (ctx, props) => {
   ctx.text('Click me')
   ctx.click(() => {
-    ctx.emit('bro', { test: 'hiiii' }, {
-      bubbles: true,
-    })
+    ctx.emit('seeProps', props)
   })
 })
 
 // Cascade playground
 const App = div().setup((ctx) => {
+  // TODO: maybe event bus?
+  // ctx.on('bro', (e) => {
+  //   console.log(e.detail)
+  // })
+  const r = ref('hello World')
   ctx.nest(
-    Comp(),
+    fragment(
+      Comp().model(r),
+      Comp().model(r),
+      Comp().model(r),
+      Comp().model(r),
+    ),
   )
 })
 
-App.mount('#app')
+// App.on('seeProps', (e, data) => {
+//   console.log(data)
+// })
 
-App.on('bro', (event) => {
-  console.log(2, event.detail)
-})x 
+App.mount('#app')
