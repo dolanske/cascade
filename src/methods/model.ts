@@ -273,6 +273,12 @@ export function model<PropsType extends object>(this: Component<PropsType>, defa
 
         break
       }
+
+      // For all other components, we only pass it as a prop
+      default: {
+        // @ts-expect-error This is undesired behavior but we will allow it
+        this.prop('modelValue', defaultRef)
+      }
     }
   })
 

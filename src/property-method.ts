@@ -9,7 +9,6 @@ import { isWatchSource, WATCH_CONF } from './util'
  */
 export function registerWatchedProp(this: Component<any>, key: string, value: MaybeRefOrGetter<any>) {
   const setValue = (value: any) => {
-    console.log(this.el, key, value)
     Reflect.set(this.el, key, value)
   }
 
