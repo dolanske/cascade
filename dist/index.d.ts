@@ -1,4 +1,3 @@
-import { EffectScope } from '@vue/reactivity';
 import { MaybeRefOrGetter } from '@vue/reactivity';
 import { Primitive } from '@vue/reactivity';
 import { Properties } from 'csstype';
@@ -86,6 +85,7 @@ export declare const col: <PropsType extends object>() => VoidComponent<PropsTyp
 export declare const colgroup: ComponentInstance;
 
 export declare class Component<PropsType extends object> {
+    #private;
     /**
      * Set `textContent` of the current component.
      */
@@ -242,19 +242,13 @@ export declare class Component<PropsType extends object> {
      * If true, the component can not have any child components
      */
     isVoid: boolean;
-    __onMountCbs: GenericCallback[];
-    __onDestroyCbs: GenericCallback[];
-    __onInitCbs: GenericCallback[];
-    __scopes: Set<SetupArguments<PropsType>>;
-    __runningScopes: Set<EffectScope>;
-    __componentProps: PropsType;
     constructor(el: HTMLElement, props?: PropsType);
-    __setComponentChildren(value: Children<PropsType>): void;
-    __runOnMount(): void;
-    __runOnDestroy(): void;
-    __runOnInit(): void;
-    __rerunSetup(): void;
-    __closeScopes(): void;
+    $setComponentChildren(value: Children<PropsType>): void;
+    $runOnMount(): void;
+    $runOnDestroy(): void;
+    $runOnInit(): void;
+    $rerunSetup(): void;
+    $closeScopes(): void;
     /**
      * Executes provided callback function when the component is initialized.
      * Before being rendered in the DOM.
@@ -278,7 +272,7 @@ export declare class Component<PropsType extends object> {
     /**
      * Mounts the current element in the DOM. Usually, you would use this function
      * either in the root App component, or a single component, if you're simply
-     * adding small reactive __scopes into an otherwise static site.
+     * adding small reactive #scopes into an otherwise static site.
      *
      * @param selector {string} Default: "body" element
      */
@@ -332,6 +326,13 @@ export declare class Component<PropsType extends object> {
      * removed. This is the best way to declare reusable components.
      */
     setup(setupFn: SetupArguments<PropsType>): this;
+    /**
+     * Emit a custom event which parent components can listen for. Additionally,
+     * you can provide data which should be sent along.
+     *
+     * @param eventName Your custom event name
+     * @param data Any kind of data to be sent
+     */
     emit: typeof emit;
 }
 
@@ -749,7 +750,7 @@ export declare const video: ComponentInstance;
  */
 declare class VoidComponent<PropsType extends object> extends Component<PropsType> {
     constructor(type: HtmlVoidtags | 'option');
-    __setComponentChildren(_value: Children<PropsType>): void;
+    $setComponentChildren(_value: Children<PropsType>): void;
 }
 
 export declare const wbr: <PropsType extends object>() => VoidComponent<PropsType>;

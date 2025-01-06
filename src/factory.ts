@@ -15,7 +15,7 @@ export const htmlNormalElFactory = htmlNormalTags.reduce((group, type) => {
     const root = document.createElement(type)
     const inst = new Component<PropsType>(root)
     const nested = isArray(children) ? children.concat(rest) : [children].concat(rest)
-    inst.__setComponentChildren(nested)
+    inst.$setComponentChildren(nested)
     inst.children = nested
     return inst
   }

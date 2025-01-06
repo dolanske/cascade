@@ -46,9 +46,9 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
     if (parent instanceof Component)
       children.parent = parent
     root.appendChild(children.el)
-    children.__runOnInit()
+    children.$runOnInit()
     render(children, children.componentChildren)
-    children.__runOnMount()
+    children.$runOnMount()
   }
 
   else if (Array.isArray(children)) {
@@ -79,9 +79,9 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
         if (parent instanceof Component)
           child.parent = parent
         root.appendChild(child.el)
-        child.__runOnInit()
+        child.$runOnInit()
         render(child, child.componentChildren)
-        child.__runOnMount()
+        child.$runOnMount()
       }
     }
   }
