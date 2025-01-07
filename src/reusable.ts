@@ -7,7 +7,7 @@ import type { ComponentChildren, ComponentChildrenItems, SetupArguments } from '
 import { El, htmlVoidTags } from './factory'
 import { isArray } from './util'
 
-type ReusableComponent<PropsType extends object> = (children?: ComponentChildren<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>
+export type ReusableComponent<PropsType extends object> = (children?: ComponentChildren<PropsType>, ...rest: ComponentChildrenItems<PropsType>[]) => Component<PropsType>
 
 const elementsWihoutChildren = [
   ...htmlVoidTags,

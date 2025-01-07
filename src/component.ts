@@ -1,6 +1,6 @@
-import type { EffectScope } from '@vue/reactivity'
+import type { EffectScope, WatchHandle } from '@vue/reactivity'
 import type { ComponentChildren, ComponentChildrenItems, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
-import { effectScope } from '@vue/reactivity'
+import { effectScope, toValue, unref, watch } from '@vue/reactivity'
 import { createId } from './id'
 import { destroy } from './lifecycle'
 import { attr, attrs } from './methods/attributes'
@@ -18,7 +18,7 @@ import { show } from './methods/show'
 import { style } from './methods/style'
 import { text } from './methods/text'
 import { render } from './render'
-import { isArray } from './util'
+import { getElIndex, isArray, isWatchSource } from './util'
 
 export class Component<PropsType extends object> {
   /**
@@ -183,18 +183,20 @@ export class Component<PropsType extends object> {
 
   //
   // Private stuff for implementation
-  #onMountCbs: GenericCallback[] = []
-  #onDestroyCbs: GenericCallback[] = []
-  #onInitCbs: GenericCallback[] = []
+  $onMountCbs: GenericCallback[] = []
+  $onDestroyCbs: GenericCallback[] = []
+  $onInitCbs: GenericCallback[] = []
 
-  #scopes = new Set<SetupArguments<PropsType>>()
-  #runningScopes = new Set<EffectScope>()
-  #componentProps: PropsType
+  $scopes = new Set<SetupArguments<PropsType>>()
+  $runningScopes = new Set<EffectScope>()
+  $componentProps: PropsType
+
+  $dynamicChildrenStopper: WatchHandle[] = []
 
   constructor(el: HTMLElement, props?: PropsType) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
-    this.#componentProps = props ?? {} as PropsType
+    this.$componentProps = props ?? {} as PropsType
     this.identifier = createId(true)
   }
 
@@ -204,40 +206,63 @@ export class Component<PropsType extends object> {
     if (this.isVoid)
       return
 
+    let i = 0
+    for (const child of isArray(value) ? value : [value]) {
+      // Last check in case we're in array of values
+      if (isWatchSource(child)) {
+        this.$dynamicChildrenStopper.push(
+          // A new child can also be null, in that case the old one should destroy itself and the new one should be ignored
+          watch(() => toValue(child), (child, prevChild) => {
+            if (prevChild && prevChild instanceof Component) {
+              prevChild.destroy()
+            }
+
+            if (child && child instanceof Component) {
+              render(this, child, i)
+            }
+          }, {
+            immediate: true,
+          }),
+        )
+      }
+
+      i++
+    }
+
     this.componentChildren = value
   }
 
   $runOnMount() {
-    for (const cb of this.#onMountCbs)
+    for (const cb of this.$onMountCbs)
       cb()
   }
 
   $runOnDestroy() {
-    for (const cb of this.#onDestroyCbs)
+    for (const cb of this.$onDestroyCbs)
       cb()
   }
 
   $runOnInit() {
-    for (const cb of this.#onInitCbs)
+    for (const cb of this.$onInitCbs)
       cb()
   }
 
   $rerunSetup() {
-    for (const runner of this.#scopes) {
+    for (const runner of this.$scopes) {
       const scope = effectScope()
       scope.run(() => {
-        runner(this, this.#componentProps)
+        runner(this, this.$componentProps)
       })
 
-      this.#runningScopes.add(scope)
+      this.$runningScopes.add(scope)
     }
   }
 
   $closeScopes() {
-    for (const scope of this.#runningScopes)
+    for (const scope of this.$runningScopes)
       scope.stop()
 
-    this.#runningScopes = new Set()
+    this.$runningScopes = new Set()
   }
 
   /////////////////////////////////////////////////////////////
@@ -250,7 +275,7 @@ export class Component<PropsType extends object> {
    * @param callback {function}
    */
   onInit(callback: GenericCallback) {
-    this.#onInitCbs.push(callback)
+    this.$onInitCbs.push(callback)
   }
 
   /**
@@ -260,7 +285,7 @@ export class Component<PropsType extends object> {
    * @param callback {function}
    */
   onMount(callback: GenericCallback) {
-    this.#onMountCbs.push(callback)
+    this.$onMountCbs.push(callback)
   }
 
   /**
@@ -270,7 +295,7 @@ export class Component<PropsType extends object> {
    */
 
   onDestroy(callback: GenericCallback) {
-    this.#onDestroyCbs.push(callback)
+    this.$onDestroyCbs.push(callback)
   }
 
   /**
@@ -297,6 +322,7 @@ export class Component<PropsType extends object> {
    */
   destroy() {
     destroy(this)
+    this.$dynamicChildrenStopper.forEach(stop => stop())
   }
 
   /**
@@ -309,7 +335,7 @@ export class Component<PropsType extends object> {
   clone() {
     const cloned = new Component<PropsType>(this.el)
     cloned.componentChildren = this.componentChildren
-    cloned.#scopes = new Set(this.#scopes)
+    cloned.$scopes = new Set(this.$scopes)
     return cloned
   }
 
@@ -338,7 +364,7 @@ export class Component<PropsType extends object> {
    * @param value {any}
    */
   prop<Key extends keyof PropsType>(key: Key, value: PropsType[Key]) {
-    Object.assign(this.#componentProps, { [key]: value })
+    Object.assign(this.$componentProps, { [key]: value })
     return this
   }
 
@@ -349,7 +375,7 @@ export class Component<PropsType extends object> {
    */
   props(props: Partial<PropsType>) {
     for (const key of Object.keys(props))
-      Object.assign(this.#componentProps, { [key]: props[key as keyof PropsType] })
+      Object.assign(this.$componentProps, { [key]: props[key as keyof PropsType] })
     return this
   }
 
@@ -359,12 +385,12 @@ export class Component<PropsType extends object> {
    * removed. This is the best way to declare reusable components.
    */
   setup(setupFn: SetupArguments<PropsType>) {
-    this.#scopes.add(setupFn)
+    this.$scopes.add(setupFn)
 
     this.onInit(() => {
       const scope = effectScope()
       scope.run(() => {
-        setupFn(this, this.#componentProps)
+        setupFn(this, this.$componentProps)
       })
 
       this.onDestroy(() => {
