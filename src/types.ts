@@ -1,4 +1,3 @@
-import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Properties, PropertiesHyphen } from 'csstype'
 import type { Component, Fragment } from './component'
 import type { ReusableComponent } from './reusable'
@@ -9,7 +8,7 @@ export type HtmlVoidtags = 'area' | 'base' | 'br' | 'col' | 'embed' | 'hr' | 'im
 export type CustomTags = 'fragment'
 export type AvailableTags = HtmlTags | HtmlVoidtags | CustomTags
 
-export type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | ReusableComponent<PropsType> | MaybeRefOrGetter<string | number | Component<PropsType> | Element | Fragment<PropsType> | ReusableComponent<PropsType>>
+export type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | ReusableComponent<PropsType>
 export type ComponentChildren<PropsType extends object> = ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[]
 export type ComponentInstance = <PropsType extends object>(children?: ComponentChildren<PropsType>) => Component<PropsType>
 export type ValueOf<T> = T[keyof T]

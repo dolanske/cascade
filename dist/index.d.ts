@@ -1,9 +1,11 @@
+import { EffectScope } from '@vue/reactivity';
 import { MaybeRefOrGetter } from '@vue/reactivity';
 import { Primitive } from '@vue/reactivity';
 import { Properties } from 'csstype';
 import { PropertiesHyphen } from 'csstype';
 import { Ref } from '@vue/reactivity';
 import { UnwrapRef } from '@vue/reactivity';
+import { WatchHandle } from '@vue/reactivity';
 
 export declare const a: ComponentInstance;
 
@@ -85,7 +87,6 @@ export declare const col: <PropsType extends object>() => VoidComponent<PropsTyp
 export declare const colgroup: ComponentInstance;
 
 export declare class Component<PropsType extends object> {
-    #private;
     /**
      * Set `textContent` of the current component.
      */
@@ -242,6 +243,19 @@ export declare class Component<PropsType extends object> {
      * If true, the component can not have any child components
      */
     isVoid: boolean;
+    /**
+     * Stores reference to the element the component is mounted to. Only the
+     * top-most component has a root element.
+     */
+    root: Element | null;
+    isRoot: boolean;
+    $onMountCbs: GenericCallback[];
+    $onDestroyCbs: GenericCallback[];
+    $onInitCbs: GenericCallback[];
+    $scopes: Set<SetupArguments<PropsType>>;
+    $runningScopes: Set<EffectScope>;
+    $componentProps: PropsType;
+    $dynamicChildrenStopper: WatchHandle[];
     constructor(el: HTMLElement, props?: PropsType);
     $setComponentChildren(value: Children<PropsType>): void;
     $runOnMount(): void;
@@ -336,7 +350,7 @@ export declare class Component<PropsType extends object> {
     emit: typeof emit;
 }
 
-declare type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | MaybeRefOrGetter<string | number | Component<PropsType>>;
+declare type ComponentChildrenItems<PropsType extends object> = string | number | Component<PropsType> | Element | Fragment<PropsType> | ReusableComponent<PropsType>;
 
 declare type ComponentInstance = <PropsType extends object>(children?: Children<PropsType>) => Component<PropsType>;
 

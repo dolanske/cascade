@@ -1,6 +1,6 @@
 import type { EffectScope, WatchHandle } from '@vue/reactivity'
 import type { ComponentChildren, ComponentChildrenItems, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
-import { effectScope, toValue, watch } from '@vue/reactivity'
+import { effectScope } from '@vue/reactivity'
 import { createId } from './id'
 import { destroy } from './lifecycle'
 import { attr, attrs } from './methods/attributes'
@@ -18,7 +18,7 @@ import { show } from './methods/show'
 import { style } from './methods/style'
 import { text } from './methods/text'
 import { render } from './render'
-import { isArray, isWatchSource } from './util'
+import { isArray } from './util'
 
 export class Component<PropsType extends object> {
   /**
@@ -186,6 +186,7 @@ export class Component<PropsType extends object> {
    * top-most component has a root element.
    */
   root: Element | null = null
+  isRoot = false
 
   //
   // Private stuff for implementation
@@ -211,36 +212,6 @@ export class Component<PropsType extends object> {
   $setComponentChildren(value: ComponentChildren<PropsType>) {
     if (this.isVoid)
       return
-
-    let i = 0
-    for (const child of isArray(value) ? value : [value]) {
-      // Last check in case we're in array of values
-      if (isWatchSource(child)) {
-        this.$dynamicChildrenStopper.push(
-          // A new child can also be null, in that case the old one should destroy itself and the new one should be ignored
-          watch(() => toValue(child), (child, prevChild) => {
-            if (prevChild) {
-              console.log(prevChild, child)
-              if (typeof prevChild === 'string') {
-                this.el.innerHTML = this.el.innerHTML.replace(prevChild, child)
-              }
-              // (this.root || prevChild.parent.el).replaceChild(child, prevChild)
-              // prevChild.remove()
-              // prevChild.destroy()
-            }
-            else {
-              render(this, child, i)
-            }
-            // else {
-            // }
-          }, {
-            immediate: true,
-          }),
-        )
-      }
-      i++
-    }
-
     this.componentChildren = value
   }
 
@@ -323,6 +294,7 @@ export class Component<PropsType extends object> {
       throw new Error('Root element does not exist')
 
     this.root = domRoot
+    this.isRoot = true
 
     domRoot.appendChild(this.el)
     this.$rerunSetup()
