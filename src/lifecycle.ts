@@ -9,8 +9,7 @@ export function destroy(component: Component<any>) {
     if (!(comp instanceof Component))
       return
 
-    for (const cb of comp.__onDestroyCbs)
-      cb()
+    comp.$runOnDestroy()
 
     const { children } = comp
 
@@ -27,7 +26,8 @@ export function destroy(component: Component<any>) {
 
   stop(component)
 
-  component.__runOnDestroy()
+  component.$runOnDestroy()
+  component.$closeScopes()
 
   // Remove root
   component.el.remove()

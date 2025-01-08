@@ -181,63 +181,69 @@ export class Component<PropsType extends object> {
    */
   isVoid: boolean = false
 
+  /**
+   * Stores reference to the element the component is mounted to. Only the
+   * top-most component has a root element.
+   */
+  root: Element | null = null
+  isRoot = false
+
   //
   // Private stuff for implementation
-  __onMountCbs: GenericCallback[] = []
-  __onDestroyCbs: GenericCallback[] = []
-  __onInitCbs: GenericCallback[] = []
+  $onMountCbs: GenericCallback[] = []
+  $onDestroyCbs: GenericCallback[] = []
+  $onInitCbs: GenericCallback[] = []
 
-  __scopes = new Set<SetupArguments<PropsType>>()
-  __runningScopes = new Set<EffectScope>()
-  __componentProps: PropsType
+  $scopes = new Set<SetupArguments<PropsType>>()
+  $runningScopes = new Set<EffectScope>()
+  $componentProps: PropsType
 
   constructor(el: HTMLElement, props?: PropsType) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
-    this.__componentProps = props ?? {} as PropsType
+    this.$componentProps = props ?? {} as PropsType
     this.identifier = createId(true)
   }
 
   /////////////////////////////////////////////////////////////
   // Private API
-  __setComponentChildren(value: ComponentChildren<PropsType>) {
+  $setComponentChildren(value: ComponentChildren<PropsType>) {
     if (this.isVoid)
       return
-
     this.componentChildren = value
   }
 
-  __runOnMount() {
-    for (const cb of this.__onMountCbs)
+  $runOnMount() {
+    for (const cb of this.$onMountCbs)
       cb()
   }
 
-  __runOnDestroy() {
-    for (const cb of this.__onDestroyCbs)
+  $runOnDestroy() {
+    for (const cb of this.$onDestroyCbs)
       cb()
   }
 
-  __runOnInit() {
-    for (const cb of this.__onInitCbs)
+  $runOnInit() {
+    for (const cb of this.$onInitCbs)
       cb()
   }
 
-  __rerunSetup() {
-    for (const runner of this.__scopes) {
+  $rerunSetup() {
+    for (const runner of this.$scopes) {
       const scope = effectScope()
       scope.run(() => {
-        runner(this, this.__componentProps)
+        runner(this, this.$componentProps)
       })
 
-      this.__runningScopes.add(scope)
+      this.$runningScopes.add(scope)
     }
   }
 
-  __closeScopes() {
-    for (const scope of this.__runningScopes)
+  $closeScopes() {
+    for (const scope of this.$runningScopes)
       scope.stop()
 
-    this.__runningScopes = new Set()
+    this.$runningScopes = new Set()
   }
 
   /////////////////////////////////////////////////////////////
@@ -250,7 +256,7 @@ export class Component<PropsType extends object> {
    * @param callback {function}
    */
   onInit(callback: GenericCallback) {
-    this.__onInitCbs.push(callback)
+    this.$onInitCbs.push(callback)
   }
 
   /**
@@ -260,7 +266,7 @@ export class Component<PropsType extends object> {
    * @param callback {function}
    */
   onMount(callback: GenericCallback) {
-    this.__onMountCbs.push(callback)
+    this.$onMountCbs.push(callback)
   }
 
   /**
@@ -270,13 +276,13 @@ export class Component<PropsType extends object> {
    */
 
   onDestroy(callback: GenericCallback) {
-    this.__onDestroyCbs.push(callback)
+    this.$onDestroyCbs.push(callback)
   }
 
   /**
    * Mounts the current element in the DOM. Usually, you would use this function
    * either in the root App component, or a single component, if you're simply
-   * adding small reactive __scopes into an otherwise static site.
+   * adding small reactive #scopes into an otherwise static site.
    *
    * @param selector {string} Default: "body" element
    */
@@ -285,11 +291,14 @@ export class Component<PropsType extends object> {
     if (!domRoot)
       throw new Error('Root element does not exist')
 
+    this.root = domRoot
+    this.isRoot = true
+
     domRoot.appendChild(this.el)
-    this.__rerunSetup()
-    this.__runOnInit()
+    this.$rerunSetup()
+    this.$runOnInit()
     render(this, this.componentChildren)
-    this.__runOnMount()
+    this.$runOnMount()
   }
 
   /**
@@ -309,7 +318,7 @@ export class Component<PropsType extends object> {
   clone() {
     const cloned = new Component<PropsType>(this.el)
     cloned.componentChildren = this.componentChildren
-    cloned.__scopes = new Set(this.__scopes)
+    cloned.$scopes = new Set(this.$scopes)
     return cloned
   }
 
@@ -338,7 +347,7 @@ export class Component<PropsType extends object> {
    * @param value {any}
    */
   prop<Key extends keyof PropsType>(key: Key, value: PropsType[Key]) {
-    Object.assign(this.__componentProps, { [key]: value })
+    Object.assign(this.$componentProps, { [key]: value })
     return this
   }
 
@@ -349,7 +358,7 @@ export class Component<PropsType extends object> {
    */
   props(props: Partial<PropsType>) {
     for (const key of Object.keys(props))
-      Object.assign(this.__componentProps, { [key]: props[key as keyof PropsType] })
+      Object.assign(this.$componentProps, { [key]: props[key as keyof PropsType] })
     return this
   }
 
@@ -359,12 +368,12 @@ export class Component<PropsType extends object> {
    * removed. This is the best way to declare reusable components.
    */
   setup(setupFn: SetupArguments<PropsType>) {
-    this.__scopes.add(setupFn)
+    this.$scopes.add(setupFn)
 
     this.onInit(() => {
       const scope = effectScope()
       scope.run(() => {
-        setupFn(this, this.__componentProps)
+        setupFn(this, this.$componentProps)
       })
 
       this.onDestroy(() => {
@@ -374,7 +383,13 @@ export class Component<PropsType extends object> {
     return this
   }
 
-  // TODO document
+  /**
+   * Emit a custom event which parent components can listen for. Additionally,
+   * you can provide data which should be sent along.
+   *
+   * @param eventName Your custom event name
+   * @param data Any kind of data to be sent
+   */
   emit = emit
 }
 
@@ -388,7 +403,7 @@ export class VoidComponent<PropsType extends object> extends Component<PropsType
     super(document.createElement(type))
   }
 
-  override __setComponentChildren(_value: ComponentChildren<PropsType>): void {
+  override $setComponentChildren(_value: ComponentChildren<PropsType>): void {
     this.componentChildren = []
   }
 }
@@ -407,9 +422,9 @@ export class Fragment<PropsType extends object> extends Component<PropsType> {
     const domRoot = document.querySelector(selector)
     if (!domRoot)
       throw new Error('Root element does not exist')
-    this.__runOnInit()
+    this.$runOnInit()
     render(domRoot, this.componentChildren)
-    this.__runOnMount()
+    this.$runOnMount()
   }
 }
 

@@ -1,5 +1,4 @@
 import type { ComponentChildren } from './types'
-import { toValue, watch } from '@vue/reactivity'
 import { Component, Fragment } from './component'
 import { isNil, isWatchSource } from './util'
 
@@ -46,9 +45,9 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
     if (parent instanceof Component)
       children.parent = parent
     root.appendChild(children.el)
-    children.__runOnInit()
+    children.$runOnInit()
     render(children, children.componentChildren)
-    children.__runOnMount()
+    children.$runOnMount()
   }
 
   else if (Array.isArray(children)) {
@@ -62,41 +61,43 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
       else if (child instanceof Fragment) {
         render(root, child.componentChildren)
       }
-      else if (isWatchSource(child)) {
-        watch(() => toValue(child), (value) => {
-          // TODO: cleanup previous component before rendering new
-          // if (value instanceof Component)
-          //   value.destroy()
-          // else root.innerHTML = ''
-
-          render(root, value, i)
-        }, {
-          immediate: true,
-          deep: true,
-        })
-      }
-      else {
+      else if (!isWatchSource(child)) {
         if (parent instanceof Component)
           child.parent = parent
         root.appendChild(child.el)
-        child.__runOnInit()
+        child.$runOnInit()
         render(child, child.componentChildren)
-        child.__runOnMount()
+        child.$runOnMount()
       }
     }
   }
+  // else if (isWatchSource(children)) {
+  //   console.log('registered dynamci children')
+  //   watch(() => toValue(children), (newChildren, prevChildren) => {
+  //     console.log(newChildren, prevChildren)
 
-  else if (isWatchSource(children)) {
-    watch(() => toValue(children), (value) => {
-      // TODO: cleanup previous component before rendering new \
-      if (value instanceof Component)
-        value.destroy()
-      else root.innerHTML = ''
+  //     // Clenup previous child elements
+  //     if (prevChildren) {
+  //       if (isArray(prevChildren)) {
+  //         for (const child of prevChildren) {
+  //           if (child instanceof Component)
+  //             child.destroy()
+  //           else if (child instanceof Element)
+  //             child.remove()
+  //         }
+  //       }
+  //       else if (prevChildren instanceof Component) {
+  //         prevChildren.destroy()
+  //       }
+  //       else if (prevChildren instanceof Element) {
+  //         prevChildren.remove()
+  //       }
+  //     }
 
-      render(root, value)
-    }, {
-      immediate: true,
-      deep: true,
-    })
-  }
+  //     render(root, newChildren)
+  //   }, {
+  //     immediate: true,
+  //     deep: true,
+  //   })
+  // }
 }

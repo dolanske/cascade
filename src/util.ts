@@ -47,3 +47,9 @@ export const WATCH_CONF = {
 export function capitalizeString(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
+
+// export function getElIndex(el: HTMLElement) {
+//   if (!el.parentElement)
+//     return -1
+//   return [...el.parentElement.childNodes].indexOf(el)
+// }
