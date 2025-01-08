@@ -5,7 +5,6 @@ import { Properties } from 'csstype';
 import { PropertiesHyphen } from 'csstype';
 import { Ref } from '@vue/reactivity';
 import { UnwrapRef } from '@vue/reactivity';
-import { WatchHandle } from '@vue/reactivity';
 
 export declare const a: ComponentInstance;
 
@@ -255,7 +254,6 @@ export declare class Component<PropsType extends object> {
     $scopes: Set<SetupArguments<PropsType>>;
     $runningScopes: Set<EffectScope>;
     $componentProps: PropsType;
-    $dynamicChildrenStopper: WatchHandle[];
     constructor(el: HTMLElement, props?: PropsType);
     $setComponentChildren(value: Children<PropsType>): void;
     $runOnMount(): void;

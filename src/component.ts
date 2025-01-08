@@ -1,4 +1,4 @@
-import type { EffectScope, WatchHandle } from '@vue/reactivity'
+import type { EffectScope } from '@vue/reactivity'
 import type { ComponentChildren, ComponentChildrenItems, GenericCallback, HtmlVoidtags, SetupArguments } from './types'
 import { effectScope } from '@vue/reactivity'
 import { createId } from './id'
@@ -198,8 +198,6 @@ export class Component<PropsType extends object> {
   $runningScopes = new Set<EffectScope>()
   $componentProps: PropsType
 
-  $dynamicChildrenStopper: WatchHandle[] = []
-
   constructor(el: HTMLElement, props?: PropsType) {
     this.el = el
     Object.defineProperty(this.el, '__instance', this)
@@ -308,7 +306,6 @@ export class Component<PropsType extends object> {
    */
   destroy() {
     destroy(this)
-    this.$dynamicChildrenStopper.forEach(stop => stop())
   }
 
   /**
