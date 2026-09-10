@@ -88,8 +88,11 @@ function renderDynamic(parent: Component<any> | Element, source: DynamicComponen
     clear()
     previous = value
     const values = Array.isArray(value) ? value : [value]
+    const container = anchor.parentNode
+    if (!container)
+      return
     for (const child of values)
-      mount(parent, child, anchor)
+      mount(parent, child, anchor, container)
   }
 
   const stop = watch(() => toValue(source), update, { immediate: true })

@@ -276,7 +276,10 @@ export class Component<PropsType extends object> {
    * @param callback {function}
    */
   onMount(callback: GenericCallback) {
-    this.$onMountCbs.push(callback)
+    if (this.$isMounted)
+      callback()
+    else
+      this.$onMountCbs.push(callback)
   }
 
   /**
