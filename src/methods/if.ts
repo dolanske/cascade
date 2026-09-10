@@ -1,7 +1,7 @@
 import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from '../component'
 import { toValue, watch } from '@vue/reactivity'
-import { isWatchSource, WATCH_CONF } from '../util'
+import { isWatchSource } from '../util'
 
 export function if_impl<PropsType extends object>(this: Component<PropsType>, expr: MaybeRefOrGetter) {
   // Anchors are used to correctly re-insert nodes back to the dom
@@ -22,7 +22,7 @@ export function if_impl<PropsType extends object>(this: Component<PropsType>, ex
     parent.el.insertBefore(anchor, this.el)
 
     if (isWatchSource(expr)) {
-      const release = watch(() => toValue(expr), process, WATCH_CONF)
+      const release = watch(() => toValue(expr), process, { immediate: true })
       this.onDestroy(release)
     }
     else {

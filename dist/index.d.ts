@@ -67,7 +67,7 @@ declare type CascadeEvent = (e: Event | CustomEvent, data?: unknown) => void;
 
 declare function change<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig): Component<PropsType>;
 
-export declare type Children<PropsType extends object> = ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[];
+export declare type Children<PropsType extends object> = ComponentChildrenItems<PropsType> | DynamicComponentChildren<PropsType> | (ComponentChildrenItems<PropsType> | DynamicComponentChildren<PropsType>)[];
 
 export declare const cite: ComponentInstance;
 
@@ -383,6 +383,8 @@ export declare const dl: ComponentInstance;
 
 export declare const dt: ComponentInstance;
 
+declare type DynamicComponentChildren<PropsType extends object> = MaybeRefOrGetter<ComponentChildrenItems<PropsType> | ComponentChildrenItems<PropsType>[]>;
+
 declare const El: Record<HtmlTags, ComponentInstance> & Record<HtmlVoidtags, <PropsType extends object>() => VoidComponent<PropsType>> & {
     fragment: typeof fragment;
     input: typeof input;
@@ -421,11 +423,13 @@ declare function focus_2<PropsType extends object>(this: Component<PropsType>, l
 
 export declare const footer: ComponentInstance;
 
-declare function for_impl<T extends MaybeRefOrGetter<object>, PropsType extends object>(this: Component<PropsType>, source: T, callback: CallbackType<UnwrapRef<T>, any>): any;
+declare function for_impl<T extends MaybeRefOrGetter<object>, PropsType extends object>(this: Component<PropsType>, source: T, callback: CallbackType<UnwrapRef<T>, any>, key?: KeyGetter<UnwrapRef<T> extends object ? UnwrapRef<T>[keyof UnwrapRef<T>] : never>): any;
 
-declare function for_impl<T extends MaybeRefOrGetter<any[]>, PropsType extends object>(this: Component<PropsType>, source: T, callback: CallbackType<UnwrapRef<T>, any>): any;
+declare function for_impl<T extends MaybeRefOrGetter<any[]>, PropsType extends object>(this: Component<PropsType>, source: T, callback: CallbackType<UnwrapRef<T>, any>, key?: KeyGetter<UnwrapRef<T> extends any[] ? UnwrapRef<T>[number] : never>): any;
 
-declare function for_impl<PropsType extends object>(this: Component<PropsType>, source: MaybeRefOrGetter<number>, callback: CallbackType<number, any>): any;
+declare function for_impl<PropsType extends object>(this: Component<PropsType>, source: MaybeRefOrGetter<number>, callback: CallbackType<number, any>, key?: KeyGetter<number>): any;
+
+declare type ForKey = string | number | symbol;
 
 export declare const form: ComponentInstance;
 
@@ -531,6 +535,8 @@ declare function keydown<PropsType extends object>(this: Component<PropsType>, l
 declare function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions): Component<PropsType>;
 
 export declare const keygen: ComponentInstance;
+
+declare type KeyGetter<T> = (value: T, index: number) => ForKey;
 
 declare interface KeyInputOptions {
     detect?: 'some' | 'every';

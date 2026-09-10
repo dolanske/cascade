@@ -129,8 +129,10 @@ ctx.html(() => SVGIcon.value)
 Allows nesting of components and HTML elements.
 
 ```ts
-// NOTE: it is planned to allow refs and getter functions, but that does not work yet.
 type ComponentChildren = string | number | Component | Element | Fragment
+  | ComponentChildren[]
+  | Ref<ComponentChildren>
+  | (() => ComponentChildren)
 ctx.nest(...value: ComponentChildren | ComponentChildren[])
 ```
 Example
@@ -166,8 +168,13 @@ export type CallbackType<T> =
 ctx.for(
   source: MaybeRefOrGetter<Source>,
   callback: CallbackType<UnwrapRef<Source>>,
+  key?: (value: any, index: number) => string | number | symbol,
 )
 ```
+
+When a key getter is provided, entries with the same key and object identity
+are moved instead of being recreated. This preserves nested component state and
+avoids rerendering unchanged rows.
 
 Example
 ```ts

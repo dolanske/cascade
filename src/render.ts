@@ -1,4 +1,5 @@
-import type { ComponentChildren } from './types'
+import type { ComponentChildren, ComponentChildrenItems, DynamicComponentChildren } from './types'
+import { toValue, watch } from '@vue/reactivity'
 import { Component, Fragment } from './component'
 import { isNil, isWatchSource } from './util'
 
@@ -13,11 +14,90 @@ function replaceChildAt(parent: Element, newChild: Element | Text, index: number
   return true
 }
 
-export function render(parent: Component<any> | Element, children?: ComponentChildren<any>, index?: number) {
+function destroyChild(child: ComponentChildrenItems<any>) {
+  if (child instanceof Component)
+    child.destroy()
+  else if (child instanceof Element)
+    child.remove()
+}
+
+export function mount(parent: Component<any> | Element, child: ComponentChildrenItems<any>, before?: ChildNode, target?: Node) {
+  const root = parent instanceof Element ? parent : parent.el
+  const container = target ?? root
+
+  if (child instanceof Fragment) {
+    for (const nested of child.componentChildren as ComponentChildrenItems<any>[])
+      mount(parent, nested, before, container)
+  }
+  else if (child instanceof Component) {
+    if (parent instanceof Component)
+      child.parent = parent
+    if (before)
+      container.insertBefore(child.el, before)
+    else
+      container.appendChild(child.el)
+    child.$runOnInit()
+    render(child, child.componentChildren)
+    child.$runOnMount()
+  }
+  else if (child instanceof Element) {
+    if (before)
+      container.insertBefore(child, before)
+    else
+      container.appendChild(child)
+  }
+  else if (typeof child === 'string' || typeof child === 'number') {
+    const text = document.createTextNode(String(child))
+    if (before)
+      container.insertBefore(text, before)
+    else
+      container.appendChild(text)
+  }
+}
+
+function renderDynamic(parent: Component<any> | Element, source: DynamicComponentChildren<any>) {
+  const root = parent instanceof Element ? parent : parent.el
+  const anchor = document.createComment('dynamic')
+  root.appendChild(anchor)
+  let previous: ComponentChildrenItems<any> | ComponentChildrenItems<any>[] | undefined
+
+  const clear = () => {
+    if (previous === undefined)
+      return
+    const values = Array.isArray(previous) ? previous : [previous]
+    for (const child of values)
+      destroyChild(child)
+    previous = undefined
+  }
+
+  const update = (value: ComponentChildrenItems<any> | ComponentChildrenItems<any>[]) => {
+    clear()
+    previous = value
+    const values = Array.isArray(value) ? value : [value]
+    for (const child of values)
+      mount(parent, child, anchor)
+  }
+
+  const stop = watch(() => toValue(source), update, { immediate: true })
+  if (parent instanceof Component) {
+    parent.onDestroy(() => {
+      stop()
+      clear()
+      anchor.remove()
+    })
+  }
+}
+
+export function render(parent: Component<any> | Element, children?: ComponentChildren<any> | DynamicComponentChildren<any>, index?: number) {
   const root = parent instanceof Element ? parent : parent.el
 
-  if (!children)
+  if (children === undefined || children === null)
     return
+
+  if (isWatchSource(children)) {
+    renderDynamic(parent, children)
+    return
+  }
 
   if (typeof children === 'string' || typeof children === 'number') {
     // if index is not provided, simply set text content, otherwise replace text
@@ -42,62 +122,23 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
   }
 
   else if (children instanceof Component) {
-    if (parent instanceof Component)
-      children.parent = parent
-    root.appendChild(children.el)
-    children.$runOnInit()
-    render(children, children.componentChildren)
-    children.$runOnMount()
+    mount(parent, children)
   }
 
   else if (Array.isArray(children)) {
-    const len = children.length
-    for (let i = 0; i < len; i++) {
-      const child = children[i]
-
-      if (child instanceof Element || typeof child === 'string' || typeof child === 'number') {
-        render(root, child, i)
-      }
-      else if (child instanceof Fragment) {
-        render(root, child.componentChildren)
+    const fragment = document.createDocumentFragment()
+    for (const child of children) {
+      if (child instanceof Fragment) {
+        for (const nested of child.componentChildren as ComponentChildrenItems<any>[])
+          mount(parent, nested, undefined, fragment)
       }
       else if (!isWatchSource(child)) {
-        if (parent instanceof Component)
-          child.parent = parent
-        root.appendChild(child.el)
-        child.$runOnInit()
-        render(child, child.componentChildren)
-        child.$runOnMount()
+        mount(parent, child as ComponentChildrenItems<any>, undefined, fragment)
+      }
+      else {
+        renderDynamic(parent, child)
       }
     }
+    root.appendChild(fragment)
   }
-  // else if (isWatchSource(children)) {
-  //   console.log('registered dynamci children')
-  //   watch(() => toValue(children), (newChildren, prevChildren) => {
-  //     console.log(newChildren, prevChildren)
-
-  //     // Clenup previous child elements
-  //     if (prevChildren) {
-  //       if (isArray(prevChildren)) {
-  //         for (const child of prevChildren) {
-  //           if (child instanceof Component)
-  //             child.destroy()
-  //           else if (child instanceof Element)
-  //             child.remove()
-  //         }
-  //       }
-  //       else if (prevChildren instanceof Component) {
-  //         prevChildren.destroy()
-  //       }
-  //       else if (prevChildren instanceof Element) {
-  //         prevChildren.remove()
-  //       }
-  //     }
-
-  //     render(root, newChildren)
-  //   }, {
-  //     immediate: true,
-  //     deep: true,
-  //   })
-  // }
 }
