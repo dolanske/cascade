@@ -32,7 +32,7 @@ export function mount(parent: Component<any> | Element, child: ComponentChildren
   else if (child instanceof Component) {
     if (parent instanceof Component)
       child.parent = parent
-    if (before)
+    if (before && before.parentNode === container)
       container.insertBefore(child.el, before)
     else
       container.appendChild(child.el)
@@ -41,22 +41,22 @@ export function mount(parent: Component<any> | Element, child: ComponentChildren
     child.$runOnMount()
   }
   else if (child instanceof Element) {
-    if (before)
+    if (before && before.parentNode === container)
       container.insertBefore(child, before)
     else
       container.appendChild(child)
   }
   else if (typeof child === 'string' || typeof child === 'number') {
     const text = document.createTextNode(String(child))
-    if (before)
+    if (before && before.parentNode === container)
       container.insertBefore(text, before)
     else
       container.appendChild(text)
   }
 }
 
-function renderDynamic(parent: Component<any> | Element, source: DynamicComponentChildren<any>) {
-  const root = parent instanceof Element ? parent : parent.el
+function renderDynamic(parent: Component<any> | Element, source: DynamicComponentChildren<any>, target?: Node) {
+  const root = target ?? (parent instanceof Element ? parent : parent.el)
   const anchor = document.createComment('dynamic')
   root.appendChild(anchor)
   let previous: ComponentChildrenItems<any> | ComponentChildrenItems<any>[] | undefined
@@ -136,7 +136,7 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
         mount(parent, child as ComponentChildrenItems<any>, undefined, fragment)
       }
       else {
-        renderDynamic(parent, child)
+        renderDynamic(parent, child, fragment)
       }
     }
     root.appendChild(fragment)

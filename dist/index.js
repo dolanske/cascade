@@ -1,7 +1,7 @@
 var z = Object.defineProperty;
 var U = (t, e, n) => e in t ? z(t, e, { enumerable: !0, configurable: !0, writable: !0, value: n }) : t[e] = n;
-var r = (t, e, n) => U(t, typeof e != "symbol" ? e + "" : e, n);
-import { isRef as W, watch as d, toValue as y, effectScope as j } from "@vue/reactivity";
+var c = (t, e, n) => U(t, typeof e != "symbol" ? e + "" : e, n);
+import { isRef as W, watch as f, toValue as y, effectScope as j } from "@vue/reactivity";
 const X = /* @__PURE__ */ new Set(), G = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split(""), J = "abcdefghiklmnopqrstuvwxyz".split("");
 function K(t) {
   const e = t ? J : G;
@@ -39,7 +39,7 @@ const A = {
   immediate: !0,
   deep: !0
 };
-function _(t) {
+function N(t) {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
 function Y(t) {
@@ -68,7 +68,7 @@ function x(t, e, n) {
 function R(t) {
   return this.onInit(() => {
     if (b(t)) {
-      const e = d(() => y(t), (n) => x(this.el, n), {
+      const e = f(() => y(t), (n) => x(this.el, n), {
         immediate: !0,
         deep: !0
       });
@@ -80,7 +80,7 @@ function R(t) {
 function tt(t, e) {
   return this.onInit(() => {
     if (b(e)) {
-      const n = d(() => y(e), (s) => x(this.el, t, s), {
+      const n = f(() => y(e), (s) => x(this.el, t, s), {
         immediate: !0,
         deep: !0
       });
@@ -93,34 +93,34 @@ function et(t, e) {
   if (w(t) && !S(e))
     throw new TypeError("Cannot use object notation with second argument.");
   let n = "";
-  const s = /* @__PURE__ */ Object.create(null), i = (a) => {
-    for (const h of Object.keys(a))
-      a[h] ? this.el.classList.add(h) : this.el.classList.remove(h);
-  }, o = (a) => {
-    if (a)
-      if (typeof a == "string")
-        n && this.el.classList.remove(n), n = a, this.el.classList.add(n);
-      else if (C(a)) {
-        const h = a.length;
-        for (let p = 0; p < h; p++) {
-          const c = a[p];
-          if (c)
-            typeof c == "string" ? (this.el.classList.add(c), s[p] = c) : w(a) && i(c);
+  const s = /* @__PURE__ */ Object.create(null), i = (u) => {
+    for (const h of Object.keys(u))
+      u[h] ? this.el.classList.add(h) : this.el.classList.remove(h);
+  }, o = (u) => {
+    if (u)
+      if (typeof u == "string")
+        n && this.el.classList.remove(n), n = u, this.el.classList.add(n);
+      else if (C(u)) {
+        const h = u.length;
+        for (let d = 0; d < h; d++) {
+          const l = u[d];
+          if (l)
+            typeof l == "string" ? (this.el.classList.add(l), s[d] = l) : w(u) && i(l);
           else {
-            const u = s[p];
-            u && (this.el.classList.remove(u), s[p] = null);
+            const a = s[d];
+            a && (this.el.classList.remove(a), s[d] = null);
           }
         }
-      } else w(a) && i(a);
-  }, l = (a, h) => {
-    b(h) ? this.onDestroy(d(() => y(h), (p) => {
-      o({ [a]: p });
-    }, A)) : a && h !== !1 && o(a);
-  }, f = (a) => {
-    for (const [h, p] of Object.entries(a))
-      l(h, p);
+      } else w(u) && i(u);
+  }, r = (u, h) => {
+    b(h) ? this.onDestroy(f(() => y(h), (d) => {
+      o({ [u]: d });
+    }, A)) : u && h !== !1 && o(u);
+  }, p = (u) => {
+    for (const [h, d] of Object.entries(u))
+      r(h, d);
   };
-  return w(t) ? f(t) : typeof t == "string" && l(t, e), this;
+  return w(t) ? p(t) : typeof t == "string" && r(t, e), this;
 }
 function nt(t) {
   return this.attr("disabled", t), this;
@@ -143,36 +143,36 @@ function it(t) {
 function $(t, e, n, s) {
   const i = t instanceof Element ? t : t.el, o = s ?? i;
   if (e instanceof O)
-    for (const l of e.componentChildren)
-      $(t, l, n, o);
+    for (const r of e.componentChildren)
+      $(t, r, n, o);
   else if (e instanceof m)
-    t instanceof m && (e.parent = t), n ? o.insertBefore(e.el, n) : o.appendChild(e.el), e.$runOnInit(), D(e, e.componentChildren), e.$runOnMount();
+    t instanceof m && (e.parent = t), n && n.parentNode === o ? o.insertBefore(e.el, n) : o.appendChild(e.el), e.$runOnInit(), D(e, e.componentChildren), e.$runOnMount();
   else if (e instanceof Element)
-    n ? o.insertBefore(e, n) : o.appendChild(e);
+    n && n.parentNode === o ? o.insertBefore(e, n) : o.appendChild(e);
   else if (typeof e == "string" || typeof e == "number") {
-    const l = document.createTextNode(String(e));
-    n ? o.insertBefore(l, n) : o.appendChild(l);
+    const r = document.createTextNode(String(e));
+    n && n.parentNode === o ? o.insertBefore(r, n) : o.appendChild(r);
   }
 }
-function T(t, e) {
-  const n = t instanceof Element ? t : t.el, s = document.createComment("dynamic");
-  n.appendChild(s);
-  let i;
-  const o = () => {
-    if (i === void 0)
+function T(t, e, n) {
+  const s = n ?? (t instanceof Element ? t : t.el), i = document.createComment("dynamic");
+  s.appendChild(i);
+  let o;
+  const r = () => {
+    if (o === void 0)
       return;
-    const a = Array.isArray(i) ? i : [i];
-    for (const h of a)
-      it(h);
-    i = void 0;
-  }, f = d(() => y(e), (a) => {
-    o(), i = a;
-    const h = Array.isArray(a) ? a : [a];
-    for (const p of h)
-      $(t, p, s);
+    const h = Array.isArray(o) ? o : [o];
+    for (const d of h)
+      it(d);
+    o = void 0;
+  }, u = f(() => y(e), (h) => {
+    r(), o = h;
+    const d = Array.isArray(h) ? h : [h];
+    for (const l of d)
+      $(t, l, i);
   }, { immediate: !0 });
   t instanceof m && t.onDestroy(() => {
-    f(), o(), s.remove();
+    u(), r(), i.remove();
   });
 }
 function D(t, e, n) {
@@ -199,9 +199,9 @@ function D(t, e, n) {
       const i = document.createDocumentFragment();
       for (const o of e)
         if (o instanceof O)
-          for (const l of o.componentChildren)
-            $(t, l, void 0, i);
-        else b(o) ? T(t, o) : $(t, o, void 0, i);
+          for (const r of o.componentChildren)
+            $(t, r, void 0, i);
+        else b(o) ? T(t, o, i) : $(t, o, void 0, i);
       s.appendChild(i);
     }
   }
@@ -209,53 +209,53 @@ function D(t, e, n) {
 function rt(t, e, n) {
   let s = [];
   const i = (o) => {
-    const l = [], f = /* @__PURE__ */ new Map();
+    const r = [], p = /* @__PURE__ */ new Map();
     if (n)
-      for (const c of s)
-        f.set(c.key, c);
-    const a = (c, u, g) => {
-      const k = n ? n(c, u) : u, E = n ? f.get(k) : void 0;
-      l.push({ key: k, value: c, child: E && E.value === c ? E.child : g });
+      for (const l of s)
+        p.set(l.key, l);
+    const u = (l, a, g) => {
+      const k = n ? n(l, a) : a, E = n ? p.get(k) : void 0;
+      r.push({ key: k, value: l, child: E && E.value === l ? E.child : g });
     };
     if (C(o)) {
-      const c = o.length;
-      for (let u = 0; u < c; u++) {
-        const g = e(o[u], u);
-        g && a(o[u], u, g);
+      const l = o.length;
+      for (let a = 0; a < l; a++) {
+        const g = e(o[a], a);
+        g && u(o[a], a, g);
       }
     } else if (w(o)) {
-      const c = Object.keys(o), u = c.length;
-      for (let g = 0; g < u; g++) {
-        const k = c[g], E = e(Reflect.get(o, k), k, g);
-        E && a(Reflect.get(o, k), g, E);
+      const l = Object.keys(o), a = l.length;
+      for (let g = 0; g < a; g++) {
+        const k = l[g], E = e(Reflect.get(o, k), k, g);
+        E && u(Reflect.get(o, k), g, E);
       }
     } else if (typeof o == "number")
-      for (let c = 0; c < o; c++) {
-        const u = e(c);
-        u && a(c, c, u);
+      for (let l = 0; l < o; l++) {
+        const a = e(l);
+        a && u(l, l, a);
       }
-    const h = l, p = new Set(h.map((c) => c.child));
-    for (const c of s)
-      p.has(c.child) || (c.child instanceof m ? c.child.destroy() : c.child instanceof Element && c.child.remove());
+    const h = r, d = new Set(h.map((l) => l.child));
+    for (const l of s)
+      d.has(l.child) || (l.child instanceof m ? l.child.destroy() : l.child instanceof Element && l.child.remove());
     if (n) {
-      const c = document.createDocumentFragment();
-      for (const u of h)
-        u.child instanceof m ? (u.child.parent = this, c.appendChild(u.child.el)) : u.child instanceof Element ? c.appendChild(u.child) : c.appendChild(document.createTextNode(String(u.child)));
-      this.el.replaceChildren(c);
-      for (const u of h)
-        s.some((g) => g.child === u.child) || D(this, u.child);
+      const l = document.createDocumentFragment();
+      for (const a of h)
+        a.child instanceof m ? (a.child.parent = this, l.appendChild(a.child.el)) : a.child instanceof Element ? l.appendChild(a.child) : l.appendChild(document.createTextNode(String(a.child)));
+      this.el.replaceChildren(l);
+      for (const a of h)
+        s.some((g) => g.child === a.child) || D(this, a.child);
     } else {
-      const c = document.createDocumentFragment();
-      for (const u of h)
-        $(this, u.child, void 0, c);
-      this.el.replaceChildren(), this.el.appendChild(c);
+      const l = document.createDocumentFragment();
+      for (const a of h)
+        $(this, a.child, void 0, l);
+      this.el.replaceChildren(), this.el.appendChild(l);
     }
     s = h;
   };
   return this.onInit(() => {
     if (b(t)) {
-      const o = d(() => y(t), (l) => {
-        i(l);
+      const o = f(() => y(t), (r) => {
+        i(r);
       }, { immediate: !0, deep: !0 });
       this.onDestroy(o);
     } else
@@ -268,7 +268,7 @@ function v(t, e) {
   };
   if (b(e)) {
     n(y(e));
-    const s = d(() => y(e), (i) => {
+    const s = f(() => y(e), (i) => {
       n(i);
     }, A);
     this.onDestroy(s);
@@ -284,32 +284,34 @@ function lt(t) {
 function at(t) {
   const e = new Comment("if");
   return this.onInit(() => {
-    const n = this.parent;
-    if (!n)
+    if (!this.parent)
       return console.warn("Parent element not found. `if()` will not work.");
-    const s = (i) => {
-      i ? n.el.insertBefore(this.el, e) : this.el.remove();
-    };
-    if (n.el.insertBefore(e, this.el), b(t)) {
-      const i = d(() => y(t), s, { immediate: !0 });
-      this.onDestroy(i);
+    const s = (o) => {
+      const r = e.parentNode;
+      r && (o ? this.el.parentNode !== r && r.insertBefore(this.el, e) : this.el.parentNode === r && this.el.remove());
+    }, i = this.el.parentNode;
+    if (!i)
+      return console.warn("Component element not found. `if()` will not work.");
+    if (i.insertBefore(e, this.el), b(t)) {
+      const o = f(() => y(t), s, { immediate: !0 });
+      this.onDestroy(o);
     } else
       s(t);
   }), this;
 }
-const ut = (t) => Number(t), ht = (t) => t.trim(), ft = (t) => t.toString().toUpperCase(), dt = (t) => t.toString().toUpperCase();
+const ut = (t) => Number(t), ht = (t) => t.trim(), dt = (t) => t.toString().toUpperCase(), ft = (t) => t.toString().toUpperCase();
 function pt(t) {
-  return t.split("\\s+").map((e) => _(e)).join("\\s+");
+  return t.split("\\s+").map((e) => N(e)).join("\\s+");
 }
-const mt = (t) => _(t);
+const mt = (t) => N(t);
 function yt(t) {
   return (e) => e.substring(0, t);
 }
 const te = {
   trim: ht,
   number: ut,
-  uppercase: ft,
-  lowercase: dt,
+  uppercase: dt,
+  lowercase: ft,
   truncate: yt,
   capitalize: mt,
   capitalizeAll: pt
@@ -317,11 +319,11 @@ const te = {
 function L(t, e) {
   return !e || e.length === 0 ? t : e.reduce((n, s) => s(n), t);
 }
-function q(t, e, n) {
+function _(t, e, n) {
   C(t.value) ? t.value.includes(e) ? t.value.splice(t.value.indexOf(e), 1) : t.value.push(e) : n ? t.value = e : t.value = null;
 }
 function M(t, e) {
-  (!t.value || C(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (q(t, e.value, !0), e.removeAttribute("checked"));
+  (!t.value || C(t.value) && t.value.length === 0) && e.hasAttribute("checked") && (_(t, e.value, !0), e.removeAttribute("checked"));
 }
 function bt(t, e = {}) {
   return this.onMount(() => {
@@ -330,27 +332,27 @@ function bt(t, e = {}) {
       case "TEXTAREA": {
         switch (this.el.type) {
           case "checkbox": {
-            const n = this.el, s = d(t, (i) => {
+            const n = this.el, s = f(t, (i) => {
               i === n.value || C(i) && i.includes(n.value) ? n.checked = !0 : n.checked = !1;
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener("change", (i) => {
-              const { checked: o, value: l } = i.target;
-              q(t, l, o);
+              const { checked: o, value: r } = i.target;
+              _(t, r, o);
             }, e.eventOptions), M(t, n);
             break;
           }
           case "radio": {
-            const n = this.el, s = d(t, (i) => {
+            const n = this.el, s = f(t, (i) => {
               n.checked = i === n.value;
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener("change", (i) => {
-              const { value: o, checked: l } = i.target;
-              l && (t.value = o);
+              const { value: o, checked: r } = i.target;
+              r && (t.value = o);
             }, e.eventOptions), M(t, n);
             break;
           }
           default: {
-            const n = this.el, s = d(t, (i) => {
+            const n = this.el, s = f(t, (i) => {
               n.value = String(i);
             }, { deep: !0 });
             this.onDestroy(s), n.addEventListener(e.lazy ? "change" : "input", (i) => {
@@ -363,28 +365,28 @@ function bt(t, e = {}) {
         break;
       }
       case "SELECT": {
-        const n = this.el, s = d(t, (o) => {
+        const n = this.el, s = f(t, (o) => {
           t.value = o;
         }, { deep: !0 });
         this.onDestroy(s), n.addEventListener("change", (o) => {
-          let l = o.target.value;
-          l = L(l, e.transforms), t.value = l;
+          let r = o.target.value;
+          r = L(r, e.transforms), t.value = r;
         }, e.eventOptions);
         const i = C(t.value) ? t.value[0] : t.value;
         if (i)
           n.value = i.toString();
         else if (n.childElementCount > 0) {
-          const o = Array.from(n.children).find((l) => l.hasAttribute("selected"));
+          const o = Array.from(n.children).find((r) => r.hasAttribute("selected"));
           if (o) {
             o.removeAttribute("selected");
-            const l = o.value;
-            t.value = l, n.value = l;
+            const r = o.value;
+            t.value = r, n.value = r;
           }
         }
         break;
       }
       case "DETAILS": {
-        const n = this.el, s = d(t, (o) => {
+        const n = this.el, s = f(t, (o) => {
           n.open = !!o;
         }, { deep: !0 });
         this.onDestroy(s), n.addEventListener("toggle", () => {
@@ -434,8 +436,8 @@ function xt(t, e, n = {}) {
   };
   async function i(o) {
     if (n.modifiers) {
-      for (const l of n.modifiers)
-        if (!await l(o, s))
+      for (const r of n.modifiers)
+        if (!await r(o, s))
           return;
     }
     e(o, "detail" in o ? o.detail : void 0), s.executedTimes++, s.lastCall = Date.now();
@@ -466,23 +468,23 @@ function jt(t, e) {
 }
 function P(t, e, n, s) {
   const i = [];
-  function o(f) {
-    i.push(f), i.length > e.length && i.shift();
+  function o(p) {
+    i.push(p), i.length > e.length && i.shift();
   }
-  const l = Array.isArray(e) ? e : [e];
-  this.on(t, (f) => {
-    const a = f.key;
+  const r = Array.isArray(e) ? e : [e];
+  this.on(t, (p) => {
+    const u = p.key;
     function h() {
-      n(f, "detail" in f ? f.detail : void 0);
+      n(p, "detail" in p ? p.detail : void 0);
     }
     switch ((s == null ? void 0 : s.detect) || "every") {
       case "some": {
-        l.includes(a) && h();
+        r.includes(u) && h();
         break;
       }
       case "every":
       default: {
-        o(a), l.every((c, u) => c === i[u]) && h();
+        o(u), r.every((l, a) => l === i[a]) && h();
         break;
       }
     }
@@ -500,25 +502,25 @@ function Mt(t, e) {
 function Vt(t, e, n) {
   return P.call(this, "keyup", t, e, n), this;
 }
-function _t(t, e) {
+function Nt(t, e) {
   return this.on("keyup", t, e);
 }
-function qt(t, e, n) {
+function _t(t, e, n) {
   return P.call(this, "keypress", t, e, n), this;
 }
-function Bt(t) {
+function qt(t) {
   return this.onMount(() => {
     const e = this.el.style.getPropertyValue("display"), n = (s) => {
       s ? S(e) ? this.el.style.removeProperty("display") : this.el.style.setProperty("display", e) : this.el.style.setProperty("display", "none");
     };
     if (b(t)) {
-      const s = d(() => y(t), n, A);
+      const s = f(() => y(t), n, A);
       this.onDestroy(s);
     } else
       n(t);
   }), this;
 }
-function Ft(t, e) {
+function Bt(t, e) {
   const n = (s) => {
     if (!w(s)) {
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
@@ -530,7 +532,7 @@ function Ft(t, e) {
   };
   if (typeof t == "string")
     if (b(e)) {
-      const s = d(() => y(e), (i) => {
+      const s = f(() => y(e), (i) => {
         n({ [t]: i });
       });
       this.onDestroy(s);
@@ -539,7 +541,7 @@ function Ft(t, e) {
     if (e)
       console.warn("[El.style] Refs which don't contain a style object are not allowed");
     else {
-      const s = d(() => y(t), n, A);
+      const s = f(() => y(t), n, A);
       this.onDestroy(s);
     }
   else if (w(t)) {
@@ -547,16 +549,16 @@ function Ft(t, e) {
     for (const i of s) {
       const o = Reflect.get(t, i);
       if (b(o)) {
-        const l = d(() => y(o), (f) => {
-          S(f) || this.el.style.setProperty(i, String(f));
+        const r = f(() => y(o), (p) => {
+          S(p) || this.el.style.setProperty(i, String(p));
         });
-        this.onDestroy(l);
+        this.onDestroy(r);
       } else S(o) || this.el.style.setProperty(i, String(o));
     }
   }
   return this;
 }
-function Ht(t) {
+function Ft(t) {
   return v.call(this, "textContent", t), this;
 }
 class m {
@@ -564,11 +566,11 @@ class m {
     /**
      * Set `textContent` of the current component.
      */
-    r(this, "text", Ht);
+    c(this, "text", Ft);
     /**
      * Set `innerHTML` of the current component.
      */
-    r(this, "html", ct);
+    c(this, "html", ct);
     /**
      * Add an event listener to the current component.
      *
@@ -577,35 +579,35 @@ class m {
      * @param options {EventListenerOptions | undefined} Optional event configuration
      *
      */
-    r(this, "on", xt);
+    c(this, "on", xt);
     /**
      * Shorthand for binding `on("click")` event listener to the current component.
      */
-    r(this, "click", Dt);
+    c(this, "click", Dt);
     /**
      * Shorthand for binding `on("submit")` event listener to the current component.
      */
-    r(this, "submit", Ot);
+    c(this, "submit", Ot);
     /**
      * Shorthand for binding `on("focus")` event listener to the current component.
      */
-    r(this, "focus", At);
+    c(this, "focus", At);
     /**
      * Shorthand for binding `on("blur")` event listener to the current component.
      */
-    r(this, "blur", It);
+    c(this, "blur", It);
     /**
      * Shorthand for binding `on("change")` event listener to the current component.
      */
-    r(this, "change", Pt);
+    c(this, "change", Pt);
     /**
      * Shorthand for binding `on("input")` event listener to the current component.
      */
-    r(this, "input", jt);
+    c(this, "input", jt);
     /**
      * Shorthand for binding `on("keydown")` event listener to the current component.
      */
-    r(this, "keydown", Tt);
+    c(this, "keydown", Tt);
     /**
      * Shorthand for binding `on("keydown")` event listener to the current
      * component and listening for specific keys to be pressed down.
@@ -614,11 +616,11 @@ class m {
      * Component.keydownExact(["Shift", "T"], () => ...)
      * ```
      */
-    r(this, "keydownExact", Lt);
+    c(this, "keydownExact", Lt);
     /**
      * Shorthand for binding `on("keyup")` event listener to the current component.
      */
-    r(this, "keyup", Mt);
+    c(this, "keyup", Mt);
     /**
      * Shorthand for binding `on("keyup")` event listener to the current
      * component and listening for specific keys to be released.
@@ -627,11 +629,11 @@ class m {
      * Component.keyupExact(["Shift", "T"], () => ...)
      * ```
      */
-    r(this, "keyupExact", Vt);
+    c(this, "keyupExact", Vt);
     /**
      * Shorthand for binding `on("keypress")` event listener to the current component.
      */
-    r(this, "keypress", _t);
+    c(this, "keypress", Nt);
     /**
      * Shorthand for binding `on("keypress")` event listener to the current
      * component and listening for specific keys to be pressed.
@@ -640,63 +642,63 @@ class m {
      * Component.keypressExact(["Shift", "T"], () => ...)
      * ```
      */
-    r(this, "keypressExact", qt);
+    c(this, "keypressExact", _t);
     /**
      * Bind reactive class object to the current component.
      */
-    r(this, "class", et);
+    c(this, "class", et);
     /**
      * Simple helper which allows you to insert component's children anywhere in
      * the chain. This was made mainly because it feels less natural to add
      * children to a component and only then use methods like `if` or `for` on it.
      */
-    r(this, "nest", gt);
+    c(this, "nest", gt);
     /**
      * Two way binding of a reactive variable to the inputs / selects value.
      */
-    r(this, "model", bt);
+    c(this, "model", bt);
     /**
      * Bind attribute object to the component.
      */
-    r(this, "attrs", R);
+    c(this, "attrs", R);
     /**
      * Bind a single attribute to the component.
      */
-    r(this, "attr", tt);
+    c(this, "attr", tt);
     /**
      * Dynamically bind a `disabled` attribute to the component.
      */
-    r(this, "disabled", nt);
+    c(this, "disabled", nt);
     /**
      * Dynamically bind an `id` attribute to the component.
      */
-    r(this, "id", lt);
+    c(this, "id", lt);
     /**
      * Toggle between showing or hiding the current component. the component is still
      * rendered, but has `display: none` applied to it.
      *
      * This function also preserves the previously added inline styles.
      */
-    r(this, "show", Bt);
+    c(this, "show", qt);
     /**
      * Add reactive styling object to the current component.
      */
-    r(this, "style", Ft);
+    c(this, "style", Bt);
     /**
      * Conditionally render a component.
      */
-    r(this, "if", at);
+    c(this, "if", at);
     //
     // Public stuff which could be useful to users
-    r(this, "identifier");
+    c(this, "identifier");
     /**
      * Stores reference to the mounted DOM Element of the current component.
      */
-    r(this, "el");
+    c(this, "el");
     /**
      * Stores child component instances.
      */
-    r(this, "componentChildren", []);
+    c(this, "componentChildren", []);
     /**
      * Normally, providing children to a component will render them as the first descendant of said component. You can change the place where children will render, effectively creating a slot component.
      * You can do this by using `ctx.children` in your component's `.nest()` call.
@@ -710,29 +712,29 @@ class m {
      * <div><div><h1>"Hello world"</h1></div></div>
      * ```
      */
-    r(this, "children", []);
+    c(this, "children", []);
     /**
      * Stores the reference to the parent Component instance, if it has one.
      */
-    r(this, "parent", null);
+    c(this, "parent", null);
     /**
      * If true, the component can not have any child components
      */
-    r(this, "isVoid", !1);
+    c(this, "isVoid", !1);
     /**
      * Stores reference to the element the component is mounted to. Only the
      * top-most component has a root element.
      */
-    r(this, "root", null);
-    r(this, "isRoot", !1);
+    c(this, "root", null);
+    c(this, "isRoot", !1);
     //
     // Private stuff for implementation
-    r(this, "$onMountCbs", []);
-    r(this, "$onDestroyCbs", []);
-    r(this, "$onInitCbs", []);
-    r(this, "$scopes", /* @__PURE__ */ new Set());
-    r(this, "$runningScopes", /* @__PURE__ */ new Set());
-    r(this, "$componentProps");
+    c(this, "$onMountCbs", []);
+    c(this, "$onDestroyCbs", []);
+    c(this, "$onInitCbs", []);
+    c(this, "$scopes", /* @__PURE__ */ new Set());
+    c(this, "$runningScopes", /* @__PURE__ */ new Set());
+    c(this, "$componentProps");
     /**
      * Iterate over the provided object / array / number and execute the provided
      * callback for each item. Components returned from the callback are then
@@ -748,7 +750,7 @@ class m {
      *
      *
      */
-    r(this, "for", rt);
+    c(this, "for", rt);
     /**
      * Emit a custom event which parent components can listen for. Additionally,
      * you can provide data which should be sent along.
@@ -756,7 +758,7 @@ class m {
      * @param eventName Your custom event name
      * @param data Any kind of data to be sent
      */
-    r(this, "emit", st);
+    c(this, "emit", st);
     this.el = e, Object.defineProperty(this.el, "__instance", this), this.$componentProps = n ?? {}, this.identifier = Q(!0);
   }
   /////////////////////////////////////////////////////////////
@@ -903,14 +905,14 @@ class O extends m {
     this.$runOnInit(), D(n, this.componentChildren), this.$runOnMount();
   }
 }
-function Nt(t = [], ...e) {
+function Ht(t = [], ...e) {
   const n = C(t) ? t.concat(e) : [t].concat(e);
   return new O(n);
 }
 class zt extends I {
   constructor(n) {
     super("img");
-    r(this, "el");
+    c(this, "el");
     this.el = n;
   }
   src(n) {
@@ -924,10 +926,10 @@ function Ut(t) {
   const e = document.createElement("img"), n = new zt(e);
   return t && n.src(t), n;
 }
-class B extends I {
+class q extends I {
   constructor(n, s) {
     super();
-    r(this, "el");
+    c(this, "el");
     this.el = n, this.el instanceof HTMLInputElement && s && (this.el.type = s);
   }
   type(n) {
@@ -948,11 +950,11 @@ class B extends I {
 }
 function Wt(t = "text") {
   const e = document.createElement("input");
-  return new B(e, t);
+  return new q(e, t);
 }
 function Xt() {
   const t = document.createElement("textarea");
-  return new B(t);
+  return new q(t);
 }
 class Gt extends I {
   constructor(e, n) {
@@ -972,20 +974,20 @@ class Gt extends I {
 function Jt(t, e) {
   return new Gt(t, e);
 }
-const Kt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], F = ["area", "base", "br", "col", "embed", "hr", "link", "meta", "source", "track", "wbr"], H = Kt.reduce((t, e) => (t[e] = (n = [], ...s) => {
-  const i = document.createElement(e), o = new m(i), l = C(n) ? n.concat(s) : [n].concat(s);
-  return o.$setComponentChildren(l), o.children = l, o;
-}, t), {}), N = F.reduce((t, e) => (t[e] = () => {
+const Kt = ["a", "abbr", "address", "applet", "article", "aside", "audio", "b", "basefont", "bdi", "bdo", "bgsound", "blink", "blockquote", "body", "button", "canvas", "caption", "cite", "code", "colgroup", "data", "datalist", "dd", "decorator", "del", "details", "dfn", "div", "dl", "dt", "element", "em", "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "html", "i", "iframe", "ins", "isindex", "kbd", "keygen", "label", "legend", "li", "listing", "main", "map", "mark", "menu", "meter", "nav", "noscript", "object", "ol", "optgroup", "output", "p", "picture", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "spacer", "span", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "template", "tfoot", "th", "thead", "time", "title", "tr", "u", "ul", "video"], B = ["area", "base", "br", "col", "embed", "hr", "link", "meta", "source", "track", "wbr"], F = Kt.reduce((t, e) => (t[e] = (n = [], ...s) => {
+  const i = document.createElement(e), o = new m(i), r = C(n) ? n.concat(s) : [n].concat(s);
+  return o.$setComponentChildren(r), o.children = r, o;
+}, t), {}), H = B.reduce((t, e) => (t[e] = () => {
   const n = new I(e);
   return n.isVoid = !0, n;
-}, t), {}), V = Object.assign(H, N, {
-  fragment: Nt,
+}, t), {}), V = Object.assign(F, H, {
+  fragment: Ht,
   input: Wt,
   textarea: Xt,
   option: Jt,
   img: Ut
 }), Qt = [
-  ...F,
+  ...B,
   "input",
   "textarea",
   "option"
@@ -1006,8 +1008,8 @@ const {
   audio: ae,
   b: ue,
   basefont: he,
-  bdi: fe,
-  bdo: de,
+  bdi: de,
+  bdo: fe,
   bgsound: pe,
   blink: me,
   blockquote: ye,
@@ -1031,12 +1033,12 @@ const {
   dt: Le,
   element: Me,
   em: Ve,
-  fieldset: _e,
-  figcaption: qe,
-  figure: Be,
-  footer: Fe,
-  form: He,
-  h1: Ne,
+  fieldset: Ne,
+  figcaption: _e,
+  figure: qe,
+  footer: Be,
+  form: Fe,
+  h1: He,
   h2: ze,
   h3: Ue,
   h4: We,
@@ -1059,8 +1061,8 @@ const {
   main: an,
   map: un,
   mark: hn,
-  menu: fn,
-  meter: dn,
+  menu: dn,
+  meter: fn,
   nav: pn,
   noscript: mn,
   object: yn,
@@ -1084,12 +1086,12 @@ const {
   small: Ln,
   spacer: Mn,
   span: Vn,
-  strong: _n,
-  style: qn,
-  sub: Bn,
-  summary: Fn,
-  sup: Hn,
-  table: Nn,
+  strong: Nn,
+  style: _n,
+  sub: qn,
+  summary: Bn,
+  sup: Fn,
+  table: Hn,
   tbody: zn,
   td: Un,
   template: Wn,
@@ -1102,7 +1104,7 @@ const {
   u: Yn,
   ul: Rn,
   video: ts
-} = H, {
+} = F, {
   area: es,
   base: ns,
   br: ss,
@@ -1114,7 +1116,7 @@ const {
   source: as,
   track: us,
   wbr: hs
-} = N;
+} = H;
 export {
   m as Component,
   ee as Modifier,
@@ -1130,8 +1132,8 @@ export {
   ue as b,
   ns as base,
   he as basefont,
-  fe as bdi,
-  de as bdo,
+  de as bdi,
+  fe as bdo,
   pe as bgsound,
   me as blink,
   ye as blockquote,
@@ -1159,14 +1161,14 @@ export {
   Me as element,
   Ve as em,
   is as embed,
-  _e as fieldset,
-  qe as figcaption,
-  Be as figure,
-  Fe as footer,
-  He as form,
-  Nt as fragment,
+  Ne as fieldset,
+  _e as figcaption,
+  qe as figure,
+  Be as footer,
+  Fe as form,
+  Ht as fragment,
   Rt as getInstance,
-  Ne as h1,
+  He as h1,
   ze as h2,
   Ue as h3,
   We as h4,
@@ -1193,9 +1195,9 @@ export {
   an as main,
   un as map,
   hn as mark,
-  fn as menu,
+  dn as menu,
   ls as meta,
-  dn as meter,
+  fn as meter,
   pn as nav,
   mn as noscript,
   yn as object,
@@ -1222,12 +1224,12 @@ export {
   as as source,
   Mn as spacer,
   Vn as span,
-  _n as strong,
-  qn as style,
-  Bn as sub,
-  Fn as summary,
-  Hn as sup,
-  Nn as table,
+  Nn as strong,
+  _n as style,
+  qn as sub,
+  Bn as summary,
+  Fn as sup,
+  Hn as table,
   zn as tbody,
   Un as td,
   Wn as template,

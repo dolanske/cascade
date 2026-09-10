@@ -13,13 +13,23 @@ export function if_impl<PropsType extends object>(this: Component<PropsType>, ex
       return console.warn('Parent element not found. `if()` will not work.')
 
     const process = (res: any) => {
-      if (res)
-        parent.el.insertBefore(this.el, anchor)
-      else
+      const host = anchor.parentNode
+      if (!host)
+        return
+
+      if (res) {
+        if (this.el.parentNode !== host)
+          host.insertBefore(this.el, anchor)
+      }
+      else if (this.el.parentNode === host) {
         this.el.remove()
+      }
     }
 
-    parent.el.insertBefore(anchor, this.el)
+    const host = this.el.parentNode
+    if (!host)
+      return console.warn('Component element not found. `if()` will not work.')
+    host.insertBefore(anchor, this.el)
 
     if (isWatchSource(expr)) {
       const release = watch(() => toValue(expr), process, { immediate: true })
