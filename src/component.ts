@@ -193,6 +193,8 @@ export class Component<PropsType extends object> {
   $onMountCbs: GenericCallback[] = []
   $onDestroyCbs: GenericCallback[] = []
   $onInitCbs: GenericCallback[] = []
+  $isMounted = false
+  $mountPending = false
 
   $scopes = new Set<SetupArguments<PropsType>>()
   $runningScopes = new Set<EffectScope>()
@@ -214,8 +216,16 @@ export class Component<PropsType extends object> {
   }
 
   $runOnMount() {
+    if (this.$isMounted)
+      return
+    this.$isMounted = true
+    this.$mountPending = false
     for (const cb of this.$onMountCbs)
       cb()
+  }
+
+  $deferOnMount() {
+    this.$mountPending = true
   }
 
   $runOnDestroy() {

@@ -2,7 +2,7 @@ import type { MaybeRefOrGetter, UnwrapRef } from '@vue/reactivity'
 import type { ComponentChildrenItems } from '../types'
 import { toValue, watch } from '@vue/reactivity'
 import { Component } from '../component'
-import { mount, render } from '../render'
+import { flushMounts, mount, render } from '../render'
 import { isArray, isObject, isWatchSource } from '../util'
 
 export type Source = number | any[] | object
@@ -114,6 +114,8 @@ export function for_impl<S extends MaybeRefOrGetter<Source>, PropsType extends o
         mount(this, entry.child, undefined, fragment)
       this.el.replaceChildren()
       this.el.appendChild(fragment)
+      if (this.el.isConnected)
+        flushMounts(this.el)
     }
     else {
       const fragment = document.createDocumentFragment()
@@ -130,6 +132,8 @@ export function for_impl<S extends MaybeRefOrGetter<Source>, PropsType extends o
         }
       }
       this.el.replaceChildren(fragment)
+      if (this.el.isConnected)
+        flushMounts(this.el)
       for (const entry of nextEntries) {
         if (!entries.some(old => old.child === entry.child))
           render(this, entry.child)

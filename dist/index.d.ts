@@ -251,12 +251,15 @@ export declare class Component<PropsType extends object> {
     $onMountCbs: GenericCallback[];
     $onDestroyCbs: GenericCallback[];
     $onInitCbs: GenericCallback[];
+    $isMounted: boolean;
+    $mountPending: boolean;
     $scopes: Set<SetupArguments<PropsType>>;
     $runningScopes: Set<EffectScope>;
     $componentProps: PropsType;
     constructor(el: HTMLElement, props?: PropsType);
     $setComponentChildren(value: Children<PropsType>): void;
     $runOnMount(): void;
+    $deferOnMount(): void;
     $runOnDestroy(): void;
     $runOnInit(): void;
     $rerunSetup(): void;

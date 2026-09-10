@@ -21,6 +21,17 @@ function destroyChild(child: ComponentChildrenItems<any>) {
     child.remove()
 }
 
+export function flushMounts(node: Node) {
+  if (node instanceof Element) {
+    const instance = Reflect.get(node, '__instance')
+    if (instance instanceof Component && instance.$mountPending)
+      instance.$runOnMount()
+  }
+
+  for (const child of Array.from(node.childNodes))
+    flushMounts(child)
+}
+
 export function mount(parent: Component<any> | Element, child: ComponentChildrenItems<any>, before?: ChildNode, target?: Node) {
   const root = parent instanceof Element ? parent : parent.el
   const container = target ?? root
@@ -38,7 +49,10 @@ export function mount(parent: Component<any> | Element, child: ComponentChildren
       container.appendChild(child.el)
     child.$runOnInit()
     render(child, child.componentChildren)
-    child.$runOnMount()
+    if (child.el.isConnected)
+      child.$runOnMount()
+    else
+      child.$deferOnMount()
   }
   else if (child instanceof Element) {
     if (before && before.parentNode === container)
@@ -140,5 +154,7 @@ export function render(parent: Component<any> | Element, children?: ComponentChi
       }
     }
     root.appendChild(fragment)
+    if (root.isConnected)
+      flushMounts(root)
   }
 }
