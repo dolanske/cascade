@@ -4,24 +4,19 @@ import { toValue, watch } from '@vue/reactivity'
 import { isWatchSource, WATCH_CONF } from './util'
 
 /**
- * Many methods set a single property on the root element. This function should
- * simplify adding more of these properties in the future
+ * Many methods set a single property on the root element. The binding is
+ * created on init so that it lives inside the component's effect scope and is
+ * re-created when a destroyed component is rendered again.
  */
-export function registerWatchedProp(this: Component<any>, key: string, value: MaybeRefOrGetter<any>) {
-  const setValue = (value: any) => {
-    Reflect.set(this.el, key, value)
-  }
-
-  if (isWatchSource(value)) {
-    setValue(toValue(value))
-
-    const release = watch(() => toValue(value), (computedVal) => {
-      setValue(computedVal)
-    }, WATCH_CONF)
-
-    this.onDestroy(release)
-  }
-  else {
-    setValue(value)
-  }
+export function bindProp(this: Component<any, any>, key: string, value: MaybeRefOrGetter<any>) {
+  this.onInit(() => {
+    if (isWatchSource(value)) {
+      watch(() => toValue(value), (computedVal) => {
+        Reflect.set(this.el, key, computedVal ?? '')
+      }, WATCH_CONF)
+    }
+    else {
+      Reflect.set(this.el, key, value ?? '')
+    }
+  })
 }

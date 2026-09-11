@@ -1,8 +1,7 @@
 import type { MaybeRefOrGetter, Primitive } from '@vue/reactivity'
 import type { Component } from '../component'
-import { registerWatchedProp } from '../property-method'
+import { bindProp } from '../property-method'
 
-export function id<PropsType extends object>(this: Component<PropsType>, value: MaybeRefOrGetter<Primitive>) {
-  registerWatchedProp.call(this, 'id', value)
-  return this
+export function id(this: Component<any, any>, value: MaybeRefOrGetter<Primitive>) {
+  bindProp.call(this, 'id', value)
 }

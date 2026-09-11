@@ -2,23 +2,24 @@ import type { Ref } from '@vue/reactivity'
 import type { Component } from '../component'
 import { toValue } from '@vue/reactivity'
 
-interface EventModifierState {
+export interface EventModifierState {
   executedTimes: number
   lastCall: number
 }
 
+/**
+ * Runs before the listener. Returning `false` (or a promise of `false`)
+ * cancels the listener.
+ */
 export type EventModifier = (evt: Event, state: EventModifierState) => boolean | Promise<boolean>
 
-interface EventConfig {
-  options?: EventListenerOptions
+export interface EventConfig {
+  options?: AddEventListenerOptions
   modifiers?: EventModifier[]
 }
 
 //////////////////////////////
 // Modifiers
-
-// Each modifier needs to return true, otherwise the provided callback will not
-// be be executed
 
 /**
  * Throttle the execution of the event callback based on the provided delay amount
@@ -34,6 +35,11 @@ function throttle(amount: number): EventModifier {
   }
 }
 
+/**
+ * Delays the execution of the event callback
+ *
+ * @param amount Delay in milliseconds
+ */
 function delay(amount: number): EventModifier {
   return () => new Promise<boolean>((r) => {
     setTimeout(() => r(true), amount)
@@ -76,6 +82,12 @@ const prevent: EventModifier = (evt) => {
  */
 const cancel: EventModifier = () => false
 
+/**
+ * Only runs the callback when the event originates from the element itself,
+ * not from a child.
+ */
+const self: EventModifier = evt => evt.target === evt.currentTarget
+
 export const Modifier = {
   /**
    * Executes event callback if the provided expression passes.
@@ -83,7 +95,7 @@ export const Modifier = {
    * @param expression Ref<boolean> | boolean
    * @returns EventModifier
    */
-  if: (expression: boolean | Ref<boolean>): EventModifier => () => {
+  if: (expression: boolean | Ref<boolean> | (() => boolean)): EventModifier => () => {
     return !!toValue(expression)
   },
   throttle,
@@ -93,144 +105,89 @@ export const Modifier = {
   prevent,
   cancel,
   delay,
+  self,
 } as const
 
 //////////////////////////////
 // Implementation
 
-type CascadeEvent = (e: Event | CustomEvent, data?: unknown) => void
+export type CascadeEvent = (e: any, data?: any) => void
 
-export function on<PropsType extends object>(this: Component<PropsType>, type: keyof HTMLElementEventMap | (string & {}), listener: CascadeEvent, config: EventConfig = {}) {
+export function on(this: Component<any, any>, type: string, listener: CascadeEvent, config: EventConfig = {}) {
   const state: EventModifierState = {
     executedTimes: 0,
     lastCall: 0,
   }
+  const modifiers = config.modifiers
 
-  async function callbackHandler(evt: Event) {
-    if (config.modifiers) {
-      for (const modifier of config.modifiers) {
-        if (!(await modifier(evt, state)))
-          return
-      }
-    }
-
+  const run = (evt: Event) => {
     listener(evt, 'detail' in evt ? (evt as CustomEvent).detail : undefined)
-
     state.executedTimes++
     state.lastCall = Date.now()
   }
 
+  // Modifiers run synchronously unless one of them returns a promise, so
+  // `preventDefault()` inside the listener still works.
+  const handler = (evt: Event) => {
+    if (!modifiers || modifiers.length === 0)
+      return run(evt)
+
+    let i = 0
+    const step = (): void | Promise<void> => {
+      while (i < modifiers.length) {
+        const result = modifiers[i++](evt, state)
+        if (result instanceof Promise) {
+          return result.then((passed) => {
+            if (passed)
+              return step()
+          })
+        }
+        if (!result)
+          return
+      }
+      run(evt)
+    }
+
+    step()
+  }
+
   this.onMount(() => {
-    this.el.addEventListener(type, callbackHandler, config.options)
+    this.el.addEventListener(type, handler, config.options)
+    return () => this.el.removeEventListener(type, handler, config.options)
   })
-  this.onDestroy(() => {
-    this.el.removeEventListener(type, callbackHandler)
-  })
-  return this
 }
 
 //////////////////////////////
-// Custom shorthands
-
-export function click<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('click', listener, options)
-}
-
-export function submit<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('submit', listener, options)
-}
-
-export function focus<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('focus', listener, options)
-}
-
-export function blur<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('blur', listener, options)
-}
-
-export function change<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('change', listener, options)
-}
-
-export function input<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('input', listener, options)
-}
+// Keyboard
 
 export interface KeyInputOptions {
-  // `some` will detect any of the provwided keys and call the listener
-  // `every` will only trigger if all the keys have been hit in that exact sequence
+  /**
+   * `some` triggers the listener when any of the provided keys is pressed.
+   * `every` (default) only triggers when all keys have been pressed in that
+   * exact sequence.
+   */
   detect?: 'some' | 'every'
 }
 
-function keyEventImpl(this: Component<any>, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
-  // Store pressed keys in case there are multiple keys to check for
+export function keyEventImpl(this: Component<any, any>, eventType: 'keydown' | 'keyup' | 'keypress', keyOrArrayOfKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
+  const keys = Array.isArray(keyOrArrayOfKeys) ? keyOrArrayOfKeys : [keyOrArrayOfKeys]
+  // Last pressed keys, at most as many as we are looking for
   const history: string[] = []
 
-  function addKeyToHistory(newKey: string) {
-    history.push(newKey)
-    // Remove keys which exceed the detection range
-    if (history.length > keyOrArrayOfKeys.length)
+  this.on(eventType, (event: KeyboardEvent) => {
+    const key = event.key
+
+    if (options?.detect === 'some') {
+      if (keys.includes(key))
+        listener(event)
+      return
+    }
+
+    history.push(key)
+    if (history.length > keys.length)
       history.shift()
-  }
 
-  // Turn options into array either way
-  const keysInArray = Array.isArray(keyOrArrayOfKeys) ? keyOrArrayOfKeys : [keyOrArrayOfKeys]
-
-  this.on(eventType, (event) => {
-    const key = (event as KeyboardEvent).key
-
-    function callListener() {
-      listener(event, 'detail' in event ? (event as CustomEvent).detail : undefined)
-    }
-
-    switch (options?.detect || 'every') {
-      case 'some': {
-        if (keysInArray.includes(key))
-          callListener()
-
-        break
-      }
-
-      case 'every':
-      default: {
-        addKeyToHistory(key)
-
-        const passed = keysInArray.every((expectedKey, index) => {
-          return expectedKey === history[index]
-        })
-
-        if (passed)
-          callListener()
-
-        break
-      }
-    }
+    if (history.length === keys.length && keys.every((expected, index) => expected === history[index]))
+      listener(event)
   }, options)
-}
-
-export function keydown<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('keydown', listener, options)
-}
-
-export function keydownExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
-  keyEventImpl.call(this, 'keydown', requiredKeyOrKeys, listener, options)
-  return this
-}
-
-export function keyup<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('keyup', listener, options)
-}
-
-export function keyupExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
-  keyEventImpl.call(this, 'keyup', requiredKeyOrKeys, listener, options)
-  return this
-}
-
-export function keypress<PropsType extends object>(this: Component<PropsType>, listener: CascadeEvent, options?: EventConfig) {
-  return this.on('keyup', listener, options)
-}
-
-export function keypressExact<PropsType extends object>(this: Component<PropsType>, requiredKeyOrKeys: string | string[], listener: CascadeEvent, options?: EventConfig & KeyInputOptions) {
-  keyEventImpl.call(this, 'keypress', requiredKeyOrKeys, listener, options)
-  return this
 }

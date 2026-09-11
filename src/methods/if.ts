@@ -1,34 +1,33 @@
-import type { MaybeRefOrGetter } from '@vue/reactivity'
+import type { EffectScope, MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from '../component'
-import { toValue, watch } from '@vue/reactivity'
-import { isWatchSource, WATCH_CONF } from '../util'
+import { effectScope, toValue, watch } from '@vue/reactivity'
+import { isWatchSource, warnOnce, WATCH_CONF } from '../util'
 
-export function if_impl<PropsType extends object>(this: Component<PropsType>, expr: MaybeRefOrGetter) {
-  // Anchors are used to correctly re-insert nodes back to the dom
-  const anchor = new Comment('if')
+export function if_impl(this: Component<any, any>, expr: MaybeRefOrGetter<any>) {
+  if (this.$anchor)
+    warnOnce(`if-twice-${this.identifier}`, '[cascade] `.if()` was called more than once on a component, only the last condition applies.', this.el)
+
+  // The anchor keeps the position of the component while it is removed
+  this.$anchor ??= document.createComment('if')
+
+  // The condition watcher must keep running while the component is hidden
+  // and its own scope is paused, so it lives in a scope of its own.
+  let scope: EffectScope | null = null
 
   this.onInit(() => {
-    const parent = this.parent
-    if (!parent)
-      return console.warn('Parent element not found. `if()` will not work.')
-
-    const process = (res: any) => {
-      if (res)
-        parent.el.insertBefore(this.el, anchor)
-      else
-        this.el.remove()
+    if (!isWatchSource(expr)) {
+      this.$setVisible(!!expr)
+      return
     }
 
-    parent.el.insertBefore(anchor, this.el)
-
-    if (isWatchSource(expr)) {
-      const release = watch(() => toValue(expr), process, WATCH_CONF)
-      this.onDestroy(release)
-    }
-    else {
-      process(expr)
-    }
+    scope = effectScope(true)
+    scope.run(() => {
+      watch(() => toValue(expr), value => this.$setVisible(!!value), WATCH_CONF)
+    })
   })
 
-  return this
+  this.onDestroy(() => {
+    scope?.stop()
+    scope = null
+  })
 }

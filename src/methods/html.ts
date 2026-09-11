@@ -1,8 +1,7 @@
 import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from '../component'
-import { registerWatchedProp } from '../property-method'
+import { bindProp } from '../property-method'
 
-export function html<PropsType extends object>(this: Component<PropsType>, value: MaybeRefOrGetter<string>) {
-  registerWatchedProp.call(this, 'innerHTML', value)
-  return this
+export function html(this: Component<any, any>, value: MaybeRefOrGetter<string>) {
+  bindProp.call(this, 'innerHTML', value)
 }

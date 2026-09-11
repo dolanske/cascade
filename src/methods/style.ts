@@ -1,61 +1,71 @@
-import type { MaybeRefOrGetter, Ref } from '@vue/reactivity'
+import type { MaybeRefOrGetter } from '@vue/reactivity'
 import type { Component } from '../component'
 import type { CSSStyle } from '../types'
 import { toValue, watch } from '@vue/reactivity'
-import { isNil, isObject, isWatchSource, WATCH_CONF } from '../util'
+import { isNil, isObject, isWatchSource, warnOnce, WATCH_CONF } from '../util'
 
-type LimitedPrimitive = string | number
+export type StyleValue = string | number | null | undefined
 
-export function style(
-  this: Component<any>,
-  key: keyof CSSStyle | CSSStyle | MaybeRefOrGetter<CSSStyle>,
-  value?: MaybeRefOrGetter<LimitedPrimitive>,
-) {
-  const setStyleProperties = (props: CSSStyle) => {
-    if (!isObject(props)) {
-      console.warn('[El.style] Refs which don\'t contain a style object are not allowed')
+/**
+ * `style.setProperty()` only understands hyphenated names, `csstype` allows
+ * both notations.
+ */
+function hyphenate(key: string) {
+  return key.startsWith('--') ? key : key.replace(/[A-Z]/g, char => `-${char.toLowerCase()}`)
+}
+
+function setStyle(el: HTMLElement, key: string, value: StyleValue) {
+  if (isNil(value) || value === '')
+    el.style.removeProperty(hyphenate(key))
+  else
+    el.style.setProperty(hyphenate(key), String(value))
+}
+
+export function style(this: Component<any, any>, key: keyof CSSStyle | MaybeRefOrGetter<CSSStyle>, value?: MaybeRefOrGetter<StyleValue>) {
+  this.onInit(() => {
+    const el = this.el
+
+    // style('color', value)
+    if (typeof key === 'string') {
+      if (isWatchSource(value))
+        watch(() => toValue(value), updated => setStyle(el, key, updated), WATCH_CONF)
+      else
+        setStyle(el, key, value)
       return
     }
-    const keys = Object.keys(props)
-    for (const key of keys)
-      this.el.style.setProperty(key, Reflect.get(props, key))
-  }
-  if (typeof key === 'string') {
-    if (isWatchSource(value)) {
-      const release = watch(() => toValue(value), (updatedValue) => {
-        setStyleProperties({ [key]: updatedValue })
-      })
-      this.onDestroy(release)
+
+    // style(ref) / style(() => ({ ... }))
+    if (isWatchSource(key)) {
+      if (value !== undefined)
+        warnOnce('style-ref-value', '[cascade] `.style()` ignores the second argument when the first one is a ref or getter.')
+
+      let prevKeys: string[] = []
+      watch(() => toValue(key), (props) => {
+        if (!isObject(props)) {
+          warnOnce('style-not-object', '[cascade] `.style()` refs must resolve to a style object.', props)
+          return
+        }
+        const keys = Object.keys(props)
+        for (const prev of prevKeys) {
+          if (!(prev in props))
+            el.style.removeProperty(hyphenate(prev))
+        }
+        for (const prop of keys)
+          setStyle(el, prop, Reflect.get(props, prop))
+        prevKeys = keys
+      }, WATCH_CONF)
+      return
     }
-    else if (value) {
-      setStyleProperties({ [key]: value })
-    }
-  }
-  else if (isWatchSource(key)) {
-    if (value) {
-      console.warn('[El.style] Refs which don\'t contain a style object are not allowed')
-    }
-    else {
-      const release = watch(() => toValue(key), setStyleProperties, WATCH_CONF)
-      this.onDestroy(release)
-    }
-  }
-  else if (isObject(key)) {
-    const keyProps = Object.keys(key)
-    for (const keyProp of keyProps) {
-      const value: LimitedPrimitive | Ref<LimitedPrimitive> = Reflect.get(key, keyProp)
-      if (isWatchSource(value)) {
-        const release = watch(() => toValue(value), (updatedValue) => {
-          if (isNil(updatedValue))
-            return
-          this.el.style.setProperty(keyProp, String(updatedValue))
-        })
-        this.onDestroy(release)
-      }
-      else if (!isNil(value)) {
-        this.el.style.setProperty(keyProp, String(value))
+
+    // style({ color: 'red', width: ref })
+    if (isObject(key)) {
+      for (const prop of Object.keys(key)) {
+        const propValue: MaybeRefOrGetter<StyleValue> = Reflect.get(key, prop)
+        if (isWatchSource(propValue))
+          watch(() => toValue(propValue), updated => setStyle(el, prop, updated), WATCH_CONF)
+        else
+          setStyle(el, prop, propValue)
       }
     }
-  }
-  return this
+  })
 }

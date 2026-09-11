@@ -1,64 +1,48 @@
 import type { MaybeRefOrGetter, Primitive } from '@vue/reactivity'
 import type { Component } from '../component'
 import { toValue, watch } from '@vue/reactivity'
-import { isNil, isObject, isWatchSource } from '../util'
+import { isNil, isWatchSource, WATCH_CONF, WATCH_CONF_SHALLOW } from '../util'
 
-type Attributes = Record<string, Primitive>
+export type Attributes = Record<string, Primitive>
 
-export function setAttribute(el: HTMLElement, key: string | Attributes, value?: Primitive) {
-  if (isObject(key)) {
-    Object.entries(key).forEach(([k, v]) => {
-      setAttribute(el, k, v)
-    })
-    return
-  }
-
-  if (isNil(value)) {
+export function setAttribute(el: HTMLElement, key: string, value?: Primitive) {
+  if (isNil(value) || value === true)
     el.setAttribute(key, '')
-  }
-  else if (typeof value === 'boolean') {
-    if (value)
-      el.setAttribute(key, '')
-    else
-      el.removeAttribute(key)
-  }
-  else {
+  else if (value === false)
+    el.removeAttribute(key)
+  else
     el.setAttribute(key, String(value))
-  }
 }
 
-export function attrs<PropsType extends object>(this: Component<PropsType>, attrData: MaybeRefOrGetter<Attributes>) {
+export function attrs(this: Component<any, any>, attrData: MaybeRefOrGetter<Attributes>) {
   this.onInit(() => {
-    if (isWatchSource(attrData)) {
-      const release = watch(() => toValue(attrData), value => setAttribute(this.el, value), {
-        immediate: true,
-        deep: true,
-      })
+    const el = this.el
 
-      this.onDestroy(release)
+    if (!isWatchSource(attrData)) {
+      for (const key of Object.keys(attrData))
+        setAttribute(el, key, attrData[key])
+      return
     }
-    else {
-      setAttribute(this.el, attrData)
-    }
+
+    let prevKeys: string[] = []
+    watch(() => toValue(attrData), (value) => {
+      const keys = Object.keys(value ?? {})
+      for (const prev of prevKeys) {
+        if (!keys.includes(prev))
+          el.removeAttribute(prev)
+      }
+      for (const key of keys)
+        setAttribute(el, key, value[key])
+      prevKeys = keys
+    }, WATCH_CONF_SHALLOW)
   })
-
-  return this
 }
 
-export function attr<PropsType extends object>(this: Component<PropsType>, key: string, value?: MaybeRefOrGetter<Primitive>) {
+export function attr(this: Component<any, any>, key: string, value?: MaybeRefOrGetter<Primitive>) {
   this.onInit(() => {
-    if (isWatchSource(value)) {
-      const release = watch(() => toValue(value), value => setAttribute(this.el, key, value), {
-        immediate: true,
-        deep: true,
-      })
-
-      this.onDestroy(release)
-    }
-    else {
+    if (isWatchSource(value))
+      watch(() => toValue(value), updated => setAttribute(this.el, key, updated), WATCH_CONF)
+    else
       setAttribute(this.el, key, value)
-    }
   })
-
-  return this
 }

@@ -1,15 +1,20 @@
-import type { ModelTransform } from './methods/model'
-import type { EventModifier } from './methods/on'
-import type { ComponentChildren as Children } from './types'
-import { Component, fragment } from './component'
-import { img } from './components/img'
-import { input, textarea } from './components/input'
-import { option } from './components/select'
+import type { ClassObject, ClassValue } from './methods/class'
+import type { ForOptions } from './methods/for'
+import type { ModelOptions, ModelTransform, ModelValue } from './methods/model'
+import type { EventConfig, EventModifier, EventModifierState, KeyInputOptions } from './methods/on'
+import type { StyleValue } from './methods/style'
+import type { ReusableComponent } from './reusable'
+import type { ComponentChildren as Children, ComponentChildren, ComponentChildrenItems, CSSStyle, EventsMap, HtmlTags, HtmlVoidtags, Key, NoEvents, SetupArguments } from './types'
+import { Component, Fragment, fragment, VoidComponent } from './component'
+import { img, ImgElement } from './components/img'
+import { input, InputElement, textarea } from './components/input'
+import { Option, option } from './components/select'
 import { htmlNormalElFactory, htmlVoidElFactory } from './factory'
 import { createId } from './id'
 import { Transform } from './methods/model'
 import { Modifier } from './methods/on'
 import { reusable } from './reusable'
+import { flushSync, nextTick } from './scheduler'
 import { getInstance } from './util'
 
 const {
@@ -42,6 +47,7 @@ const {
   del,
   details,
   dfn,
+  dialog,
   div,
   dl,
   dt,
@@ -117,6 +123,7 @@ const {
   tr,
   u,
   ul,
+  var: varElement,
   video,
 } = htmlNormalElFactory
 
@@ -158,12 +165,17 @@ export {
   caption,
   Children,
   cite,
+  ClassObject,
+  ClassValue,
   code,
   col,
   colgroup,
   Component,
+  ComponentChildren,
+  ComponentChildrenItems,
   content,
   createId,
+  CSSStyle,
   data,
   datalist,
   dd,
@@ -171,18 +183,25 @@ export {
   del,
   details,
   dfn,
+  dialog,
   div,
   dl,
   dt,
   element,
   em,
   embed,
+  EventConfig,
   EventModifier,
+  EventModifierState,
+  EventsMap,
   fieldset,
   figcaption,
   figure,
+  flushSync,
   footer,
   form,
+  ForOptions,
+  Fragment,
   fragment,
   getInstance,
   h1,
@@ -196,14 +215,20 @@ export {
   hgroup,
   hr,
   html,
+  HtmlTags,
+  HtmlVoidtags,
   i,
   iframe,
   img,
+  ImgElement,
   input,
+  InputElement,
   ins,
   isindex,
   kbd,
+  Key,
   keygen,
+  KeyInputOptions,
   label,
   legend,
   li,
@@ -215,13 +240,18 @@ export {
   menu,
   meta,
   meter,
+  ModelOptions,
   ModelTransform,
+  ModelValue,
   Modifier,
   nav,
+  nextTick,
+  NoEvents,
   noscript,
   object,
   ol,
   optgroup,
+  Option,
   option,
   output,
   p,
@@ -229,8 +259,8 @@ export {
   pre,
   progress,
   q,
-  //
   reusable,
+  ReusableComponent,
   rp,
   rt,
   ruby,
@@ -239,6 +269,7 @@ export {
   script,
   section,
   select,
+  SetupArguments,
   shadow,
   small,
   source,
@@ -246,6 +277,7 @@ export {
   span,
   strong,
   style,
+  StyleValue,
   sub,
   summary,
   sup,
@@ -264,6 +296,8 @@ export {
   Transform,
   u,
   ul,
+  varElement,
   video,
+  VoidComponent,
   wbr,
 }
