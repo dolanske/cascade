@@ -428,6 +428,10 @@ export declare const content: ComponentInstance;
 export declare function createId(limited?: boolean): string;
 
 export declare interface CSSStyle extends Properties, PropertiesHyphen {
+    /**
+     * Custom properties, e.g. `--accent-color`
+     */
+    [customProperty: `--${string}`]: string | number | null | undefined;
 }
 
 export declare const data: ComponentInstance;
@@ -795,7 +799,7 @@ export declare const Modifier: {
 /**
  * `onMount` callbacks can return a cleanup function, which runs on destroy.
  */
-declare type MountCallback = () => void | GenericCallback;
+declare type MountCallback = () => unknown;
 
 export declare const nav: ComponentInstance;
 

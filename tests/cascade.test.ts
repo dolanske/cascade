@@ -1,3 +1,4 @@
+import type { CSSStyle } from '../src/index'
 import { computed, reactive, ref, shallowRef } from '@vue/reactivity'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { button, dialog, div, flushSync, fragment, getInstance, input, li, Modifier, nextTick, option, p, reusable, select, span, Transform, ul, varElement as varEl } from '../src/index'
@@ -514,7 +515,7 @@ describe('attributes', () => {
 
   it('applies styles immediately, including camelCase and reactive objects', () => {
     const width = ref(10)
-    const styles = ref({ backgroundColor: 'red', color: 'blue' })
+    const styles = ref<CSSStyle>({ backgroundColor: 'red', color: 'blue' })
     const el = div()
       .style('width', () => `${width.value}px`)
       .style(styles)

@@ -175,7 +175,7 @@ export class Component<PropsType extends object = Record<string, any>, EventsTyp
       for (const cb of this.$onMountCbs) {
         const cleanup = cb()
         if (isFn(cleanup))
-          this.$onDestroyCbs.push(cleanup)
+          this.$onDestroyCbs.push(cleanup as GenericCallback)
       }
     })
 

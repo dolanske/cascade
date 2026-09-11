@@ -98,13 +98,18 @@ export type ComponentInstance = <PropsType extends object = Record<string, any>,
 ) => Component<PropsType, EventsType>
 
 export type ValueOf<T> = T[keyof T]
-export interface CSSStyle extends Properties, PropertiesHyphen { }
+export interface CSSStyle extends Properties, PropertiesHyphen {
+  /**
+   * Custom properties, e.g. `--accent-color`
+   */
+  [customProperty: `--${string}`]: string | number | null | undefined
+}
 export type GenericCallbackWithThis<PropsType extends object> = (this: Component<PropsType, any>) => void
 export type GenericCallback = () => void
 /**
  * `onMount` callbacks can return a cleanup function, which runs on destroy.
  */
-export type MountCallback = () => void | GenericCallback
+export type MountCallback = () => unknown
 export type VisibilityCallback = (visible: boolean) => void
 
 export type SetupArguments<PropsType extends object, EventsType extends EventsMap = NoEvents>
