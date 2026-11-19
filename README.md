@@ -237,7 +237,7 @@ ctx.for(['One', 'Two', 'Three'], (item, index) => {
 
 ##### Keys
 
-When the source changes the list is reconciled: items which were added are rendered, removed ones destroyed and the rest kept. Give each item a key so it can be recognised after it moved. A key can be provided in two ways:
+To avoid re-rendering the entire list when a reactive property updates, we can provide a `key` so only the affected elements are updated.
 
 ```ts
 // 1. On the rendered component. The callback runs for every item on each
@@ -247,28 +247,6 @@ ctx.for(users, user => Row().props({ user }).key(user.id))
 // 2. Through the `key` option. The callback only runs for new items, which is
 //    the fastest option for very large lists.
 ctx.for(users, user => Row().props({ user }), { key: user => user.id })
-```
-
-Rules for reuse, in order:
-
-- Object sources use the property name as the key, number sources the index.
-- Without a key, array items are matched by index and then by identity, so removing an item from the middle does not re-create the ones after it. Lists of objects without keys log a warning once.
-- An item is only reused when it is the same value as before (`Object.is`). Replacing an object (`items.value = items.value.map(i => ({ ...i }))`) re-renders that item.
-- If the callback declares the `index` parameter, its output depends on the position, so an item whose index changed is rendered again. Omit the parameter if you don't need it.
-
-##### Granular updates
-
-Every item runs inside its own tracked effect. Reactive values read directly in the callback re-render just that item, getters passed to methods update in place without touching the item at all:
-
-```ts
-const items = ref([{ id: 1, label: 'a' }])
-
-// `item.label` is read in the callback: changing it re-creates this one <li>
-ctx.for(items, item => li(item.label).key(item.id))
-// `item.label` is read by a getter: changing it only updates the text
-ctx.for(items, item => li(() => item.label).key(item.id))
-
-items.value[0].label = 'b'   // only the first item is touched, nothing else runs
 ```
 
 ---
